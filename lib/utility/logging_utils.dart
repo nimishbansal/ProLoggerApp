@@ -18,13 +18,13 @@ const String ERROR = 'ERROR';
 const String CRITICAL = 'CRITICAL';
 const String FATAL = 'FATAL';
 
-const grey = Color(0xffb74093);
-const green = Color(0x00FF00);
-const blue = Color(0x0000FF);
-const yellow = Color(0xFFFF00);
-const red = Color(0xFF0000);
-const orange = Color(0xFFA500);
-const black = Color(0x000000);
+var grey = Color(0x808080).withAlpha(0xFF);
+var green = Color(0x00FF00).withAlpha(0xFF);
+var blue = Color(0x0000FF).withAlpha(0xFF);
+var yellow = Color(0xFFFF00).withAlpha(0xFF);
+var red = Color(0xFF0000).withAlpha(0xFF);
+var orange = Color(0xFFA500).withAlpha(0xFF);
+var black = Color(0x000000).withAlpha(0xFF);
 
 var logLevelTuple = [
 	[NOTSET, LEVEL_NOTSET, grey],
