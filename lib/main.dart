@@ -48,7 +48,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-	int _counter = 0;
+	
+	Widget _myListView(BuildContext context) {
+		
+		var logEntry1 = LogEntry(title: "Title", message: "This is a custom message", logLevel: notset);
+		var logEntry2 = LogEntry(title: "Title", message: "This is a custom message", logLevel: debug);
+		var logEntry3 = LogEntry(title: "Title", message: "This is a custom message", logLevel: info);
+		var logEntry4 = LogEntry(title: "Title", message: "This is a custom message", logLevel: warning);
+		var logEntry5 = LogEntry(title: "Title", message: "This is a custom message", logLevel: error);
+		var logEntry6 = LogEntry(title: "Title", message: "This is a custom message", logLevel: fatal);
+		var logEntry7 = LogEntry(title: "Title", message: "This is a custom message", logLevel: critical);
+		var logEntry8 = LogEntry(title: "Title", message: "This is a custom message", logLevel: critical);
+		var logEntry9 = LogEntry(title: "Title", message: "This is a custom message", logLevel: critical);
+		
+		var logEntries = List<LogEntry>();
+		logEntries.addAll([logEntry1,logEntry2, logEntry3, logEntry4, logEntry5, logEntry6, logEntry7, logEntry8, logEntry9]);
+		
+		return ListView.builder(
+			itemCount: logEntries.length,
+			itemBuilder: (context, index) {
+				return LogEntryCard(logEntry: logEntries[index],);
+			},
+		);
+		
+	}
+	
 	
 	void _incrementCounter() {
 		setState(() {
@@ -57,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
 			// so that the display can reflect the updated values. If we changed
 			// _counter without calling setState(), then the build method would not be
 			// called again, and so nothing would appear to happen.
-			_counter++;
+//			_counter++;
 		});
 	}
 	
@@ -70,14 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
 		// The Flutter framework has been optimized to make rerunning build methods
 		// fast, so that you can just rebuild anything that needs updating rather
 		// than having to individually change instances of widgets.
-		
-//		var logEntry1 = LogEntry(title: "Title", message: "This is a custom message", logLevel: notset);
-		var logEntry2 = LogEntry(title: "Title", message: "This is a custom message", logLevel: debug);
-		var logEntry3 = LogEntry(title: "Title", message: "This is a custom message", logLevel: info);
-		var logEntry4 = LogEntry(title: "Title", message: "This is a custom message", logLevel: warning);
-		var logEntry5 = LogEntry(title: "Title", message: "This is a custom message", logLevel: error);
-		var logEntry6 = LogEntry(title: "Title", message: "This is a custom message", logLevel: fatal);
-		var logEntry7 = LogEntry(title: "Title", message: "This is a custom message", logLevel: critical);
 		
 		
 		return Scaffold(
@@ -106,13 +122,16 @@ class _MyHomePageState extends State<MyHomePage> {
 					// horizontal).
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: <Widget>[
+						Container(child: _myListView(context), height:  MediaQuery.of(context).size.height-100,)
 //								LogEntryCard(logEntry: logEntry1),
-								LogEntryCard(logEntry: logEntry2),
-								LogEntryCard(logEntry: logEntry3),
-								LogEntryCard(logEntry: logEntry4),
-								LogEntryCard(logEntry: logEntry5),
-								LogEntryCard(logEntry: logEntry6),
-								LogEntryCard(logEntry: logEntry7),
+//								LogEntryCard(logEntry: logEntry2),
+//								LogEntryCard(logEntry: logEntry3),
+//								LogEntryCard(logEntry: logEntry4),
+//								LogEntryCard(logEntry: logEntry5),
+//								LogEntryCard(logEntry: logEntry6),
+//								LogEntryCard(logEntry: logEntry7),
+//								LogEntryCard(logEntry: logEntry8),
+//								LogEntryCard(logEntry: logEntry9),
 							],
 						),
 				),

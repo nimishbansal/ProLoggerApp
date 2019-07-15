@@ -13,6 +13,7 @@ class LogEntryCard extends StatefulWidget {
 
 class _LogEntryCardState extends State<LogEntryCard> {
 	final LogEntry logEntry;
+	var checkboxStatus = false;
 	
 	_LogEntryCardState(this.logEntry);
 	
@@ -26,6 +27,14 @@ class _LogEntryCardState extends State<LogEntryCard> {
 							leading: get_colored_icon_for_log_level(color: logEntry.logLevel.color),
 							title: Text('The ${logEntry.title}'),
 							subtitle: Text('${logEntry.message}'),
+							trailing: Checkbox(
+								value: checkboxStatus,
+								onChanged: (bool value) {
+									setState(() {
+										checkboxStatus = value;
+									});
+								},
+							),
 						),
 					],)
 				),
