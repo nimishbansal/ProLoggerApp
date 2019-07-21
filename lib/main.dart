@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 //        primarySwatch: Colors.blue,
 				primaryColor:red
 			),
-			home: AppTourBottomCarousel(noOfCarouselCircles: 5,selectedCarouselIndex: 2,),
+			home: DefaultTourScreen(noOfScreens: 5,),
 //			home: ScreenWithSingleImageForAppTour(
 //				uri: "https://media.idownloadblog.com/wp-content/uploads/2016/05/Seb-Home-screen-may-2016.png",
 //				noOfScreens: 1,
