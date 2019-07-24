@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pro_logger/AppTour/Screens/DefaultTourScreen.dart';
-import 'package:pro_logger/AppTour/Widgets/AppTourBottomCarousel.dart';
-import 'package:pro_logger/AppTour/Widgets/ScreenWithSingleImageForAppTour.dart';
-import 'package:pro_logger/utility/logging_utils.dart';
+import 'package:pro_logger/Entries/Screens/IssueScreen.dart';
+import 'package:pro_logger/utility/LogLevel.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,15 +19,9 @@ class MyApp extends StatelessWidget {
 		return MaterialApp(
 			title: 'Flutter Demo',
 			theme: ThemeData(
-//        primarySwatch: Colors.blue,
 				primaryColor:red
 			),
-			home: DefaultTourScreen(noOfScreens: 5,),
-//			home: ScreenWithSingleImageForAppTour(
-//				uri: "https://media.idownloadblog.com/wp-content/uploads/2016/05/Seb-Home-screen-may-2016.png",
-//				noOfScreens: 1,
-//				currentIndex: 0,
-//			)
+			home: IssueScreen(),
 		);
 	}
 }

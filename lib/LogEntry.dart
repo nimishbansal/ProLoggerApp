@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:pro_logger/utility/logging_utils.dart';
+import 'package:pro_logger/utility/LogLevel.dart';
 
 class LogEntry
 {
@@ -12,6 +12,13 @@ class LogEntry
 		this.title = title;
 		this.message = message;
 		this.logLevel = logLevel;
+	}
+
+	LogEntry.fromJson(Map<String, dynamic> data)
+	{
+		title = data['title'];
+		message = data['message'];
+		logLevel = LogLevel.fromLevelName(data['level_name']);
 	}
 	
 }

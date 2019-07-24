@@ -36,18 +36,36 @@ var logLevelTuple = [
 	[CRITICAL, LEVEL_CRITICAL, black],
 ];
 
+var logLevelDictionary = {
+    NOTSET: [NOTSET, LEVEL_NOTSET, grey],
+    DEBUG: [DEBUG, LEVEL_DEBUG, green],
+    INFO:[INFO, LEVEL_INFO, blue],
+    WARNING:[WARNING, LEVEL_WARNING, yellow],
+    ERROR: [ERROR, LEVEL_ERROR, red],
+    FATAL: [FATAL, LEVEL_FATAL, orange],
+    CRITICAL: [CRITICAL, LEVEL_CRITICAL, black],
+};
+
 
 class LogLevel
 {
 	int level;
 	String name;
 	Color color;
-	
+
 	LogLevel({@required int level, @required String name ,@required Color color})
 	{
 		this.level = level;
 		this.name = name;
 		this.color = color;
+	}
+
+	LogLevel.fromLevelName(String level_name)
+	{
+	    List<dynamic> args = logLevelDictionary[level_name];
+        name=args[0];
+        level=args[1];
+        color=args[2];
 	}
 }
 
