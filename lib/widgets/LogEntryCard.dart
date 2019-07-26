@@ -25,7 +25,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
 					children: <Widget>[
 						ListTile(
 							leading: get_colored_icon_for_log_level(color: logEntry.logLevel.color),
-							title: Text('The ${logEntry.title}'),
+							title: Text('${logEntry.title}'),
 							subtitle: Text('${logEntry.message}'),
 							trailing: Checkbox(
 								value: checkboxStatus,
