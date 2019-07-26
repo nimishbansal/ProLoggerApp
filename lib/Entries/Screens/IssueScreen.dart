@@ -29,8 +29,10 @@ class _IssueScreenState extends State<IssueScreen> {
 
 	void getLogEntries(LogEntryRepository repository) async
 	{
-		logEntries.addAll(await repository.fetchLogEntryList());
-
+		var entries = await repository.fetchLogEntryList();
+		setState((){
+			logEntries.addAll(entries);
+		});
 //		var logEntry1 = LogEntry(title: "Title", message: "This is a custom message", logLevel: notset);
 //		var logEntry2 = LogEntry(title: "Title", message: "This is a custom message", logLevel: debug);
 //		var logEntry3 = LogEntry(title: "Title", message: "This is a custom message", logLevel: info);
