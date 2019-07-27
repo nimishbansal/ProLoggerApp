@@ -7,15 +7,15 @@ import 'package:pro_logger/main.dart';
 import 'package:pro_logger/widgets/LogEntryCard.dart';
 import 'package:web_socket_channel/io.dart';
 
-class IssueScreen extends StatefulWidget {
+class LogEntryScreen extends StatefulWidget {
 	final String title;
-	IssueScreen({Key key, this.title}) : super(key: key);
+	LogEntryScreen({Key key, this.title}) : super(key: key);
 
 	@override
-	_IssueScreenState createState() => _IssueScreenState();
+	_LogEntryScreenState createState() => _LogEntryScreenState();
 }
 
-class _IssueScreenState extends State<IssueScreen> {
+class _LogEntryScreenState extends State<LogEntryScreen> {
 
 	var logEntries = List<LogEntry>();
 	var dataLoaded = false;
@@ -25,10 +25,11 @@ class _IssueScreenState extends State<IssueScreen> {
     {
 		var ws = await WebSocket.connect("ws://192.168.0.107:8080/", protocols: ['echo-protocol']);
         var s = IOWebSocketChannel(ws);
-        if (1==2)
-        {
-            ws.close();
-        }
+        print("results");
+        s.sink.add("aww");
+        s.stream.listen((dynamic data){
+            print("data is " + data.toString());
+        });
 	}
 
 

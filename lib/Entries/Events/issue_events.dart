@@ -1,25 +1,25 @@
-abstract class IssueEvent{}
+abstract class LogEntryEvent{}
 
-class NewIssueEvent extends IssueEvent
+class NewLogEntryEvent extends LogEntryEvent
 {}
 
-class NotSetEvent extends NewIssueEvent
+class NotSetEvent extends NewLogEntryEvent
 {}
 
-class DebugEvent extends NewIssueEvent
+class DebugEvent extends NewLogEntryEvent
 {}
 
-class InfoEvent extends NewIssueEvent
+class InfoEvent extends NewLogEntryEvent
 {}
 
-class WarningEvent extends NewIssueEvent
+class WarningEvent extends NewLogEntryEvent
 {}
 
-class ErrorEvent extends NewIssueEvent
+class ErrorEvent extends NewLogEntryEvent
 {}
 
-class FatalEvent extends NewIssueEvent
+class FatalEvent extends NewLogEntryEvent
 {}
 
-class CriticalEvent extends NewIssueEvent
+class CriticalEvent extends NewLogEntryEvent
 {}

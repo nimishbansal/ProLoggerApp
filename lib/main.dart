@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pro_logger/Entries/Screens/IssueScreen.dart';
+import 'package:pro_logger/Entries/Screens/LogEntryScreen.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
 void main() => runApp(MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 			theme: ThemeData(
 				primaryColor:red
 			),
-			home: IssueScreen(),
+			home: LogEntryScreen(),
 		);
 	}
 }
