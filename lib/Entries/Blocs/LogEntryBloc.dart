@@ -11,6 +11,8 @@ import 'package:web_socket_channel/io.dart';
 class LogEntryBloc
 {
 
+    LogEntry logEntry = new LogEntry(title: null, message: null, logLevel: null);
+
     List<LogEntry> logEntries;
     LogEntryRepository _logEntryRepository;
 
@@ -22,8 +24,8 @@ class LogEntryBloc
     Stream<List<LogEntry>> get logEntryStream => _issueListStateController.stream;
 
 
-    final _issueEventController = StreamController<LogEntryEvent>();
-    Sink<LogEntryEvent> get issueEventController => _issueEventController.sink;
+    final _logEntryEventController = StreamController<LogEntryEvent>();
+    Sink<LogEntryEvent> get logEventControllerSink => _logEntryEventController.sink;
 
 
     LogEntryBloc()
@@ -31,7 +33,7 @@ class LogEntryBloc
         _logEntryRepository = new LogEntryRepository();
         fetchLogEntriesList();
         connectToSocket();
-         _issueEventController.stream.listen(_mapEventToState);
+         _logEntryEventController.stream.listen(_mapEventToState);
     }
 
 
@@ -48,7 +50,8 @@ class LogEntryBloc
         _ioWebSocketChannel = IOWebSocketChannel(_webSocket);
         _ioWebSocketChannel.sink.add(json.encode({'type': 'onConnect'}));
         _ioWebSocketChannel.stream.listen((dynamic data){
-//            addDataToList(data);
+            logEntry = LogEntry.fromJson(json.decode(data.toString()));
+            logEventControllerSink.add(NewLogEntryEvent());
         });
     }
 
@@ -57,15 +60,18 @@ class LogEntryBloc
     {
         if (event is NewLogEntryEvent)
         {
-
+            logEntries.length+=1;
+            logEntries.setRange(1,logEntries.length,logEntries);
+            logEntries.setRange(0, 1, [logEntry]);
+            _inIssue.add(logEntries);
         }
 
-        _inIssue.add(logEntries);
+//        _inIssue.add(logEntries);
     }
 
     void dispose()
     {
-        _issueEventController.close();
+        _logEntryEventController.close();
         _issueListStateController.close();
         _ioWebSocketChannel.sink.close();
         _webSocket.close();
