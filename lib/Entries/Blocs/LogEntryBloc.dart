@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -15,38 +16,42 @@ class LogEntryBloc
 
     WebSocket _webSocket;
     IOWebSocketChannel _ioWebSocketChannel;
-    final _issueListStateController = StreamController<List<LogEntry>>();
-    final _issueEventController = StreamController<LogEntryEvent>();
 
+    StreamController<List<LogEntry>> _issueListStateController = StreamController<List<LogEntry>>();
     StreamSink<List<LogEntry>> get _inIssue => _issueListStateController.sink;
-    Stream<List<LogEntry>> get issue => _issueListStateController.stream;
+    Stream<List<LogEntry>> get logEntryStream => _issueListStateController.stream;
 
+
+    final _issueEventController = StreamController<LogEntryEvent>();
     Sink<LogEntryEvent> get issueEventController => _issueEventController.sink;
+
 
     LogEntryBloc()
     {
         _logEntryRepository = new LogEntryRepository();
         fetchLogEntriesList();
-        setSocketForRealtimeErrors();
-        _issueEventController.stream.listen(_mapEventToState);
+        connectToSocket();
+         _issueEventController.stream.listen(_mapEventToState);
     }
 
 
     void fetchLogEntriesList() async {
         logEntries = await _logEntryRepository.fetchLogEntryList();
+        _issueListStateController.add(logEntries);
     }
 
 
-    void setSocketForRealtimeErrors() async {
+
+    void connectToSocket() async
+    {
         _webSocket = await WebSocket.connect("ws://192.168.0.107:8080/", protocols: ['echo-protocol']);
         _ioWebSocketChannel = IOWebSocketChannel(_webSocket);
-//        print("ouu");
-//        print("stream is " + _ioWebSocketChannel.stream.toString());
-//        _ioWebSocketChannel.stream.listen((dynamic data){
-//            print("data is " + data.toString());
-//        });
-//        _ioWebSocketChannel.sink.add("message");
+        _ioWebSocketChannel.sink.add(json.encode({'type': 'onConnect'}));
+        _ioWebSocketChannel.stream.listen((dynamic data){
+//            addDataToList(data);
+        });
     }
+
 
     void _mapEventToState(LogEntryEvent event)
     {
@@ -62,8 +67,8 @@ class LogEntryBloc
     {
         _issueEventController.close();
         _issueListStateController.close();
-//        _ioWebSocketChannel.sink.close();
-//        _webSocket.close();
+        _ioWebSocketChannel.sink.close();
+        _webSocket.close();
 
     }
 

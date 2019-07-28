@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/LogEntry.dart';
 import 'package:pro_logger/main.dart';
@@ -18,43 +19,32 @@ class LogEntryScreen extends StatefulWidget {
 
 class _LogEntryScreenState extends State<LogEntryScreen> {
 
-    var logEntries = List<LogEntry>();
-    var dataLoaded = false;
+    LogEntryBloc _logEntryBloc;
+    var _logEntries = List<LogEntry>();
 
 
     void addDataToList(dynamic data)
     {
         setState(() {
-            logEntries.length+=1;
-            logEntries.setRange(1,logEntries.length,logEntries);
-            logEntries.setRange(0, 1, [LogEntry.fromJson(json.decode(data.toString()))]);
+            _logEntries.length+=1;
+            _logEntries.setRange(1,_logEntries.length,_logEntries);
+            _logEntries.setRange(0, 1, [LogEntry.fromJson(json.decode(data.toString()))]);
         });
     }
-
-    void connectToSocket() async
-    {
-        var ws = await WebSocket.connect("ws://192.168.0.107:8080/", protocols: ['echo-protocol']);
-        var s = IOWebSocketChannel(ws);
-        s.sink.add("aww");
-        s.stream.listen((dynamic data){
-            addDataToList(data);
-        });
-    }
-
 
     @override
     void initState() {
         super.initState();
-        LogEntryRepository repository = new LogEntryRepository();
-        getLogEntries(repository);
-        connectToSocket();
+        _logEntryBloc = new LogEntryBloc();
+        _logEntryBloc.fetchLogEntriesList();
+
     }
 
     void getLogEntries(LogEntryRepository repository) async
     {
         var entries = await repository.fetchLogEntryList();
         setState((){
-            logEntries.addAll(entries);
+            _logEntries.addAll(entries);
         });
     }
 
@@ -91,7 +81,21 @@ class _LogEntryScreenState extends State<LogEntryScreen> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                        Container(child: _myListView(context), height:  MediaQuery.of(context).size.height-100,)
+                        StreamBuilder(
+                                stream: _logEntryBloc.logEntryStream,
+                                builder:(context, snapshot) {
+                                    print("has data ${snapshot.hasData}");
+                                    print("data ${snapshot.data}");
+
+                                    if (snapshot.hasData) {
+                                        return Container(child: _myListView(context, snapshot.data), height:  MediaQuery.of(context).size.height-100);
+
+                                    }
+                                    else {
+                                        return Container();
+                                    }
+                                }
+                        ),
                     ],
                 ),
             ),
@@ -99,7 +103,7 @@ class _LogEntryScreenState extends State<LogEntryScreen> {
     }
 
 
-    Widget _myListView(BuildContext context) {
+    Widget _myListView(BuildContext context, List<LogEntry> logEntries) {
         return ListView.builder(
             itemCount: logEntries.length,
             itemBuilder: (context, index) {
