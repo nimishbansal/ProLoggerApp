@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
+import 'ThemeManager/widgets/ThemeChangerWidget.dart';
+
+var initialTheme = ThemeData(primaryColor: white);
 void main() => runApp(MyApp());
 
 class Choice

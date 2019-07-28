@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
-import 'package:pro_logger/LogEntry.dart';
+import 'package:pro_logger/Entries/LogEntry.dart';
 import 'package:pro_logger/main.dart';
-import 'package:pro_logger/widgets/LogEntryCard.dart';
+import 'package:pro_logger/Entries/widgets/LogEntryCard.dart';
 
 class LogEntryListScreen extends StatefulWidget {
     final String title;
