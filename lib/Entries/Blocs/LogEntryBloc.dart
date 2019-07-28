@@ -11,7 +11,7 @@ import 'package:web_socket_channel/io.dart';
 class LogEntryBloc
 {
 
-    LogEntry logEntry = new LogEntry(title: null, message: null, logLevel: null);
+    LogEntry logEntry = new LogEntry(id:null, title: null, message: null, logLevel: null);
 
     List<LogEntry> logEntries;
     LogEntryRepository _logEntryRepository;

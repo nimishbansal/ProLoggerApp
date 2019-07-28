@@ -25,6 +25,7 @@ var yellow = Color(0xFFFF00).withAlpha(0xFF);
 var red = Color(0xFF0000).withAlpha(0xFF);
 var orange = Color(0xFFA500).withAlpha(0xFF);
 var black = Color(0x000000).withAlpha(0xFF);
+var white = Color(0xFFFFFF).withAlpha(0xFF);
 
 var logLevelTuple = [
 	[NOTSET, LEVEL_NOTSET, grey],

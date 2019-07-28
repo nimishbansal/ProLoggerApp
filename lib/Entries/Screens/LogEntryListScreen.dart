@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
@@ -7,17 +6,16 @@ import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/LogEntry.dart';
 import 'package:pro_logger/main.dart';
 import 'package:pro_logger/widgets/LogEntryCard.dart';
-import 'package:web_socket_channel/io.dart';
 
-class LogEntryScreen extends StatefulWidget {
+class LogEntryListScreen extends StatefulWidget {
     final String title;
-    LogEntryScreen({Key key, this.title}) : super(key: key);
+    LogEntryListScreen({Key key, this.title}) : super(key: key);
 
     @override
-    _LogEntryScreenState createState() => _LogEntryScreenState();
+    _LogEntryListScreenState createState() => _LogEntryListScreenState();
 }
 
-class _LogEntryScreenState extends State<LogEntryScreen> {
+class _LogEntryListScreenState extends State<LogEntryListScreen> {
 
     LogEntryBloc _logEntryBloc;
     var _logEntries = List<LogEntry>();
