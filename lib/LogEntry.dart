@@ -16,10 +16,15 @@ class LogEntry
 
 	LogEntry.fromJson(Map<String, dynamic> data)
 	{
-		print(data);
 		title = data['title'];
 		message = data['message'];
 		logLevel = LogLevel.fromLevelName(data['level_name']);
+	}
+
+	@override
+	String toString()
+	{
+		return this.title;
 	}
 	
 }
