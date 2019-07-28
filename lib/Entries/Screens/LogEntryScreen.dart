@@ -26,22 +26,8 @@ class _LogEntryScreenState extends State<LogEntryScreen> {
     {
         setState(() {
             logEntries.length+=1;
-//            print(logEntries);
-//            logEntries.setRange(1,logEntries.length,logEntries);
-//            print(logEntries);
-//            logEntries.setRange(0, 1, [LogEntry.fromJson(json.decode(data.toString()))]);
-//            print(logEntries);
-//            logEntries.length+=1;
-//            print("logEntry length is ${logEntries.length}");
-            for (int i=logEntries.length-1; i>0; i--)
-            {
-                logEntries[i] = logEntries[i-1];
-            }
-            logEntries[0] = LogEntry.fromJson(json.decode(data.toString()));
-//            print("log entries are $logEntries");
-//            logEntries.clear();
-
-
+            logEntries.setRange(1,logEntries.length,logEntries);
+            logEntries.setRange(0, 1, [LogEntry.fromJson(json.decode(data.toString()))]);
         });
     }
 
@@ -117,7 +103,6 @@ class _LogEntryScreenState extends State<LogEntryScreen> {
         return ListView.builder(
             itemCount: logEntries.length,
             itemBuilder: (context, index) {
-                print("logEntries $logEntries with index $index");
                 return LogEntryCard(key:ValueKey(logEntries[index]), logEntry: logEntries[index],);
             },
         );
