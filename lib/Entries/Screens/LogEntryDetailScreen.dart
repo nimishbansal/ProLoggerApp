@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/ThemeManager/widgets/ThemeChangerInheritedWidget.dart';
 import '../../main.dart';
 
 class LogEntryDetailScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class LogEntryDetailScreen extends StatefulWidget {
 class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
   @override
   Widget build(BuildContext context) {
+//    ThemeChangerInheritedWidget.of(context).switchTheme(Theme.of(context).copyWith(primaryColor: Colors.red));
     const List<Choice> choices = const <Choice>[
       const Choice(title: 'Car', icon: Icons.directions_car),
       const Choice(title: 'Bicycle', icon: Icons.directions_bike),
@@ -61,7 +63,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
             padding: const EdgeInsets.all(16.0),
             child: new Material(
                 child: new Text(
-              widget.logEntry.title,
+              widget.logEntry.message,
               style: TextStyle(fontSize: 20),
             )),
           ),
