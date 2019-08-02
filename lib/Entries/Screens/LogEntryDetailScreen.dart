@@ -25,7 +25,8 @@ class LogEntryDetailScreen extends StatefulWidget {
 class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
   @override
   Widget build(BuildContext context) {
-//    ThemeChangerInheritedWidget.of(context).switchTheme(Theme.of(context).copyWith(primaryColor: Colors.red));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => changeThemeAfterBuild(context));
     const List<Choice> choices = const <Choice>[
       const Choice(title: 'Car', icon: Icons.directions_car),
       const Choice(title: 'Bicycle', icon: Icons.directions_bike),
@@ -77,5 +78,12 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
     Scaffold.of(context).showSnackBar(new SnackBar(
       content: new Text(value.title + " selected"),
     ));
+  }
+
+  changeThemeAfterBuild(BuildContext context) {
+    if ((CustomTheme.instanceOf(context).themeData.primaryColor !=
+        widget.logEntry.logLevel.color) && ModalRoute.of(context).isCurrent)
+      CustomTheme.instanceOf(context)
+          .changeTheme(ThemeData(primaryColor: widget.logEntry.logLevel.color));
   }
 }
