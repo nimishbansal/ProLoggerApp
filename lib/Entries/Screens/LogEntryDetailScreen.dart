@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pro_logger/Entries/LogEntry.dart';
-import 'package:pro_logger/ThemeManager/widgets/ThemeChangerInheritedWidget.dart';
+import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import '../../main.dart';
 
 class LogEntryDetailScreen extends StatefulWidget {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'package:pro_logger/main.dart';
 import 'package:pro_logger/Entries/widgets/LogEntryCard.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
