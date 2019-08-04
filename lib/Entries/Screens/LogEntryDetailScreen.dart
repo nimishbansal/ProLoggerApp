@@ -78,6 +78,9 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
     Scaffold.of(context).showSnackBar(new SnackBar(
       content: new Text(value.title + " selected"),
     ));
+
+
+
   }
 
   changeThemeAfterBuild(BuildContext context) {

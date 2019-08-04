@@ -50,11 +50,13 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
+
     const List<Choice> choices = const <Choice>[
       const Choice(title: 'Car', icon: Icons.directions_car),
       const Choice(title: 'Bicycle', icon: Icons.directions_bike),
       const Choice(title: 'Boat', icon: Icons.directions_boat)
     ];
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
