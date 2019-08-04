@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:pro_logger/Entries/Events/issue_events.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
-import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:web_socket_channel/io.dart';
 
 class LogEntryBloc

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryDetailScreen.dart';
-import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/Entries/Models/LogEntry.dart';
 
 class LogEntryCard extends StatefulWidget {
   final LogEntry logEntry;

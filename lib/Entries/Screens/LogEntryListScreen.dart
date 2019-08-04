@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
-import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'package:pro_logger/main.dart';
 import 'package:pro_logger/Entries/widgets/LogEntryCard.dart';
@@ -95,7 +95,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
                         child: _myListView(context, snapshot.data),
                         height: MediaQuery.of(context).size.height - 100);
                   } else {
-                    return Container();
+                    return new Image(image: new AssetImage("images/loader.gif"));
                   }
                 }),
           ],

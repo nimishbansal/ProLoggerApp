@@ -63,8 +63,6 @@ class CustomThemeState extends State<CustomTheme> {
 
     void changeTheme(ThemeData newThemeData) {
         setState(() {
-            print("changing theme from ${this.themeData.toString()}");
-            print("\n\nchanged to ${newThemeData.toString()}");
             themeData = newThemeData;
         });
     }

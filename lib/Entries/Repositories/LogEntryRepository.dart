@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:pro_logger/Entries/utils.dart';
-import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/constants.dart';
 import 'package:requests/requests.dart';
 

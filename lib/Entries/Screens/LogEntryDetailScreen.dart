@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:pro_logger/Entries/LogEntry.dart';
+import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import '../../main.dart';
 

@@ -17,23 +17,22 @@ class Choice {
 }
 
 class Home extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-                body: Center(
-                        child: RaisedButton(
-                            child: Text('Open Dialog'),
-                            onPressed: () {
-                                showDialog(
-                                        context: context,
-                                        builder: (_) {
-                                            return LogLevelSelectModalWidget();
-                                        });
-                            },
-                        )));
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+            child: RaisedButton(
+      child: Text('Open Dialog'),
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return LogLevelSelectModalWidget();
+            });
+      },
+    )));
+  }
 }
-
 
 class MyApp extends StatelessWidget {
   @override
@@ -46,5 +45,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
