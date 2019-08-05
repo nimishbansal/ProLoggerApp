@@ -28,7 +28,8 @@ class Home extends StatelessWidget {
             context: context,
             builder: (_) {
               return LogLevelSelectModalWidget();
-            });
+            },
+        );
       },
     )));
   }
@@ -39,8 +40,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      home: Home(),
 //      home: LogEntryListScreen(),
-      home: LogEntryListScreen(),
       theme: CustomTheme.of(context),
     );
   }
