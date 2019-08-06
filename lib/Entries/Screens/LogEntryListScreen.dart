@@ -1,11 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
-import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
-import 'package:pro_logger/main.dart';
 import 'package:pro_logger/Entries/widgets/LogEntryCard.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
@@ -21,16 +18,6 @@ class LogEntryListScreen extends StatefulWidget {
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
   LogEntryBloc _logEntryBloc;
-  var _logEntries = List<LogEntry>();
-
-  void addDataToList(dynamic data) {
-    setState(() {
-      _logEntries.length += 1;
-      _logEntries.setRange(1, _logEntries.length, _logEntries);
-      _logEntries
-          .setRange(0, 1, [LogEntry.fromJson(json.decode(data.toString()))]);
-    });
-  }
 
   @override
   void initState() {
@@ -39,23 +26,11 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
     _logEntryBloc.fetchLogEntriesList();
   }
 
-  void getLogEntries(LogEntryRepository repository) async {
-    var entries = await repository.fetchLogEntryList();
-    setState(() {
-      _logEntries.addAll(entries);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
-
-    const List<Choice> choices = const <Choice>[
-      const Choice(title: 'Car', icon: Icons.directions_car),
-      const Choice(title: 'Bicycle', icon: Icons.directions_bike),
-      const Choice(title: 'Boat', icon: Icons.directions_boat)
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -64,21 +39,6 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
           onPressed: () {},
         ),
         title: Text("Issues"),
-        actions: <Widget>[
-          Builder(
-            builder: (context) => PopupMenuButton<Choice>(
-              onSelected: (choice) => _select(choice, context),
-              itemBuilder: (BuildContext context) {
-                return choices.map((Choice choice) {
-                  return PopupMenuItem<Choice>(
-                    value: choice,
-                    child: Text(choice.title),
-                  );
-                }).toList();
-              },
-            ),
-          ),
-        ],
       ),
       body: Center(
         child: Column(
@@ -114,13 +74,6 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         );
       },
     );
-  }
-
-  void _select(Choice value, BuildContext context) {
-    Scaffold.of(context).hideCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(new SnackBar(
-      content: new Text(value.title + " selected"),
-    ));
   }
 
   changeThemeAfterBuild(BuildContext context) {

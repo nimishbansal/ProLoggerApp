@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:pro_logger/Entries/Events/issue_events.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';

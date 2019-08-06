@@ -1,69 +1,72 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+// Example Usage:
+// CustomTheme.instanceOf(context).changeTheme(new ThemeData(**params));
+// to change Theme of scaffold
+
 class _CustomThemeInheritedWidget extends InheritedWidget {
-    final CustomThemeState data;
+  final CustomThemeState data;
 
-    _CustomThemeInheritedWidget({Key key, this.data, @required Widget child})
-            : super(key: key, child: child);
+  _CustomThemeInheritedWidget({Key key, this.data, @required Widget child})
+      : super(key: key, child: child);
 
-    @override
-    bool updateShouldNotify(_CustomThemeInheritedWidget oldWidget) {
-        return true;
-    }
+  @override
+  bool updateShouldNotify(_CustomThemeInheritedWidget oldWidget) {
+    return true;
+  }
 }
 
 class CustomTheme extends StatefulWidget {
-    final Widget child;
-    final ThemeData initialThemeData;
+  final Widget child;
+  final ThemeData initialThemeData;
 
-    const CustomTheme({Key key, this.child, this.initialThemeData})
-            : super(key: key);
-    @override
-    State<StatefulWidget> createState() {
-        return new CustomThemeState();
-    }
+  const CustomTheme({Key key, this.child, this.initialThemeData})
+      : super(key: key);
+  @override
+  State<StatefulWidget> createState() {
+    return new CustomThemeState();
+  }
 
-    static ThemeData of(BuildContext context) {
-        CustomThemeState customThemeState =
-                (context.inheritFromWidgetOfExactType(_CustomThemeInheritedWidget)
+  static ThemeData of(BuildContext context) {
+    CustomThemeState customThemeState =
+        (context.inheritFromWidgetOfExactType(_CustomThemeInheritedWidget)
                 as _CustomThemeInheritedWidget)
-                        .data;
+            .data;
 
-        return customThemeState.themeData;
-    }
+    return customThemeState.themeData;
+  }
 
-    static CustomThemeState instanceOf(BuildContext context) {
-        CustomThemeState customThemeState =
-                (context.inheritFromWidgetOfExactType(_CustomThemeInheritedWidget)
+  static CustomThemeState instanceOf(BuildContext context) {
+    CustomThemeState customThemeState =
+        (context.inheritFromWidgetOfExactType(_CustomThemeInheritedWidget)
                 as _CustomThemeInheritedWidget)
-                        .data;
+            .data;
 
-        return customThemeState;
-    }
+    return customThemeState;
+  }
 }
 
 class CustomThemeState extends State<CustomTheme> {
-    ThemeData themeData;
+  ThemeData themeData;
 
-    @override
-    Widget build(BuildContext context) {
-        return _CustomThemeInheritedWidget(
-            data: this,
-            child: widget.child,
-        );
-    }
+  @override
+  Widget build(BuildContext context) {
+    return _CustomThemeInheritedWidget(
+      data: this,
+      child: widget.child,
+    );
+  }
 
-    @override
-    void initState() {
-        themeData = widget.initialThemeData;
-        super.initState();
-    }
+  @override
+  void initState() {
+    themeData = widget.initialThemeData;
+    super.initState();
+  }
 
-    void changeTheme(ThemeData newThemeData) {
-        setState(() {
-            themeData = newThemeData;
-        });
-    }
+  void changeTheme(ThemeData newThemeData) {
+    setState(() {
+      themeData = newThemeData;
+    });
+  }
 }

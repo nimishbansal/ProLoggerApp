@@ -13,19 +13,12 @@ class LogLevelSelectModalWidget extends StatefulWidget {
 
 class LogLevelSelectModalWidgetState extends State<LogLevelSelectModalWidget> {
   Map<String, dynamic> checkboxStatuses = {};
-//    NOTSET: true,
-//    DEBUG: true,
-//    INFO: true,
-//    WARNING: true,
-//    ERROR: true,
-//    CRITICAL: true,
-//    FATAL: true
-//  };
+
 
   @override
   void initState() {
     super.initState();
-    setLogLevelStates();
+    setLogLevelStatesInSharedPrefs();
 //  clearSharedPrefs();
   }
 
@@ -100,7 +93,7 @@ class LogLevelSelectModalWidgetState extends State<LogLevelSelectModalWidget> {
         'LogLevelCheckboxStatuses', jsonEncode(this.checkboxStatuses));
   }
 
-  void setLogLevelStates() async {
+  void setLogLevelStatesInSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var result = prefs.getString('LogLevelCheckboxStatuses');
     if (result == null) {
