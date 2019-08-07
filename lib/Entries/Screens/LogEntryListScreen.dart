@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:pro_logger/Entries/Blocs/LogEntryBloc.dart';
+import 'package:pro_logger/Entries/Blocs/LogEntryListBloc.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'package:pro_logger/Entries/widgets/LogEntryCard.dart';
@@ -17,12 +17,12 @@ class LogEntryListScreen extends StatefulWidget {
 }
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
-  LogEntryBloc _logEntryBloc;
+  LogEntryListBloc _logEntryBloc;
 
   @override
   void initState() {
     super.initState();
-    _logEntryBloc = new LogEntryBloc();
+    _logEntryBloc = new LogEntryListBloc();
     _logEntryBloc.fetchLogEntriesList();
   }
 

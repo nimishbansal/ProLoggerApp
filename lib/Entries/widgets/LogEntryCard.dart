@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryDetailScreen.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
+import 'package:intl/intl.dart';
 
 class LogEntryCard extends StatefulWidget {
   final LogEntry logEntry;
@@ -26,8 +27,9 @@ class _LogEntryCardState extends State<LogEntryCard> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  leading:
-                      getColoredIconForLogLevel(color: logEntry.logLevel.color),
+                  leading: getColoredIconForLogLevel(
+                      color: logEntry.logLevel.color,
+                      created_at: logEntry.created_at),
                   title: Text('${logEntry.title}'),
                   subtitle: Text('${logEntry.message}'),
                   trailing: Checkbox(
@@ -47,11 +49,10 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 MaterialPageRoute(
                   builder: (_) {
                     return LogEntryDetailScreen(
-                      id: logEntry.id,
-                      title: logEntry.title,
-                      message: logEntry.message,
-                      logEntry: logEntry
-                    );
+                        id: logEntry.id,
+                        title: logEntry.title,
+                        message: logEntry.message,
+                        logEntry: logEntry);
                   },
                 ),
               );
@@ -65,9 +66,24 @@ class _LogEntryCardState extends State<LogEntryCard> {
     return getLogEntryCard();
   }
 
-  Widget getColoredIconForLogLevel({Color color}) {
-    return CircleAvatar(
-      backgroundColor: color,
+  Widget getColoredIconForLogLevel({Color color, DateTime created_at}) {
+    if (created_at == null) {
+      print("created at is null");
+      created_at = DateTime.now();
+    }
+
+    String formattedDate = DateFormat('kk:mm:ss').format(created_at);
+
+    return Column(
+      children: <Widget>[
+          Padding(padding: EdgeInsets.all(3.0),),
+          CircleAvatar(
+            backgroundColor: color,
+            maxRadius: 10,
+          ),
+        Padding(padding: EdgeInsets.all(2.0),),
+        Text(formattedDate)
+      ],
     );
   }
 }

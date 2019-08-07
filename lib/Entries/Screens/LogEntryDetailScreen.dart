@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pro_logger/Entries/Blocs/LogEntryDetailBloc.dart';
 
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
@@ -23,15 +24,20 @@ class LogEntryDetailScreen extends StatefulWidget {
 }
 
 class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
+  LogEntryDetailBloc _logEntryDetailBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _logEntryDetailBloc = LogEntryDetailBloc();
+    _logEntryDetailBloc.displayResults(this.widget.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
-    const List<Choice> choices = const <Choice>[
-      const Choice(title: 'Car', icon: Icons.directions_car),
-      const Choice(title: 'Bicycle', icon: Icons.directions_bike),
-      const Choice(title: 'Boat', icon: Icons.directions_boat)
-    ];
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -41,21 +47,6 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
           },
         ),
         title: Text(this.widget.title),
-        actions: <Widget>[
-          Builder(
-            builder: (context) => PopupMenuButton<Choice>(
-              onSelected: (choice) => _select(choice, context),
-              itemBuilder: (BuildContext context) {
-                return choices.map((Choice choice) {
-                  return PopupMenuItem<Choice>(
-                    value: choice,
-                    child: Text(choice.title),
-                  );
-                }).toList();
-              },
-            ),
-          ),
-        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -63,9 +54,28 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: new Material(
-                child: new Text(
-              widget.logEntry.message,
-              style: TextStyle(fontSize: 20),
+                child: Container(
+              child: Column(
+                children: <Widget>[
+                  new Text(
+                    widget.logEntry.message,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  StreamBuilder(
+                          stream: _logEntryDetailBloc.logEntryDetailStream,
+                          builder: (context, snapshot) {
+                            print("has detail data ${snapshot.hasData}");
+                            print(snapshot.data);
+                            if (snapshot.hasData) {
+                              return Container(
+                                      child: Text(snapshot.data.toString()),
+                                      height: MediaQuery.of(context).size.height - 200);
+                            } else {
+                              return new Image(image: new AssetImage("images/loader.gif"));
+                            }
+                          }),
+                ],
+              ),
             )),
           ),
         ],
@@ -73,19 +83,10 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
     );
   }
 
-  void _select(Choice value, BuildContext context) {
-    Scaffold.of(context).hideCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(new SnackBar(
-      content: new Text(value.title + " selected"),
-    ));
-
-
-
-  }
-
   changeThemeAfterBuild(BuildContext context) {
     if ((CustomTheme.instanceOf(context).themeData.primaryColor !=
-        widget.logEntry.logLevel.color) && ModalRoute.of(context).isCurrent)
+            widget.logEntry.logLevel.color) &&
+        ModalRoute.of(context).isCurrent)
       CustomTheme.instanceOf(context)
           .changeTheme(ThemeData(primaryColor: widget.logEntry.logLevel.color));
   }

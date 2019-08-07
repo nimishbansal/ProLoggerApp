@@ -7,10 +7,10 @@ import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:web_socket_channel/io.dart';
 
-class LogEntryBloc
+class LogEntryListBloc
 {
 
-    LogEntry logEntry = new LogEntry(id:null, title: null, message: null, logLevel: null);
+    LogEntry logEntry = new LogEntry(id:null, title: null, message: null, logLevel: null, created_at:null);
 
     List<LogEntry> logEntries;
     LogEntryRepository _logEntryRepository;
@@ -19,6 +19,7 @@ class LogEntryBloc
     IOWebSocketChannel _ioWebSocketChannel;
 
     StreamController<List<LogEntry>> _issueListStateController = StreamController<List<LogEntry>>();
+//  https://stackoverflow.com/a/51397263/7698247
     StreamSink<List<LogEntry>> get _inIssue => _issueListStateController.sink;
     Stream<List<LogEntry>> get logEntryStream => _issueListStateController.stream;
 
@@ -27,7 +28,7 @@ class LogEntryBloc
     Sink<LogEntryEvent> get logEventControllerSink => _logEntryEventController.sink;
 
 
-    LogEntryBloc()
+    LogEntryListBloc()
     {
         _logEntryRepository = new LogEntryRepository();
         fetchLogEntriesList();
@@ -40,7 +41,6 @@ class LogEntryBloc
         logEntries = await _logEntryRepository.fetchLogEntryList();
         _issueListStateController.add(logEntries);
     }
-
 
 
     void connectToSocket() async
