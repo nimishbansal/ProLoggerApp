@@ -47,8 +47,8 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
             StreamBuilder(
                 stream: _logEntryBloc.logEntryStream,
                 builder: (context, snapshot) {
-                  print("has data ${snapshot.hasData}");
-                  print("data ${snapshot.data}");
+//                  print("has data ${snapshot.hasData}");
+//                  print("data ${snapshot.data}");
 
                   if (snapshot.hasData) {
                     return Container(

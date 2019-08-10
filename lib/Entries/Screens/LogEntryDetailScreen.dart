@@ -3,7 +3,9 @@ import 'package:pro_logger/Entries/Blocs/LogEntryDetailBloc.dart';
 
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
+import 'package:pro_logger/utility/LogLevel.dart';
 import '../../main.dart';
+import 'LevelSpecificLogEntryDetailScreen.dart';
 
 class LogEntryDetailScreen extends StatefulWidget {
   final String title;
@@ -35,6 +37,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('building');
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
 
@@ -43,6 +46,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
+            _logEntryDetailBloc.dispose();
             Navigator.pop(context);
           },
         ),
@@ -52,29 +56,46 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(2.0),
             child: new Material(
-                child: Container(
-              child: Column(
-                children: <Widget>[
-                  new Text(
-                    widget.logEntry.message,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  StreamBuilder(
-                          stream: _logEntryDetailBloc.logEntryDetailStream,
-                          builder: (context, snapshot) {
-                            print("has detail data ${snapshot.hasData}");
-                            print(snapshot.data);
-                            if (snapshot.hasData) {
-                              return Container(
-                                      child: Text(snapshot.data.toString()),
-                                      height: MediaQuery.of(context).size.height - 200);
-                            } else {
-                              return new Image(image: new AssetImage("images/loader.gif"));
-                            }
-                          }),
-                ],
+                child: Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width-20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                    new Text(
+                      'Message:',
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: Color.fromRGBO(127, 127, 127, 1)),
+                    ),
+                    new Text(
+                      widget.logEntry.message,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    StreamBuilder(
+                        stream: _logEntryDetailBloc.logEntryDetailStream,
+                        builder: (context, snapshot) {
+                          print("has detail data ${snapshot.hasData}");
+                          print(snapshot.data);
+                          if (snapshot.hasData) {
+                            var logEntry = (snapshot.data as LogEntry);
+                            if (logEntry.logLevel.name == ERROR)
+                              return ErrorDetailScreenContainer();
+
+                            return Container(
+                                child: Text(snapshot.data.toString()),
+                                height:
+                                    MediaQuery.of(context).size.height - 200);
+                          } else {
+                            return new Image(
+                                image: new AssetImage("images/loader.gif"));
+                          }
+                        }),
+                  ],
+                ),
               ),
             )),
           ),
