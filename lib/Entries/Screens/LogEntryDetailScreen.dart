@@ -83,7 +83,10 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
                           if (snapshot.hasData) {
                             var logEntry = (snapshot.data as LogEntry);
                             if (logEntry.logLevel.name == ERROR)
-                              return ErrorDetailScreenContainer();
+                              return Container(
+                                      child:ErrorDetailScreenContainer(),
+                                      height: MediaQuery.of(context).size.height - 156,
+                              );
 
                             return Container(
                                 child: Text(snapshot.data.toString()),

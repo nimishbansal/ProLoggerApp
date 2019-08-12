@@ -10,6 +10,13 @@ class StackTraceFrameTile extends StatefulWidget {
 
 class StackTraceFrameTileState extends State<StackTraceFrameTile> {
   var collapsed = true;
+
+  toggleCollapse() {
+    this.setState(() {
+      collapsed = !(collapsed);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var exception_line_no = 26;
@@ -24,39 +31,50 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
       color: Color(0xececf1).withAlpha(0xFF),
       margin: EdgeInsets.all(4),
     ));
-    var plus_button = IconButton(
+
+    var self = this;
+
+    var plus_minus_icon = Icons.remove;
+    if (collapsed) plus_minus_icon = Icons.add;
+
+    var plus_minus_button = IconButton(
         onPressed: () {
-          super.setState(() => {collapsed = !(collapsed)});
+          toggleCollapse();
         },
         icon: Container(
             decoration: new BoxDecoration(
                 border: new Border.all(color: Colors.grey),
                 color: Color(0xFFFFFF).withAlpha(0xFF)),
             child: Icon(
-              Icons.add,
+              plus_minus_icon,
               color: Colors.grey,
             )));
 
-    var group_text_widget_and_expand_button = Container(
-        color: Color(0xececf1).withAlpha(0xFF),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[text_widget, plus_button]));
+    var groupTextWidgetAndExpandButton = GestureDetector(
+      child: Container(
+          color: Color(0xececf1).withAlpha(0xFF),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[text_widget, plus_minus_button])),
+      onTap: () {
+        toggleCollapse();
+      },
+    );
 
-    var expanded_details;
+    var expandedDetails;
     if (collapsed) {
-      expanded_details = Container();
+      expandedDetails = Container();
     } else {
-      expanded_details = Container(
+      expandedDetails = Container(
         child: Text(
             'def get_access_token(self):\nif((self.expiryTime-self.get_current_time_in_millis())>5000):\nreturn self.accessToken \nelse:\nraise ZohoOAuthException("Access token got expired!")\n@staticmethod\ndef get_current_time_in_millis():\nimport time\nreturn int(round(time.time() * 1000))\ndef set_user_email(self,userEmail):\n"),);'),
       );
     }
-    var final_column = Column(
-      children: <Widget>[group_text_widget_and_expand_button, expanded_details],
+    var finalColumn = Column(
+      children: <Widget>[groupTextWidgetAndExpandButton, expandedDetails],
     );
-    return final_column;
+    return finalColumn;
   }
 }
 
@@ -69,11 +87,21 @@ class ErrorDetailScreenContainer extends StatefulWidget {
 
 class ErrorDetailScreenContainerState
     extends State<ErrorDetailScreenContainer> {
+  refresh() {
+    setState(() {
+      print("refreshing");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var x = StackTraceFrameTile();
     var y = StackTraceFrameTile();
     var z = StackTraceFrameTile();
-    return SingleChildScrollView(child: Column(children: <Widget>[x,y,z],),);
+
+    var frames = [x, y, z];
+    return ListView(
+      children: frames,
+    );
   }
 }
