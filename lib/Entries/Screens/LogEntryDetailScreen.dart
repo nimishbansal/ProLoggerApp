@@ -27,6 +27,7 @@ class LogEntryDetailScreen extends StatefulWidget {
 
 class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
   LogEntryDetailBloc _logEntryDetailBloc;
+  var toDelete = false;
 
   @override
   void initState() {
@@ -35,21 +36,69 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
     _logEntryDetailBloc.displayResults(this.widget.id);
   }
 
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        print("cancel");
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Continue"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        print("continue");
+        this.setState(() {
+          toDelete = true;
+        });
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("AlertDialog"),
+      content: Text("Are you sure you dont want to delete this log entry?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('building');
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
+
+    if (toDelete) deleteLogEntry();
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
-            _logEntryDetailBloc.dispose();
+//            _logEntryDetailBloc.dispose();
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              showAlertDialog(context);
+            },
+          )
+        ],
         title: Text(this.widget.title),
       ),
       body: Column(
@@ -60,36 +109,60 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
             child: new Material(
                 child: Padding(
               padding: const EdgeInsets.all(6.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width - 20,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    StreamBuilder(
-                        stream: _logEntryDetailBloc.logEntryDetailStream,
-                        builder: (context, snapshot) {
-                          print("has detail data ${snapshot.hasData}");
-                          print(snapshot.data);
-                          if (snapshot.hasData) {
-                            var logEntry = (snapshot.data as LogEntry);
-                            if (logEntry.logLevel.name == ERROR)
-                              return Container(
-                                child: ErrorDetailScreenContainer(logEntry: logEntry,),
-                                height:
-                                    MediaQuery.of(context).size.height - 110,
-                              );
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width - 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        StreamBuilder(
+                            stream: _logEntryDetailBloc.logEntryDetailStream,
+                            builder: (context, snapshot) {
+                              print("has detail data ${snapshot.hasData}");
+                              print(snapshot.data);
+                              if (snapshot.hasData) {
+                                var logEntry = (snapshot.data as LogEntry);
+                                if (logEntry.logLevel.name == ERROR)
+                                  return Container(
+                                    child: ErrorDetailScreenContainer(
+                                      logEntry: logEntry,
+                                    ),
+                                    height: MediaQuery.of(context).size.height -
+                                        110,
+                                  );
 
-                            return Container(
-                                child: Text(snapshot.data.toString()),
-                                height:
-                                    MediaQuery.of(context).size.height - 200);
-                          } else {
-                            return new Image(
-                                image: new AssetImage("images/loader.gif"));
-                          }
-                        }),
-                  ],
-                ),
+                                return Container(
+                                    child: Text(snapshot.data.toString()),
+                                    height: MediaQuery.of(context).size.height -
+                                        200);
+                              } else {
+                                return new Image(
+                                    image: new AssetImage("images/loader.gif"));
+                              }
+                            }),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 120,
+                    left: 50,
+                    width: 220,
+                    height: 200,
+                    child: Container(
+                      child: toDelete
+                          ? AlertDialog(
+                              title: Text("   Deleting"),
+                              content: Column(
+                                children: [CircularProgressIndicator()],
+                              ))
+                          : Container(
+                              width: 0,
+                              height: 0,
+                            ),
+                    ),
+                  ),
+                ],
               ),
             )),
           ),
@@ -104,5 +177,14 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
         ModalRoute.of(context).isCurrent)
       CustomTheme.instanceOf(context)
           .changeTheme(ThemeData(primaryColor: widget.logEntry.logLevel.color));
+  }
+
+  void deleteLogEntry() async {
+    Future.delayed(const Duration(milliseconds: 3500), () {
+      setState(() {
+        toDelete = false;
+        Navigator.pop(context);
+      });
+    });
   }
 }
