@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
 class StackTraceFrameTile extends StatefulWidget {
@@ -27,7 +29,10 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
 
     var text_widget = Expanded(
         child: Container(
-      child: Text(complete_line),
+      child: Text(
+        complete_line,
+        style: TextStyle(fontSize: 16, fontWeight:FontWeight.bold),
+      ),
       color: Color(0xececf1).withAlpha(0xFF),
       margin: EdgeInsets.all(4),
     ));
@@ -52,7 +57,7 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
 
     var groupTextWidgetAndExpandButton = GestureDetector(
       child: Container(
-          color: Color(0xececf1).withAlpha(0xFF),
+          decoration: BoxDecoration(color: Color(0xececf1).withAlpha(0xFF), border: Border.all(width:0.6,color: Colors.grey[500])),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,13 +67,24 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
       },
     );
 
+    var preContextText = "\ndef sample(request):\n    a = 40\n    b = 50\n    print('hehehe')";
+    var exceptionContextText='    print(a/(b-50))';
+    var postContextText='    print("hahahah")\n    print(\'hohoho\')\n    return';
+
     var expandedDetails;
     if (collapsed) {
       expandedDetails = Container();
     } else {
       expandedDetails = Container(
-        child: Text(
-            'def get_access_token(self):\nif((self.expiryTime-self.get_current_time_in_millis())>5000):\nreturn self.accessToken \nelse:\nraise ZohoOAuthException("Access token got expired!")\n@staticmethod\ndef get_current_time_in_millis():\nimport time\nreturn int(round(time.time() * 1000))\ndef set_user_email(self,userEmail):\n"),);'),
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(preContextText, style: TextStyle(height: 1.2, fontSize: 15),),
+            Container(child: Text(exceptionContextText, style: TextStyle(color: Colors.white, height: 1.2, fontSize: 15),), color: Color(0x6c5fc7).withAlpha(0xFFFFF), width: double.infinity,),
+            Text(postContextText, style: TextStyle(height: 1.2, fontSize: 15))
+          ],
+        ),
       );
     }
     var finalColumn = Column(
@@ -79,6 +95,10 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
 }
 
 class ErrorDetailScreenContainer extends StatefulWidget {
+  final LogEntry logEntry;
+
+  const ErrorDetailScreenContainer({Key key, this.logEntry}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return ErrorDetailScreenContainerState();
@@ -99,9 +119,64 @@ class ErrorDetailScreenContainerState
     var y = StackTraceFrameTile();
     var z = StackTraceFrameTile();
 
-    var frames = [x, y, z];
-    return ListView(
+    var frames = [
+      //Message
+      new Text(
+        'Message:',
+        style: TextStyle(fontSize: 22, color: Color.fromRGBO(127, 127, 127, 1)),
+      ),
+      new Text(
+        widget.logEntry.message,
+        style: TextStyle(fontSize: 20),
+      ),
+      Padding(
+        padding: EdgeInsets.all(4),
+      ),
+
+      Divider(color: Colors.grey[500],),
+
+      // Exception Stack Trace
+      Align(
+        alignment: Alignment.centerLeft,
+        child: new Text(
+          'Exception:',
+          style: TextStyle(
+            fontSize: 22,
+            color: Color.fromRGBO(127, 127, 127, 1),
+          ),
+        ),
+      ),
+      x,
+      y,
+      z,
+
+      Padding(
+        padding: EdgeInsets.all(4),
+      ),
+
+      Divider(color: Colors.grey[500],),
+
+      // Timestamp
+      new Text(
+        'TimeStamp:',
+        style: TextStyle(fontSize: 22, color: Color.fromRGBO(127, 127, 127, 1)),
+      ),
+
+      new Text(
+        DateFormat("MMM d, y hh:mm:ss").format(widget.logEntry.created_at),
+        style: TextStyle(fontSize: 20),
+      ),
+
+
+      //End
+
+
+    ];
+    return new
+    Container(child:ListView(
+      shrinkWrap: true,
       children: frames,
+    ),
     );
   }
 }

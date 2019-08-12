@@ -61,20 +61,10 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
                 child: Padding(
               padding: const EdgeInsets.all(6.0),
               child: Container(
-                width: MediaQuery.of(context).size.width-20,
+                width: MediaQuery.of(context).size.width - 20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                    new Text(
-                      'Message:',
-                      style: TextStyle(
-                          fontSize: 22,
-                          color: Color.fromRGBO(127, 127, 127, 1)),
-                    ),
-                    new Text(
-                      widget.logEntry.message,
-                      style: TextStyle(fontSize: 20),
-                    ),
+                  children: <Widget>[
                     StreamBuilder(
                         stream: _logEntryDetailBloc.logEntryDetailStream,
                         builder: (context, snapshot) {
@@ -84,8 +74,9 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
                             var logEntry = (snapshot.data as LogEntry);
                             if (logEntry.logLevel.name == ERROR)
                               return Container(
-                                      child:ErrorDetailScreenContainer(),
-                                      height: MediaQuery.of(context).size.height - 156,
+                                child: ErrorDetailScreenContainer(logEntry: logEntry,),
+                                height:
+                                    MediaQuery.of(context).size.height - 110,
                               );
 
                             return Container(
