@@ -17,13 +17,15 @@ class LogEntryListScreen extends StatefulWidget {
 }
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
-  LogEntryListBloc _logEntryBloc;
+//  LogEntryListBloc _logEntryBloc;
 
   @override
   void initState() {
     super.initState();
-    _logEntryBloc = new LogEntryListBloc();
-    _logEntryBloc.fetchLogEntriesList();
+//    _logEntryBloc = new LogEntryListBloc();
+//    _logEntryBloc.fetchLogEntriesList();
+    logEntryListBloc.fetchLogEntriesList();
+
   }
 
 
@@ -45,11 +47,8 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder(
-                stream: _logEntryBloc.logEntryStream,
+                stream: logEntryListBloc.logEntryStream,
                 builder: (context, snapshot) {
-//                  print("has data ${snapshot.hasData}");
-//                  print("data ${snapshot.data}");
-
                   if (snapshot.hasData) {
                     return Container(
                         child: _myListView(context, snapshot.data),
@@ -71,7 +70,6 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         return LogEntryCard(
           key: ValueKey(logEntries[index]),
           logEntry: logEntries[index],
-            inIssue: _logEntryBloc.inIssue,
         );
       },
     );

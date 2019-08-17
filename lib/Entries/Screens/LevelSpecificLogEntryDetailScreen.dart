@@ -142,9 +142,7 @@ class ErrorDetailScreenContainerState
       ),
       new Text(
         widget.logEntry.message,
-        style: TextStyle(
-                fontSize: 20
-        ),
+        style: TextStyle(fontSize: 20),
       ),
       Padding(
         padding: EdgeInsets.all(4),
@@ -179,16 +177,52 @@ class ErrorDetailScreenContainerState
 
       // Timestamp
       new Text(
-        'TimeStamp:',
+        'Timestamp:',
         style: TextStyle(fontSize: 22, color: Color.fromRGBO(127, 127, 127, 1)),
       ),
 
       new Text(
-        DateFormat("MMM d, y hh:mm:ss").format(widget.logEntry.created_at),
+        DateFormat("MMM d, y hh:mm:ss").format(widget.logEntry.createdAt),
         style: TextStyle(fontSize: 20),
       ),
 
-      //End
+      Divider(
+        color: Colors.grey[500],
+      ),
+
+      new Text(
+        'Tags:',
+        style: TextStyle(fontSize: 22, color: Color.fromRGBO(127, 127, 127, 1)),
+      ),
+
+      new Builder(builder: (BuildContext context) {
+        return Column(
+            children: widget.logEntry.tags.entries
+                .map((mapEntry) => Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(2),
+                          ),
+                          border: Border.all(color: grey)),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              mapEntry.key,
+                              style: TextStyle(fontSize: 22, color: black),
+                            ),
+                            Text(" : ", style: TextStyle(fontSize: 22)),
+                            Text(
+                              mapEntry.value,
+                              style: TextStyle(fontSize: 22, color: blue),
+                            )
+                          ],
+                        ),
+                      ),
+                    ))
+                .toList());
+      }),
     ];
     return new Container(
       child: ListView(

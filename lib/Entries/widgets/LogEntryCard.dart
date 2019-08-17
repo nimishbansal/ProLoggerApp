@@ -10,9 +10,8 @@ import 'package:intl/intl.dart';
 
 class LogEntryCard extends StatefulWidget {
   final LogEntry logEntry;
-  final StreamSink<List<LogEntry>> inIssue;
 
-  LogEntryCard({Key key, this.logEntry, @required this.inIssue}) : super(key: key);
+  LogEntryCard({Key key, this.logEntry}) : super(key: key);
 
   @override
   _LogEntryCardState createState() => _LogEntryCardState(this.logEntry);
@@ -34,7 +33,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 ListTile(
                   leading: getColoredIconForLogLevel(
                       color: logEntry.logLevel.color,
-                      created_at: logEntry.created_at),
+                      created_at: logEntry.createdAt),
                   title: Text('${logEntry.title}'),
                   subtitle: Text('${logEntry.message}'),
                   trailing: Checkbox(
@@ -64,7 +63,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
               if (result == "RECORD_DELETED") {
                 var _logEntryRepository = new LogEntryRepository();
                 var logEntries = await _logEntryRepository.fetchLogEntryList();
-                widget.inIssue.add(logEntries);
+                logEntryListBloc.inIssue.add(logEntries);
 
               }
             }),

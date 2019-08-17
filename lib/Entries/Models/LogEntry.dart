@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:meta/meta.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
@@ -6,7 +8,8 @@ class LogEntry {
   String title;
   String message;
   LogLevel logLevel;
-  DateTime created_at;
+  DateTime createdAt;
+  Map<String, dynamic> tags;
 
   LogEntry(
       {@required this.id,
@@ -14,7 +17,8 @@ class LogEntry {
       @required this.message,
       @required this.logLevel,
       // ignore: non_constant_identifier_names
-      DateTime created_at}) {
+      DateTime created_at,
+      dynamic tags}) {
     this.title = title;
     this.message = message;
     this.logLevel = logLevel;
@@ -25,15 +29,16 @@ class LogEntry {
     title = data['title'];
     message = data['message'];
     logLevel = LogLevel.fromLevelName(data['level_name']);
-    var created_at_json = data['created_at'];
-    if (created_at_json != null) {
-      created_at = DateTime(
-          created_at_json['year'],
-          created_at_json['month'],
-          created_at_json['day'],
-          created_at_json['minute'],
-          created_at_json['second']);
+    var createdAtJson = data['created_at'];
+    if (createdAtJson != null) {
+      createdAt = DateTime(
+          createdAtJson['year'],
+          createdAtJson['month'],
+          createdAtJson['day'],
+          createdAtJson['minute'],
+          createdAtJson['second']);
     }
+    tags = jsonDecode(jsonEncode(data['tags']));
   }
 
   @override

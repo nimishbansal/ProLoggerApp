@@ -9,6 +9,8 @@ import 'package:pro_logger/utility/LogLevel.dart';
 import '../../main.dart';
 import 'LevelSpecificLogEntryDetailScreen.dart';
 
+//https://stackoverflow.com/questions/54101589/navigating-to-a-new-screen-when-stream-value-in-bloc-changes
+
 class LogEntryDetailScreen extends StatefulWidget {
   final String title;
   final String message;
