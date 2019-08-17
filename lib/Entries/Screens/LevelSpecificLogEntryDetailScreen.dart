@@ -196,33 +196,41 @@ class ErrorDetailScreenContainerState
       ),
 
       new Builder(builder: (BuildContext context) {
-        return Column(
+        return GridView.count(
+            primary: false, // set false to disallow scrolling inside grid view
+            crossAxisCount: 2,
+            mainAxisSpacing: 0.1,
+            childAspectRatio: 3,
+            shrinkWrap: true,
             children: widget.logEntry.tags.entries
-                .map((mapEntry) => Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(2),
+                .map(
+                  (mapEntry) => GridTile(
+                    child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            mapEntry.key,
+                            style: TextStyle(
+                                fontSize: 22,
+                                color: black,
+                                backgroundColor: green),
                           ),
-                          border: Border.all(color: grey)),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              mapEntry.key,
-                              style: TextStyle(fontSize: 22, color: black),
-                            ),
-                            Text(" : ", style: TextStyle(fontSize: 22)),
-                            Text(
-                              mapEntry.value,
-                              style: TextStyle(fontSize: 22, color: blue),
-                            )
-                          ],
-                        ),
+                          Text(" : ", style: TextStyle(fontSize: 22)),
+                          Text(
+                            mapEntry.value,
+                            style: TextStyle(fontSize: 22, color: blue),
+                          )
+                        ],
                       ),
-                    ))
+                    ),
+                  ),
+                )
                 .toList());
       }),
+
+      Divider(
+        color: Colors.grey[500],
+      ),
     ];
     return new Container(
       child: ListView(
