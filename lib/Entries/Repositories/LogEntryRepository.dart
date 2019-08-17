@@ -21,11 +21,21 @@ class LogEntryRepository {
     return results;
   }
 
-  Future<LogEntry> fetchLogEntryDetails(int entry_id) async {
+  Future<LogEntry> fetchLogEntryDetails(int entryId) async {
     String requestUrl = BASE_URL + LOG_ENTRY_RETRIEVE_UPDATE_DESTROY_ENDPOINT;
-    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1").replaceAll("{entry_id}", entry_id.toString());
+    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1").replaceAll("{entry_id}", entryId.toString());
     final Map<String, dynamic> response = await Requests.get(parameterisedRequestUrl, json: true);
     return LogEntry.fromJson(response);
+  }
+
+  Future<bool> deleteLogEntry(int entryId) async {
+    String requestUrl = BASE_URL + LOG_ENTRY_RETRIEVE_UPDATE_DESTROY_ENDPOINT;
+    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1").replaceAll("{entry_id}", entryId.toString());
+    var response = await Requests.delete(parameterisedRequestUrl, json: false);
+    if (response.statusCode == 204)
+        return true;
+    else
+        return false;
   }
 
 }

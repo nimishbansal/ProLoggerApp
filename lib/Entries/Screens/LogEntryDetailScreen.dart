@@ -50,6 +50,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
       onPressed: () {
         Navigator.of(context).pop();
         print("continue");
+        _logEntryDetailBloc.deleteLogEntry(this.widget.id);
         this.setState(() {
           toDelete = true;
         });
@@ -152,7 +153,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
                     child: Container(
                       child: toDelete
                           ? AlertDialog(
-                              title: Text("   Deleting"),
+                              title: Text("\tDeleting"),
                               content: Column(
                                 children: [CircularProgressIndicator()],
                               ))

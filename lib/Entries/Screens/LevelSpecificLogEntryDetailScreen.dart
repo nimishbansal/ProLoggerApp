@@ -31,7 +31,7 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
         child: Container(
       child: Text(
         complete_line,
-        style: TextStyle(fontSize: 16, fontWeight:FontWeight.bold),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       color: Color(0xececf1).withAlpha(0xFF),
       margin: EdgeInsets.all(4),
@@ -57,7 +57,9 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
 
     var groupTextWidgetAndExpandButton = GestureDetector(
       child: Container(
-          decoration: BoxDecoration(color: Color(0xececf1).withAlpha(0xFF), border: Border.all(width:0.6,color: Colors.grey[500])),
+          decoration: BoxDecoration(
+              color: Color(0xececf1).withAlpha(0xFF),
+              border: Border.all(width: 0.6, color: Colors.grey[500])),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,9 +69,11 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
       },
     );
 
-    var preContextText = "\ndef sample(request):\n    a = 40\n    b = 50\n    print('hehehe')";
-    var exceptionContextText='    print(a/(b-50))';
-    var postContextText='    print("hahahah")\n    print(\'hohoho\')\n    return';
+    var preContextText =
+        "\ndef sample(request):\n    a = 40\n    b = 50\n    print('hehehe')";
+    var exceptionContextText = '    print(a/(b-50))';
+    var postContextText =
+        '    print("hahahah")\n    print(\'hohoho\')\n    return';
 
     var expandedDetails;
     if (collapsed) {
@@ -80,8 +84,19 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(preContextText, style: TextStyle(height: 1.2, fontSize: 15),),
-            Container(child: Text(exceptionContextText, style: TextStyle(color: Colors.white, height: 1.2, fontSize: 15),), color: Color(0x6c5fc7).withAlpha(0xFFFFF), width: double.infinity,),
+            Text(
+              preContextText,
+              style: TextStyle(height: 1.2, fontSize: 15),
+            ),
+            Container(
+              child: Text(
+                exceptionContextText,
+                style:
+                    TextStyle(color: Colors.white, height: 1.2, fontSize: 15),
+              ),
+              color: Color(0x6c5fc7).withAlpha(0xFFFFF),
+              width: double.infinity,
+            ),
             Text(postContextText, style: TextStyle(height: 1.2, fontSize: 15))
           ],
         ),
@@ -127,13 +142,17 @@ class ErrorDetailScreenContainerState
       ),
       new Text(
         widget.logEntry.message,
-        style: TextStyle(fontSize: 20),
+        style: TextStyle(
+                fontSize: 20
+        ),
       ),
       Padding(
         padding: EdgeInsets.all(4),
       ),
 
-      Divider(color: Colors.grey[500],),
+      Divider(
+        color: Colors.grey[500],
+      ),
 
       // Exception Stack Trace
       Align(
@@ -154,7 +173,9 @@ class ErrorDetailScreenContainerState
         padding: EdgeInsets.all(4),
       ),
 
-      Divider(color: Colors.grey[500],),
+      Divider(
+        color: Colors.grey[500],
+      ),
 
       // Timestamp
       new Text(
@@ -167,16 +188,13 @@ class ErrorDetailScreenContainerState
         style: TextStyle(fontSize: 20),
       ),
 
-
       //End
-
-
     ];
-    return new
-    Container(child:ListView(
-      shrinkWrap: true,
-      children: frames,
-    ),
+    return new Container(
+      child: ListView(
+        shrinkWrap: true,
+        children: frames,
+      ),
     );
   }
 }
