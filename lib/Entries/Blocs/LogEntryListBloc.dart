@@ -20,7 +20,7 @@ class LogEntryListBloc
 
     StreamController<List<LogEntry>> _issueListStateController = StreamController<List<LogEntry>>();
 //  https://stackoverflow.com/a/51397263/7698247
-    StreamSink<List<LogEntry>> get _inIssue => _issueListStateController.sink;
+    StreamSink<List<LogEntry>> get inIssue => _issueListStateController.sink;
     Stream<List<LogEntry>> get logEntryStream => _issueListStateController.stream;
 
 
@@ -62,7 +62,7 @@ class LogEntryListBloc
             logEntries.length+=1;
             logEntries.setRange(1,logEntries.length,logEntries);
             logEntries.setRange(0, 1, [logEntry]);
-            _inIssue.add(logEntries);
+            inIssue.add(logEntries);
         }
 
 //        _inIssue.add(logEntries);

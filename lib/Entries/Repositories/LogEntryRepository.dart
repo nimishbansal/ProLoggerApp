@@ -32,7 +32,7 @@ class LogEntryRepository {
     String requestUrl = BASE_URL + LOG_ENTRY_RETRIEVE_UPDATE_DESTROY_ENDPOINT;
     String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1").replaceAll("{entry_id}", entryId.toString());
     var response = await Requests.delete(parameterisedRequestUrl, json: false);
-    if (response.statusCode == 204)
+    if (response == '')
         return true;
     else
         return false;

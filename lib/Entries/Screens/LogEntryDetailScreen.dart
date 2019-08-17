@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryDetailBloc.dart';
 
@@ -26,14 +28,25 @@ class LogEntryDetailScreen extends StatefulWidget {
 }
 
 class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
+  StreamSubscription _streamSubscription;
   LogEntryDetailBloc _logEntryDetailBloc;
   var toDelete = false;
+
+  void _listen() {
+    _streamSubscription =
+        _logEntryDetailBloc.logEntryDeleteStream.listen((value) {
+      if (value) {
+        Navigator.pop(context, "RECORD_DELETED");
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _logEntryDetailBloc = LogEntryDetailBloc();
     _logEntryDetailBloc.displayResults(this.widget.id);
+    _listen();
   }
 
   showAlertDialog(BuildContext context) {
@@ -81,7 +94,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
 
-    if (toDelete) deleteLogEntry();
+//    if (toDelete) deleteLogEntry();
 
     return Scaffold(
       appBar: AppBar(
@@ -187,5 +200,11 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
         Navigator.pop(context);
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _streamSubscription.cancel();
   }
 }

@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pro_logger/Entries/Blocs/LogEntryListBloc.dart';
+import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryDetailScreen.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:intl/intl.dart';
 
 class LogEntryCard extends StatefulWidget {
   final LogEntry logEntry;
+  final StreamSink<List<LogEntry>> inIssue;
 
-  LogEntryCard({Key key, this.logEntry}) : super(key: key);
+  LogEntryCard({Key key, this.logEntry, @required this.inIssue}) : super(key: key);
 
   @override
   _LogEntryCardState createState() => _LogEntryCardState(this.logEntry);
@@ -43,8 +48,8 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 ),
               ],
             ),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              var result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) {
@@ -56,6 +61,12 @@ class _LogEntryCardState extends State<LogEntryCard> {
                   },
                 ),
               );
+              if (result == "RECORD_DELETED") {
+                var _logEntryRepository = new LogEntryRepository();
+                var logEntries = await _logEntryRepository.fetchLogEntryList();
+                widget.inIssue.add(logEntries);
+
+              }
             }),
       ),
     );
@@ -76,12 +87,16 @@ class _LogEntryCardState extends State<LogEntryCard> {
 
     return Column(
       children: <Widget>[
-          Padding(padding: EdgeInsets.all(3.0),),
-          CircleAvatar(
-            backgroundColor: color,
-            maxRadius: 10,
-          ),
-        Padding(padding: EdgeInsets.all(2.0),),
+        Padding(
+          padding: EdgeInsets.all(3.0),
+        ),
+        CircleAvatar(
+          backgroundColor: color,
+          maxRadius: 10,
+        ),
+        Padding(
+          padding: EdgeInsets.all(2.0),
+        ),
         Text(formattedDate)
       ],
     );

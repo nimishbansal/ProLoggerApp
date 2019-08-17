@@ -18,7 +18,6 @@ class LogEntryDetailBloc {
 
   Stream<bool> get logEntryDeleteStream => _issueDeleteStateController.stream;
 
-
   LogEntryDetailBloc() {
     _logEntryRepository = new LogEntryRepository();
   }
@@ -30,7 +29,7 @@ class LogEntryDetailBloc {
 
   void deleteLogEntry(int id) async {
     bool result = await _logEntryRepository.deleteLogEntry(id);
-    if (result) {}
+    _issueDeleteStateController.add(result);
   }
 
   void dispose() {

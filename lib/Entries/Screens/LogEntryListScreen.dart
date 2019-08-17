@@ -71,6 +71,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         return LogEntryCard(
           key: ValueKey(logEntries[index]),
           logEntry: logEntries[index],
+            inIssue: _logEntryBloc.inIssue,
         );
       },
     );
