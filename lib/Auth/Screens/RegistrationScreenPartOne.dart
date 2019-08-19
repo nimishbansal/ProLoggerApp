@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
+import 'package:pro_logger/widgets/CountryPicker/country_selector.dart';
+
 
 class TopWaveClipper extends CustomClipper<Path> {
   List<List<double>> getListOfControlAndEndPoints(
@@ -57,9 +59,13 @@ class TopWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
 
+
 class RegistrationScreenPartOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var a = [];
+    if (a.length == 0) return Material(child: CountrySelectWidget());
+
     return Material(
       child: Container(
         color: white,
