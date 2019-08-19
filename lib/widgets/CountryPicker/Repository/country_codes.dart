@@ -10,7 +10,7 @@ const country_codes = [
 //  {"Name": "Argentina", "ISO": "ar", "Code": "54"},
 //  {"Name": "Armenia", "ISO": "am", "Code": "374"},
 //  {"Name": "Aruba", "ISO": "aw", "Code": "297"},
-//  {"Name": "Australia", "ISO": "au", "Code": "61"},
+  {"Name": "Australia", "ISO": "au", "Code": "61"},
   {"Name": "Austria", "ISO": "at", "Code": "43"},
 //  {"Name": "Azerbaijan", "ISO": "az", "Code": "994"},
 //  {"Name": "Bahamas", "ISO": "bs", "Code": "1242"},
