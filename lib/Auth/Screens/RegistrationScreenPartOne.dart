@@ -6,15 +6,13 @@ import 'package:pro_logger/utility/LogLevel.dart';
 
 class TopWaveClipper extends CustomClipper<Path> {
   List<List<double>> getListOfControlAndEndPoints(
-      int noOfEndpoints, double distanceBetweenEndpointsXCords, Size size) {
-    //    var lineLength = pow(size.width*size.width + size.height*size.height, 0.5);
+      int noOfEndpoints, double endpointGapX, Size size) {
     List<List<double>> result = [
       [0, size.height, 0, 0]
     ];
-    //y = size.height - (size.height/size.width)*x
 
     for (var i = 1; i < noOfEndpoints; i++) {
-      var endPointX = 0 + distanceBetweenEndpointsXCords * i;
+      var endPointX = 0 + endpointGapX * i;
 //      var endPointY = size.height - (size.height / size.width) * endPointX;
       var slope = (size.height / size.width) + 0.22;
       var endPointY = size.height - slope * endPointX;
@@ -67,9 +65,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
         color: white,
         height: MediaQuery.of(context).size.height,
         child: Column(
-
           children: <Widget>[
-
             Container(
               margin: EdgeInsets.only(top: 10),
             ),
@@ -79,7 +75,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(top:30.0, left:30),
+                padding: const EdgeInsets.only(top: 30.0, left: 30),
                 child: Image(
                   image: new AssetImage(
                     "images/applogo.png",
@@ -89,7 +85,6 @@ class RegistrationScreenPartOne extends StatelessWidget {
               ),
             ),
 
-
             //CoverImage, and overlay Text
             Stack(
               children: <Widget>[
@@ -97,7 +92,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                   clipper: TopWaveClipper(),
                   child: Column(
                     children: <Widget>[
-                      Container(height:40),
+                      Container(height: 40),
                       Container(
                         height: 280,
                         padding: EdgeInsets.only(left: 15),
@@ -113,17 +108,17 @@ class RegistrationScreenPartOne extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
                   child: Text(
                     "welcome\naboard",
-                    style: TextStyle(color: Colors.black54, fontSize: 50, fontWeight:FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
-
               ],
-
             )
           ],
         ),
