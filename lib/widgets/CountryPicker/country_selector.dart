@@ -231,72 +231,72 @@ class DemoAppState extends State<DemoApp> {
     ),
   ];
 
-  double height=100;
+  double height = 100;
   var maximumHeight;
-  var collapsedHeight=100.0;
+  var collapsedHeight = 100.0;
+  bool isMoving=false;
+  int dragStartTime;
 
   @override
   Widget build(BuildContext context) {
-    maximumHeight=MediaQuery.of(context).size.height;
+    maximumHeight = MediaQuery.of(context).size.height;
     return Column(
       children: <Widget>[
         Expanded(
           child: Align(
             alignment: Alignment.bottomCenter,
             child: GestureDetector(
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.fastOutSlowIn,
-                  color: Colors.green,
-                  width: MediaQuery.of(context).size.width,
-                  height: height,
-                ),
-                onVerticalDragStart: (DragStartDetails d) {
-//                  print("drag start at ${d.localPosition}");
-                },
-                onVerticalDragUpdate: (DragUpdateDetails d) {
-//                  print(
-//                      "drag update at ${d.localPosition} with delta ${d.delta}");
-                  setState(() {
-                    height-=d.delta.dy;
-                  });
-                },
-                onVerticalDragEnd: (DragEndDetails d) {
-//                  var dragEndPosition = d.velocity.pixelsPerSecond.direction;
-                  var vy=d.velocity.pixelsPerSecond.dy;
-                  var vx=d.velocity.pixelsPerSecond.dx;
-                  var _kMinFlingVelocityDelta=400;
-                  var _kMinFlingVelocity=700;
-                  if (!(vy.abs() - vx.abs() < _kMinFlingVelocityDelta) || (vy.abs() < _kMinFlingVelocity))
-                  {
-                    var collapse=false;
-                    if (vy>0)
-                      collapse=true;
-                    else if (vy<0)
-                      collapse=false;
-                    else {
-                        if (height>400)
-                          collapse=false;
-                        else
-                          collapse=true;
-                        }
-                    setState(() {
-                      if (collapse)
-                        height=collapsedHeight;
-                      else
-                        height=maximumHeight;
-                    });
-                  }
-//                  print("drag end at ${d.velocity.pixelsPerSecond.dy.abs()}");
-                },
-              onVerticalDragCancel: (){
-                  print("drag canceled");
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: isMoving?0:500),
+                curve: Curves.fastOutSlowIn,
+                color: Colors.green,
+                width: MediaQuery.of(context).size.width,
+                height: height,
+              ),
+              onVerticalDragStart: (DragStartDetails d) {
+                dragStartTime=DateTime.now().millisecondsSinceEpoch;
               },
-              onVerticalDragDown: (DragDownDetails d){
-//                  print("drag down at, ${d.localPosition}");
+              onVerticalDragUpdate: (DragUpdateDetails d) {
+                if (DateTime.now().millisecondsSinceEpoch-dragStartTime<80)
+                  {
+
+                  }
+                else{
+                  setState(() {
+                    isMoving=true;
+                    height -= d.delta.dy;
+                  });
+
+                }
+              },
+              onVerticalDragEnd: (DragEndDetails d) {
+                var vy = d.velocity.pixelsPerSecond.dy;
+                var vx = d.velocity.pixelsPerSecond.dx;
+                var _kMinFlingVelocityDelta = 400;
+                var _kMinFlingVelocity = 700;
+                if (!(vy.abs() - vx.abs() < _kMinFlingVelocityDelta) ||
+                    (vy.abs() < _kMinFlingVelocity)) {
+                  var collapse = false;
+                  if (vy > 0)
+                    collapse = true;
+                  else if (vy < 0)
+                    collapse = false;
+                  else {
+                    if (height > 400)
+                      collapse = false;
+                    else
+                      collapse = true;
+                  }
+                  setState(() {
+                    isMoving=false;
+                    if (collapse)
+                      height = collapsedHeight;
+                    else
+                      height = maximumHeight;
+                  });
+                }
               },
             ),
-
           ),
         ),
       ],
