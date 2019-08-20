@@ -63,8 +63,10 @@ class TopWaveClipper extends CustomClipper<Path> {
 class RegistrationScreenPartOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var a = [];
-    if (a.length == 0) return Material(child: CountrySelectWidget());
+    var a = [1];
+    if (a.length == 0) return Material(child: CountrySelector());
+
+    if (a.length ==1) return Material(child: DemoApp());
 
     return Material(
       child: Container(

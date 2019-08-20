@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pro_logger/utility/LogLevel.dart';
 
 import 'Models/country.dart';
 import 'Repository/country_codes.dart';
 
-class CountrySelectWidget extends StatefulWidget {
+class CountrySelector extends StatefulWidget {
   final List<Map> countryJsonList;
 
-  const CountrySelectWidget({Key key, this.countryJsonList = country_codes})
+  const CountrySelector({Key key, this.countryJsonList = country_codes})
       : super(key: key);
 
   @override
@@ -18,13 +19,13 @@ class CountrySelectWidget extends StatefulWidget {
           code: countryData['ISO'],
           dialCode: countryData['Code']));
     });
-    return CountrySelectWidgetState(countryInstances);
+    return CountrySelectorState(countryInstances);
   }
 }
 
-class CountrySelectWidgetState extends State<CountrySelectWidget> {
+class CountrySelectorState extends State<CountrySelector> {
   List<Country> countryInstances;
-  CountrySelectWidgetState(this.countryInstances);
+  CountrySelectorState(this.countryInstances);
 
   int selectedIndex;
   bool openCountryListView = true;
@@ -187,6 +188,118 @@ class CountrySelectWidgetState extends State<CountrySelectWidget> {
           });
         },
       ),
+    );
+  }
+}
+
+class DemoApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return DemoAppState();
+  }
+}
+
+class DemoAppState extends State<DemoApp> {
+  var myListView = [
+    Text(
+      "hello",
+      style: TextStyle(fontSize: 20),
+    ),
+    Text(
+      "hello1",
+      style: TextStyle(fontSize: 20),
+    ),
+    Text(
+      "hello2",
+      style: TextStyle(fontSize: 20),
+    ),
+    Text(
+      "hello3",
+      style: TextStyle(fontSize: 20),
+    ),
+    Text(
+      "hello4",
+      style: TextStyle(fontSize: 20),
+    ),
+    Text(
+      "hello5",
+      style: TextStyle(fontSize: 20),
+    ),
+    Text(
+      "hello6",
+      style: TextStyle(fontSize: 20),
+    ),
+  ];
+
+  double height=100;
+  var maximumHeight;
+  var collapsedHeight=100.0;
+
+  @override
+  Widget build(BuildContext context) {
+    maximumHeight=MediaQuery.of(context).size.height;
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: GestureDetector(
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.fastOutSlowIn,
+                  color: Colors.green,
+                  width: MediaQuery.of(context).size.width,
+                  height: height,
+                ),
+                onVerticalDragStart: (DragStartDetails d) {
+//                  print("drag start at ${d.localPosition}");
+                },
+                onVerticalDragUpdate: (DragUpdateDetails d) {
+//                  print(
+//                      "drag update at ${d.localPosition} with delta ${d.delta}");
+                  setState(() {
+                    height-=d.delta.dy;
+                  });
+                },
+                onVerticalDragEnd: (DragEndDetails d) {
+//                  var dragEndPosition = d.velocity.pixelsPerSecond.direction;
+                  var vy=d.velocity.pixelsPerSecond.dy;
+                  var vx=d.velocity.pixelsPerSecond.dx;
+                  var _kMinFlingVelocityDelta=400;
+                  var _kMinFlingVelocity=700;
+                  if (!(vy.abs() - vx.abs() < _kMinFlingVelocityDelta) || (vy.abs() < _kMinFlingVelocity))
+                  {
+                    var collapse=false;
+                    if (vy>0)
+                      collapse=true;
+                    else if (vy<0)
+                      collapse=false;
+                    else {
+                        if (height>400)
+                          collapse=false;
+                        else
+                          collapse=true;
+                        }
+                    setState(() {
+                      if (collapse)
+                        height=collapsedHeight;
+                      else
+                        height=maximumHeight;
+                    });
+                  }
+//                  print("drag end at ${d.velocity.pixelsPerSecond.dy.abs()}");
+                },
+              onVerticalDragCancel: (){
+                  print("drag canceled");
+              },
+              onVerticalDragDown: (DragDownDetails d){
+//                  print("drag down at, ${d.localPosition}");
+              },
+            ),
+
+          ),
+        ),
+      ],
     );
   }
 }
