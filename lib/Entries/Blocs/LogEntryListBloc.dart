@@ -17,11 +17,11 @@ class LogEntryListBloc {
   WebSocket _webSocket;
   IOWebSocketChannel _ioWebSocketChannel;
 
-  StreamController<List<LogEntry>> _issueListStateController =
+  StreamController<List<LogEntry>> _logEntryListStateController =
       StreamController<List<LogEntry>>();
 //  https://stackoverflow.com/a/51397263/7698247
-  StreamSink<List<LogEntry>> get inIssue => _issueListStateController.sink;
-  Stream<List<LogEntry>> get logEntryStream => _issueListStateController.stream;
+  StreamSink<List<LogEntry>> get inIssue => _logEntryListStateController.sink;
+  Stream<List<LogEntry>> get logEntryStream => _logEntryListStateController.stream;
 
   final _logEntryEventController = StreamController<LogEntryEvent>();
   Sink<LogEntryEvent> get logEventControllerSink =>
@@ -36,7 +36,7 @@ class LogEntryListBloc {
 
   void fetchLogEntriesList() async {
     this.logEntries = await _logEntryRepository.fetchLogEntryList();
-    this._issueListStateController.add(logEntries);
+    this._logEntryListStateController.add(logEntries);
   }
 
   void connectToSocket() async {
@@ -61,7 +61,7 @@ class LogEntryListBloc {
 
   void dispose() {
     _logEntryEventController.close();
-    _issueListStateController.close();
+    _logEntryListStateController.close();
     _ioWebSocketChannel.sink.close();
     _webSocket.close();
   }

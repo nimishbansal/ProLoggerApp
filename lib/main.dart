@@ -21,18 +21,18 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-            child: RaisedButton(
-      child: Text('Open Dialog'),
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (_) {
-              return LogLevelSelectModalWidget();
-            },
-        );
-      },
-    )));
+      body: Center(
+        child: RaisedButton(
+          child: Text('Open Dialog'),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => LogLevelSelectModalWidget(),
+            );
+          },
+        ),
+      ),
+    );
   }
 }
 
@@ -41,9 +41,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: RegistrationScreenPartOne(),
-//      home: Home(),
-//      home: LogEntryListScreen(),
+      initialRoute: '/',
+      routes: {
+        '/' : (context) => LogEntryListScreen()
+      },
       theme: CustomTheme.of(context),
     );
   }

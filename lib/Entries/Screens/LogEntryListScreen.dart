@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Blocs/LogEntryListBloc.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
@@ -17,20 +16,16 @@ class LogEntryListScreen extends StatefulWidget {
 }
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
-//  LogEntryListBloc _logEntryBloc;
 
   @override
   void initState() {
     super.initState();
-//    _logEntryBloc = new LogEntryListBloc();
-//    _logEntryBloc.fetchLogEntriesList();
     logEntryListBloc.fetchLogEntriesList();
-
   }
-
 
   @override
   Widget build(BuildContext context) {
+    print("args are ${ModalRoute.of(context).settings.arguments}");
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
 
@@ -54,7 +49,8 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
                         child: _myListView(context, snapshot.data),
                         height: MediaQuery.of(context).size.height - 100);
                   } else {
-                    return new Image(image: new AssetImage("images/loader.gif"));
+                    return new Image(
+                        image: new AssetImage("images/loader.gif"));
                   }
                 }),
           ],
@@ -77,8 +73,9 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
 
   changeThemeAfterBuild(BuildContext context) {
     if ((CustomTheme.instanceOf(context).themeData.primaryColor !=
-        this.widget.screenDefaultTheme.primaryColor) && ModalRoute.of(context).isCurrent)
-        CustomTheme.instanceOf(context)
+            this.widget.screenDefaultTheme.primaryColor) &&
+        ModalRoute.of(context).isCurrent)
+      CustomTheme.instanceOf(context)
           .changeTheme(this.widget.screenDefaultTheme);
   }
 }

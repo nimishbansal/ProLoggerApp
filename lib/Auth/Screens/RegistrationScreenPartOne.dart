@@ -1,9 +1,7 @@
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
-import 'package:pro_logger/widgets/CountryPicker/country_selector.dart';
 
 
 class TopWaveClipper extends CustomClipper<Path> {
@@ -21,13 +19,13 @@ class TopWaveClipper extends CustomClipper<Path> {
       var controlPointX = (endPointX + result.last[0]) / 2;
       var controlPointY = (endPointY + result.last[1]) / 2;
       if (i % 2 == 0)
-        result.add([controlPointX, controlPointY + 20, endPointX, endPointY]);
+        result.add([controlPointX, controlPointY + 15, endPointX, endPointY-25]);
       else
         result.add([
           controlPointX,
           controlPointY - 20,
-          endPointX,
-          endPointY,
+          endPointX-10,
+          endPointY+15,
         ]);
     }
     return result;
@@ -63,11 +61,6 @@ class TopWaveClipper extends CustomClipper<Path> {
 class RegistrationScreenPartOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var a = [1];
-    if (a.length == 0) return Material(child: CountrySelector());
-
-    if (a.length ==1) return Material(child: DemoApp());
-
     return Material(
       child: Container(
         color: white,
@@ -99,6 +92,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                 ClipPath(
                   clipper: TopWaveClipper(),
                   child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Container(height: 40),
                       Container(
