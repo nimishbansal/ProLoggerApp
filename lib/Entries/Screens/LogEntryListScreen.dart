@@ -16,11 +16,12 @@ class LogEntryListScreen extends StatefulWidget {
 }
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
+  int pageNo = 1;
 
   @override
   void initState() {
     super.initState();
-    logEntryListBloc.fetchLogEntriesList();
+    logEntryListBloc.fetchLogEntriesList(pageNo: pageNo);
   }
 
   @override
@@ -37,24 +38,31 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         ),
         title: Text("Issues"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            StreamBuilder(
-                stream: logEntryListBloc.logEntryStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Container(
-                        child: _myListView(context, snapshot.data),
-                        height: MediaQuery.of(context).size.height - 100);
-                  } else {
-                    return new Image(
-                        image: new AssetImage("images/loader.gif"));
-                  }
-                }),
-          ],
-        ),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: StreamBuilder(
+                      stream: logEntryListBloc.logEntryStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Container(
+                              child: _myListView(context, snapshot.data),
+                              height:
+                                  MediaQuery.of(context).size.height - 100);
+                        } else {
+                          return new Image(
+                              image: new AssetImage("images/loader.gif"));
+                        }
+                      }),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

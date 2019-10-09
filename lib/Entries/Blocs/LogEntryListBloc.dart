@@ -29,13 +29,13 @@ class LogEntryListBloc {
 
   LogEntryListBloc() {
     _logEntryRepository = new LogEntryRepository();
-    this.fetchLogEntriesList();
+    this.fetchLogEntriesList(pageNo: 1);
     this.connectToSocket();
     this._logEntryEventController.stream.listen(_mapEventToState);
   }
 
-  void fetchLogEntriesList() async {
-    this.logEntries = await _logEntryRepository.fetchLogEntryList();
+  void fetchLogEntriesList({int pageNo}) async {
+    this.logEntries = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
     this._logEntryListStateController.add(logEntries);
   }
 
