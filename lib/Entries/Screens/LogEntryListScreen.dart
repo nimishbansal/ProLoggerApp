@@ -43,7 +43,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
           if (!snapshot.hasData ||
               (snapshot.hasData && snapshot.data.status == Status.LOADING)) {
             print("snapshot data is ${snapshot.data}");
-            return Image(image: new AssetImage("images/loader.gif"));
+            return Center(child: Image(image: new AssetImage("images/loader.gif")));
           } else {
             print("snapshot data is ${snapshot.data}");
             return Column(
