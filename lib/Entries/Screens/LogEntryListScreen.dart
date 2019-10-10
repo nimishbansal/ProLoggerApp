@@ -43,7 +43,19 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
           if (!snapshot.hasData ||
               (snapshot.hasData && snapshot.data.status == Status.LOADING)) {
             print("snapshot data is ${snapshot.data}");
-            return Center(child: Image(image: new AssetImage("images/loader.gif")));
+            return Center(
+                child: Image(image: new AssetImage("images/loader.gif")));
+          } else if (snapshot.hasData && snapshot.data.status == Status.ERROR) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.network('https://static.thenounproject.com/png/207492-200.png', width: 50, height: 50,),
+                  Padding(padding: EdgeInsets.all(8),),
+                  Text(snapshot.data.message)
+                ],
+              ),
+            );
           } else {
             print("snapshot data is ${snapshot.data}");
             return Column(
@@ -51,20 +63,23 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
               children: <Widget>[
                 Container(
                   child: _myListView(context, snapshot.data.data),
-                  height: MediaQuery.of(context).size.height-130,
+                  height: MediaQuery.of(context).size.height - 130,
                 ),
                 BottomAppBar(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       FlatButton(
-                        child: Icon(Icons.chevron_left),
-                        onPressed: (logEntryListBloc.pageNo == 1)?null: _handleLeftButtonPressed
-                      ),
+                          child: Icon(Icons.chevron_left),
+                          onPressed: (logEntryListBloc.pageNo == 1)
+                              ? null
+                              : _handleLeftButtonPressed),
                       FlatButton(
-                        child: Icon(Icons.chevron_right),
-                        onPressed: (logEntryListBloc.pageNo == logEntryListBloc.lastPage)?null: _handleRightButtonPressed
-                      )
+                          child: Icon(Icons.chevron_right),
+                          onPressed: (logEntryListBloc.pageNo ==
+                                  logEntryListBloc.lastPage)
+                              ? null
+                              : _handleRightButtonPressed)
                     ],
                   ),
                 ),
@@ -84,7 +99,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         LogEntry logEntry = logEntriesSelectedStatus[index].item1;
         return LogEntryCard(
           key: ValueKey(logEntry),
-          logEntry: logEntry,
+          index: index
         );
       },
     );
@@ -99,9 +114,10 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
   }
 
   void _handleLeftButtonPressed() {
-    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo-1);
+    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo - 1);
   }
+
   void _handleRightButtonPressed() {
-    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo+1);
+    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo + 1);
   }
 }

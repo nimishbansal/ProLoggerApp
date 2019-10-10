@@ -7,21 +7,21 @@ import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryDetailScreen.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
+import 'package:pro_logger/Entries/Events/issue_events.dart';
 
 class LogEntryCard extends StatefulWidget {
-  final LogEntry logEntry;
+  final int index;
 
-  LogEntryCard({Key key, this.logEntry}) : super(key: key);
+  LogEntryCard({Key key, this.index}) : super(key: key);
 
   @override
-  _LogEntryCardState createState() => _LogEntryCardState(this.logEntry);
+  _LogEntryCardState createState() => _LogEntryCardState(logEntry:logEntryListBloc.logEntriesSelectedStatus[index].item1);
 }
 
 class _LogEntryCardState extends State<LogEntryCard> {
   final LogEntry logEntry;
-  var checkboxStatus = false;
-
-  _LogEntryCardState(this.logEntry);
+  _LogEntryCardState({this.logEntry});
 
   Widget getLogEntryCard() {
     return new Container(
@@ -37,11 +37,9 @@ class _LogEntryCardState extends State<LogEntryCard> {
                   title: Text('${logEntry.title}'),
                   subtitle: Text('${logEntry.message}'),
                   trailing: Checkbox(
-                    value: checkboxStatus,
-                    onChanged: (bool value) {
-                      setState(() {
-                        checkboxStatus = value;
-                      });
+                    value: logEntryListBloc.logEntriesSelectedStatus[widget.index].item2,
+                    onChanged: (_) {
+                      logEntryListBloc.logEventControllerSink.add(LogEntryCheckBoxToggledEvent(index:widget.index));
                     },
                   ),
                 ),

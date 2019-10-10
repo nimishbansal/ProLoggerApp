@@ -13,7 +13,6 @@ class LogEntryListBloc {
   LogEntry logEntry = new LogEntry(
       id: null, title: null, message: null, logLevel: null, created_at: null);
 
-
   int noOfRecords = 0;
   static const int pageSize = 10;
 
@@ -24,7 +23,8 @@ class LogEntryListBloc {
   int pageNo = 1;
 
   List<LogEntry> logEntries;
-  List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus = new List<Tuple2<LogEntry, bool>>();
+  List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus =
+      new List<Tuple2<LogEntry, bool>>();
   LogEntryRepository _logEntryRepository;
 
   WebSocket _webSocket;
@@ -51,14 +51,21 @@ class LogEntryListBloc {
   void fetchLogEntriesList({int pageNo}) async {
     this.pageNo = pageNo;
     _logEntryListStateController.add(ApiResponse.loading('Page${this.pageNo}'));
-    var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
-    logEntries = result.item1;
-    noOfRecords = result.item2;
-    logEntriesSelectedStatus = logEntries
-        .map((currentLogEntry) => Tuple2(currentLogEntry, false))
-        .toList();
-    _logEntryListStateController
-        .add(ApiResponse.completed(logEntriesSelectedStatus));
+    try {
+      var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
+      logEntries = result.item1;
+      noOfRecords = result.item2;
+      logEntriesSelectedStatus = logEntries
+          .map((currentLogEntry) => Tuple2(currentLogEntry, false))
+          .toList();
+      _logEntryListStateController
+          .add(ApiResponse.completed(logEntriesSelectedStatus));
+    } catch (e) {
+      if (e.runtimeType == SocketException) {
+        _logEntryListStateController
+            .add(ApiResponse.error('Connection Refused'));
+      }
+    }
   }
 
   void connectToSocket() async {
@@ -84,6 +91,10 @@ class LogEntryListBloc {
         this.logEntriesSelectedStatus.setRange(0, 1, [Tuple2(logEntry, false)]);
         this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
       }
+    } else if (event is LogEntryCheckBoxToggledEvent) {
+      var previousTuple = this.logEntriesSelectedStatus[event.index];
+      this.logEntriesSelectedStatus[event.index] = Tuple2(previousTuple.item1, !previousTuple.item2);
+      this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
     }
   }
 
