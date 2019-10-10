@@ -4,6 +4,8 @@ import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'package:pro_logger/Entries/widgets/LogEntryCard.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
+import 'package:pro_logger/utility/network_utils.dart';
+import 'package:tuple/tuple.dart';
 
 class LogEntryListScreen extends StatefulWidget {
   final String title;
@@ -16,64 +18,48 @@ class LogEntryListScreen extends StatefulWidget {
 }
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
-  int pageNo = 1;
-
   @override
   void initState() {
     super.initState();
-    logEntryListBloc.fetchLogEntriesList(pageNo: pageNo);
+    logEntryListBloc.fetchLogEntriesList(pageNo: 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    print("args are ${ModalRoute.of(context).settings.arguments}");
     WidgetsBinding.instance
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {},
-        ),
-        title: Text("Issues"),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  child: StreamBuilder(
-                      stream: logEntryListBloc.logEntryStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Container(
-                              child: _myListView(context, snapshot.data),
-                              height:
-                                  MediaQuery.of(context).size.height - 100);
-                        } else {
-                          return new Image(
-                              image: new AssetImage("images/loader.gif"));
-                        }
-                      }),
-                ),
-              ],
-            ),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {},
           ),
-        ],
-      ),
-    );
+          title: Text("Issues"),
+        ),
+        body: StreamBuilder<ApiResponse>(
+            stream: logEntryListBloc.logEntryStream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData ||
+                  (snapshot.hasData &&
+                      snapshot.data.status == Status.LOADING)) {
+                print("snapshot data is ${snapshot.data}");
+                return Image(image: new AssetImage("images/loader.gif"));
+              } else {
+                print("snapshot data is ${snapshot.data}");
+                return Container(child: _myListView(context, snapshot.data.data),);
+              }
+            }));
   }
 
-  Widget _myListView(BuildContext context, List<LogEntry> logEntries) {
+  Widget _myListView(BuildContext context,   List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus) {
     return ListView.builder(
-      itemCount: logEntries.length,
+      itemCount: logEntriesSelectedStatus.length,
       itemBuilder: (context, index) {
+        LogEntry logEntry = logEntriesSelectedStatus[index].item1;
         return LogEntryCard(
-          key: ValueKey(logEntries[index]),
-          logEntry: logEntries[index],
+          key: ValueKey(logEntry),
+          logEntry: logEntry,
         );
       },
     );

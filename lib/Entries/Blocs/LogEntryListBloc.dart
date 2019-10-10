@@ -2,26 +2,31 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:tuple/tuple.dart';
 import 'package:pro_logger/Entries/Events/issue_events.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:pro_logger/utility/network_utils.dart';
 
 class LogEntryListBloc {
   LogEntry logEntry = new LogEntry(
       id: null, title: null, message: null, logLevel: null, created_at: null);
 
+  int pageNo = 1;
+
   List<LogEntry> logEntries;
+  List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus = new List<Tuple2<LogEntry, bool>>();
   LogEntryRepository _logEntryRepository;
 
   WebSocket _webSocket;
   IOWebSocketChannel _ioWebSocketChannel;
 
-  StreamController<List<LogEntry>> _logEntryListStateController =
-      StreamController<List<LogEntry>>();
+  StreamController<ApiResponse> _logEntryListStateController =
+      StreamController<ApiResponse>();
 //  https://stackoverflow.com/a/51397263/7698247
-  StreamSink<List<LogEntry>> get inIssue => _logEntryListStateController.sink;
-  Stream<List<LogEntry>> get logEntryStream => _logEntryListStateController.stream;
+  StreamSink<ApiResponse> get inIssue => _logEntryListStateController.sink;
+  Stream<ApiResponse> get logEntryStream => _logEntryListStateController.stream;
 
   final _logEntryEventController = StreamController<LogEntryEvent>();
   Sink<LogEntryEvent> get logEventControllerSink =>
@@ -35,8 +40,11 @@ class LogEntryListBloc {
   }
 
   void fetchLogEntriesList({int pageNo}) async {
-    this.logEntries = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
-    this._logEntryListStateController.add(logEntries);
+    this.pageNo = pageNo;
+    _logEntryListStateController.add(ApiResponse.loading('Page${this.pageNo}'));
+    logEntries = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
+    logEntriesSelectedStatus = logEntries.map((currentLogEntry) => Tuple2(currentLogEntry, false)).toList();
+    _logEntryListStateController.add(ApiResponse.completed(logEntriesSelectedStatus));
   }
 
   void connectToSocket() async {
@@ -52,10 +60,11 @@ class LogEntryListBloc {
 
   void _mapEventToState(LogEntryEvent event) {
     if (event is NewLogEntryEvent) {
-      this.logEntries.length += 1;
-      this.logEntries.setRange(1, logEntries.length, logEntries);
-      this.logEntries.setRange(0, 1, [logEntry]);
-      this.inIssue.add(logEntries);
+      print("new logEntry is + $logEntry)");
+      this.logEntriesSelectedStatus.length += 1;
+      this.logEntriesSelectedStatus.setRange(1, this.logEntriesSelectedStatus.length, logEntriesSelectedStatus);
+      this.logEntriesSelectedStatus.setRange(0, 1, [Tuple2(logEntry, false)]);
+      this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
     }
   }
 

@@ -61,9 +61,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 ),
               );
               if (result == "RECORD_DELETED") {
-                var _logEntryRepository = new LogEntryRepository();
-                var logEntries = await _logEntryRepository.fetchLogEntryList();
-                logEntryListBloc.inIssue.add(logEntries);
+                logEntryListBloc.fetchLogEntriesList(pageNo:logEntryListBloc.pageNo);
 
               }
             }),
