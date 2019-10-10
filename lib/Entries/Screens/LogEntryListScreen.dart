@@ -30,29 +30,54 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         .addPostFrameCallback((_) => changeThemeAfterBuild(context));
 
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {},
-          ),
-          title: Text("Issues"),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {},
         ),
-        body: StreamBuilder<ApiResponse>(
-            stream: logEntryListBloc.logEntryStream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData ||
-                  (snapshot.hasData &&
-                      snapshot.data.status == Status.LOADING)) {
-                print("snapshot data is ${snapshot.data}");
-                return Image(image: new AssetImage("images/loader.gif"));
-              } else {
-                print("snapshot data is ${snapshot.data}");
-                return Container(child: _myListView(context, snapshot.data.data),);
-              }
-            }));
+        title: Text("Issues"),
+      ),
+      body: StreamBuilder<ApiResponse>(
+        stream: logEntryListBloc.logEntryStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData ||
+              (snapshot.hasData && snapshot.data.status == Status.LOADING)) {
+            print("snapshot data is ${snapshot.data}");
+            return Image(image: new AssetImage("images/loader.gif"));
+          } else {
+            print("snapshot data is ${snapshot.data}");
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  child: _myListView(context, snapshot.data.data),
+                  height: MediaQuery.of(context).size.height-130,
+                ),
+                BottomAppBar(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FlatButton(
+                        child: Icon(Icons.chevron_left),
+                        onPressed: (logEntryListBloc.pageNo == 1)?null: _handleLeftButtonPressed
+                      ),
+                      FlatButton(
+                        child: Icon(Icons.chevron_right),
+                        onPressed: (logEntryListBloc.pageNo == logEntryListBloc.lastPage)?null: _handleRightButtonPressed
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+        },
+      ),
+    );
   }
 
-  Widget _myListView(BuildContext context,   List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus) {
+  Widget _myListView(BuildContext context,
+      List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus) {
     return ListView.builder(
       itemCount: logEntriesSelectedStatus.length,
       itemBuilder: (context, index) {
@@ -71,5 +96,12 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         ModalRoute.of(context).isCurrent)
       CustomTheme.instanceOf(context)
           .changeTheme(this.widget.screenDefaultTheme);
+  }
+
+  void _handleLeftButtonPressed() {
+    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo-1);
+  }
+  void _handleRightButtonPressed() {
+    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo+1);
   }
 }

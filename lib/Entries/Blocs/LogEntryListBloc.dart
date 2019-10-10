@@ -13,6 +13,14 @@ class LogEntryListBloc {
   LogEntry logEntry = new LogEntry(
       id: null, title: null, message: null, logLevel: null, created_at: null);
 
+
+  int noOfRecords = 0;
+  static const int pageSize = 10;
+
+  get lastPage {
+    return (noOfRecords / pageSize).ceil();
+  }
+
   int pageNo = 1;
 
   List<LogEntry> logEntries;
@@ -24,6 +32,7 @@ class LogEntryListBloc {
 
   StreamController<ApiResponse> _logEntryListStateController =
       StreamController<ApiResponse>();
+
 //  https://stackoverflow.com/a/51397263/7698247
   StreamSink<ApiResponse> get inIssue => _logEntryListStateController.sink;
   Stream<ApiResponse> get logEntryStream => _logEntryListStateController.stream;
@@ -42,9 +51,14 @@ class LogEntryListBloc {
   void fetchLogEntriesList({int pageNo}) async {
     this.pageNo = pageNo;
     _logEntryListStateController.add(ApiResponse.loading('Page${this.pageNo}'));
-    logEntries = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
-    logEntriesSelectedStatus = logEntries.map((currentLogEntry) => Tuple2(currentLogEntry, false)).toList();
-    _logEntryListStateController.add(ApiResponse.completed(logEntriesSelectedStatus));
+    var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
+    logEntries = result.item1;
+    noOfRecords = result.item2;
+    logEntriesSelectedStatus = logEntries
+        .map((currentLogEntry) => Tuple2(currentLogEntry, false))
+        .toList();
+    _logEntryListStateController
+        .add(ApiResponse.completed(logEntriesSelectedStatus));
   }
 
   void connectToSocket() async {
@@ -60,11 +74,16 @@ class LogEntryListBloc {
 
   void _mapEventToState(LogEntryEvent event) {
     if (event is NewLogEntryEvent) {
-      print("new logEntry is + $logEntry)");
-      this.logEntriesSelectedStatus.length += 1;
-      this.logEntriesSelectedStatus.setRange(1, this.logEntriesSelectedStatus.length, logEntriesSelectedStatus);
-      this.logEntriesSelectedStatus.setRange(0, 1, [Tuple2(logEntry, false)]);
-      this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
+      noOfRecords++;
+      if (this.pageNo == 1) {
+        if (logEntriesSelectedStatus.length < pageSize) {
+          this.logEntriesSelectedStatus.length += 1;
+        }
+        this.logEntriesSelectedStatus.setRange(
+            1, this.logEntriesSelectedStatus.length, logEntriesSelectedStatus);
+        this.logEntriesSelectedStatus.setRange(0, 1, [Tuple2(logEntry, false)]);
+        this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
+      }
     }
   }
 

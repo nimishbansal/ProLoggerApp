@@ -3,9 +3,10 @@ import 'package:pro_logger/Entries/utils.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/constants.dart';
 import 'package:requests/requests.dart';
+import 'package:tuple/tuple.dart';
 
 class LogEntryRepository {
-  Future<List<LogEntry>> fetchLogEntryList({pageNo: 1}) async {
+  Future<Tuple2<List<LogEntry>, int>> fetchLogEntryList({pageNo: 1}) async {
     List<LogEntry> results = [];
     String requestUrl = BASE_URL +
         LOG_ENTRY_LIST_ENDPOINT +
@@ -15,10 +16,11 @@ class LogEntryRepository {
     final Map<String, dynamic> response =
         await Requests.get(parameterisedRequestUrl, json: true);
     var it = response['results'].iterator;
+    int count = response['count'];
     while (it.moveNext()) {
       results.add(LogEntry.fromJson(it.current));
     }
-    return results;
+    return Tuple2(results, count);
   }
 
   Future<LogEntry> fetchLogEntryDetails(int entryId) async {
