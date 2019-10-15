@@ -80,7 +80,7 @@ class LogEntryListBloc {
   }
 
   void _mapEventToState(LogEntryEvent event) {
-    if (event is NewLogEntryEvent) {
+    if (event is NewLogEntryEvent) { // New issue event
       noOfRecords++;
       if (this.pageNo == 1) {
         if (logEntriesSelectedStatus.length < pageSize) {
@@ -91,7 +91,7 @@ class LogEntryListBloc {
         this.logEntriesSelectedStatus.setRange(0, 1, [Tuple2(logEntry, false)]);
         this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
       }
-    } else if (event is LogEntryCheckBoxToggledEvent) {
+    } else if (event is LogEntryCheckBoxToggledEvent) { // Log Entry List Item Selected
       var previousTuple = this.logEntriesSelectedStatus[event.index];
       this.logEntriesSelectedStatus[event.index] = Tuple2(previousTuple.item1, !previousTuple.item2);
       this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
