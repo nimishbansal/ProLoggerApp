@@ -1,8 +1,6 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
-
 
 class TopWaveClipper extends CustomClipper<Path> {
   List<List<double>> getListOfControlAndEndPoints(
@@ -19,13 +17,14 @@ class TopWaveClipper extends CustomClipper<Path> {
       var controlPointX = (endPointX + result.last[0]) / 2;
       var controlPointY = (endPointY + result.last[1]) / 2;
       if (i % 2 == 0)
-        result.add([controlPointX, controlPointY + 15, endPointX, endPointY-25]);
+        result.add(
+            [controlPointX, controlPointY + 15, endPointX, endPointY - 25]);
       else
         result.add([
           controlPointX,
           controlPointY - 20,
-          endPointX-10,
-          endPointY+15,
+          endPointX - 10,
+          endPointY + 15,
         ]);
     }
     return result;
@@ -57,7 +56,6 @@ class TopWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
 
-
 class RegistrationScreenPartOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -72,7 +70,6 @@ class RegistrationScreenPartOne extends StatelessWidget {
             ),
 
             //App Icon and App name
-
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -98,13 +95,10 @@ class RegistrationScreenPartOne extends StatelessWidget {
                       Container(
                         height: 280,
                         padding: EdgeInsets.only(left: 15),
-                        child: FittedBox(
-                          child: Image(
-                            image: new AssetImage(
-                              "images/coverimage.png",
-                            ),
+                        child: Image(
+                          image: new AssetImage(
+                            "images/coverimage.png",
                           ),
-                          fit: BoxFit.fill,
                         ),
                       ),
                     ],

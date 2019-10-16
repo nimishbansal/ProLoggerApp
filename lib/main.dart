@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 
+import 'Auth/Screens/RegistrationScreenPartOne.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
 
 void main() => runApp(CustomTheme(
@@ -39,12 +39,14 @@ class Home extends StatelessWidget {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+//    return MaterialApp(
+//      home: RegistrationScreenPartOne(),
+//      theme: CustomTheme.of(context),
+//    );
     return MaterialApp(
       title: 'Flutter Demo',
       initialRoute: 'logEntryList',
-      routes: {
-        'logEntryList' : (context) => LogEntryListScreen()
-      },
+      routes: {'logEntryList': (context) => LogEntryListScreen()},
       theme: CustomTheme.of(context),
     );
   }
