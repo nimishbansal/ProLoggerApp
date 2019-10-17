@@ -39,10 +39,10 @@ class Home extends StatelessWidget {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-//    return MaterialApp(
-//      home: RegistrationScreenPartOne(),
-//      theme: CustomTheme.of(context),
-//    );
+    return MaterialApp(
+      home: RegistrationScreenPartOne(),
+      theme: CustomTheme.of(context),
+    );
     return MaterialApp(
       title: 'Flutter Demo',
       initialRoute: 'logEntryList',

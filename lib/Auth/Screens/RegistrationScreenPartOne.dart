@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pro_logger/library_widgets/flutter_mobile_input.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
 class TopWaveClipper extends CustomClipper<Path> {
@@ -65,6 +65,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: <Widget>[
+            /*
             Container(
               margin: EdgeInsets.only(top: 10),
             ),
@@ -96,7 +97,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                         height: 280,
                         padding: EdgeInsets.only(left: 15),
                         child: Image(
-                          image: new AssetImage(
+                          image: AssetImage(
                             "images/coverimage.png",
                           ),
                         ),
@@ -115,7 +116,11 @@ class RegistrationScreenPartOne extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
+            */
+            //Mobile Input
+            SizedBox(height: 400,),
+            MobileInput(),
           ],
         ),
       ),
