@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/library_widgets/flutter_mobile_input.dart';
+import 'package:flutter_otp/flutter_otp.dart';
 
 final mobileInputWidgetStatekey = new GlobalKey<MobileInputState>();
 
@@ -14,7 +15,7 @@ class RegistrationScreenPartTwo extends StatefulWidget {
 
 class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
   EdgeInsetsGeometry commonPadding = EdgeInsets.only(left: 32);
-
+  FlutterOtp _flutterOtp;
   MobileInput mobileInputWidget;
 
   /// Currently Typed phone No.
@@ -33,6 +34,7 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
       key: mobileInputWidgetStatekey,
       onTextChanged: _handleOnTextChanged,
     );
+    _flutterOtp = FlutterOtp();
   }
 
   void _handleNextPressed(BuildContext context) {
@@ -52,6 +54,8 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
             });
       }
       else{
+        _flutterOtp.generateOtp(1000, 9999);
+        _flutterOtp.sendOtp(phoneNumber: this.phoneNo,countryCode: '+'+mobileInputWidgetStatekey.currentState.country.dialCode);
         Navigator.pushNamed(context, 'otpInputScreen', arguments: [this.phoneNo, mobileInputWidgetStatekey.currentState.country.dialCode]);
       }
     });
