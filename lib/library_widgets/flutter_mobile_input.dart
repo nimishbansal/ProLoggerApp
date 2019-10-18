@@ -8,21 +8,18 @@ class MobileInput extends StatefulWidget {
   /// Default to True
   final bool autofocus;
 
-  /// Called when the TextField widget is tapped.
-  final VoidCallback onTap;
+  final ValueChanged<String> onTextChanged;
 
-  final bool focusOnTap;
-
-  const MobileInput({Key key, this.autofocus = true, this.onTap, this.focusOnTap=true})
+  const MobileInput({Key key, this.autofocus = true, this.onTextChanged})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _MobileInputState();
+    return MobileInputState();
   }
 }
 
-class _MobileInputState extends State<MobileInput> {
+class MobileInputState extends State<MobileInput> {
   final _controller = TextEditingController(text: "");
   CountryPicker countryPicker;
   final _focusNode = FocusNode();
@@ -31,6 +28,10 @@ class _MobileInputState extends State<MobileInput> {
   bool _submittedFlag = false;
 
   Country country;
+
+  TextEditingController get controller {
+    return _controller;
+  }
 
   void initState() {
     super.initState();
@@ -120,6 +121,7 @@ class _MobileInputState extends State<MobileInput> {
       child: TextField(
         autofocus: widget.autofocus,
         onSubmitted: (String val) => _handleSubmitPressed(val, context),
+        onChanged: widget.onTextChanged??null,
         style: TextStyle(fontSize: 20),
         keyboardType: TextInputType.numberWithOptions(),
         controller: _controller,
