@@ -18,11 +18,11 @@ class TopWaveClipper extends CustomClipper<Path> {
       var controlPointY = (endPointY + result.last[1]) / 2;
       if (i % 2 == 0)
         result.add(
-            [controlPointX, controlPointY + 15, endPointX, endPointY - 25]);
+            [controlPointX, controlPointY - 10, endPointX, endPointY - 15]);
       else
         result.add([
           controlPointX,
-          controlPointY - 20,
+          controlPointY - 15,
           endPointX - 10,
           endPointY + 15,
         ]);
@@ -32,7 +32,7 @@ class TopWaveClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    var noOfEndpoints = 9;
+    var noOfEndpoints = 4;
     var distanceBetweenEndpointsXCords = size.width / (noOfEndpoints - 1);
     var controlAndEndpoints = getListOfControlAndEndPoints(
         noOfEndpoints, distanceBetweenEndpointsXCords, size);
@@ -62,7 +62,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
     return Material(
       child: Container(
         color: white,
-        height: MediaQuery.of(context).size.height+20,
+        height: MediaQuery.of(context).size.height + 20,
         child: Column(
           children: <Widget>[
             Container(
@@ -78,7 +78,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                   image: new AssetImage(
                     "images/applogo.png",
                   ),
-                  width: 125,
+                  width: 200,
                 ),
               ),
             ),
@@ -86,41 +86,43 @@ class RegistrationScreenPartOne extends StatelessWidget {
             //CoverImage, and overlay Text
             Stack(
               children: <Widget>[
-                ClipPath(
-                  clipper: TopWaveClipper(),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Container(height: 40),
-                      Container(
-                        height: 330,
-                        padding: EdgeInsets.only(left: 15),
-                        child: Image(
-                          image: AssetImage(
-                            "images/coverimage.png",
-                          ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      child: Image(
+                        width: MediaQuery.of(context).size.width,
+                        image: AssetImage(
+                          "images/image1.png",
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 0),
-                  child: Text(
-                    "welcome\naboard",
-                    style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold),
-                  ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      child: Image(
+                        width: MediaQuery.of(context).size.width,
+                        image: AssetImage(
+                          "images/coverimage.png",
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 40,),
+
+                  ],
                 ),
               ],
             ),
             //Mobile Input
-            SizedBox(height: 35,),
-            GestureDetector(child:AbsorbPointer(child: MobileInput(autofocus:false)), onTap: (){
-              print("whole widget tapped");
-            },),
+            GestureDetector(
+              child: AbsorbPointer(child: MobileInput(autofocus: false)),
+              onTap: () {
+                print("whole widget tapped");
+              },
+            ),
+
           ],
         ),
       ),

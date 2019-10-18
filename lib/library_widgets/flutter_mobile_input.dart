@@ -164,5 +164,4 @@ class _MobileInputState extends State<MobileInput> {
     _focusNode.unfocus();
     print("END: removeFocus()");
   }
-
 }
