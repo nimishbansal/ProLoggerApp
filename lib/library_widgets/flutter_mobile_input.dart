@@ -108,8 +108,10 @@ class MobileInputState extends State<MobileInput> {
         )),
         onTap: () {
           _suffixTappedFlag = true;
-          WidgetsBinding.instance
-              .addPostFrameCallback((_) => _controller.clear());
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _controller.clear();
+            widget.onTextChanged('');
+          });
         });
     return suffixWidget;
   }
@@ -121,7 +123,7 @@ class MobileInputState extends State<MobileInput> {
       child: TextField(
         autofocus: widget.autofocus,
         onSubmitted: (String val) => _handleSubmitPressed(val, context),
-        onChanged: widget.onTextChanged??null,
+        onChanged: widget.onTextChanged ?? null,
         style: TextStyle(fontSize: 20),
         keyboardType: TextInputType.numberWithOptions(),
         controller: _controller,

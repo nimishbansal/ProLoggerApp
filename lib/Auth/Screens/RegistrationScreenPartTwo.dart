@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pro_logger/library_widgets/flutter_mobile_input.dart';
 
 final mobileInputWidgetStatekey = new GlobalKey<MobileInputState>();
@@ -22,6 +23,7 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
       autofocus: true,
       key: mobileInputWidgetStatekey,
       onTextChanged: (String phoneNo) {
+        print("hmm");
         if ((phoneNo.length == 0 && this.phoneNo.length > 0) ||
             (phoneNo.length > 0 && this.phoneNo.length == 0)) {
           setState(() {
@@ -43,7 +45,7 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
   }
   @override
   Widget build(BuildContext context) {
-    bool buttonEnabled = (this.phoneNo.length == 0);
+    bool buttonEnabled = (this.phoneNo.length != 0);
     return Scaffold(
       body: Material(
         child: Container(
@@ -56,7 +58,14 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
                 padding: const EdgeInsets.only(top: 22),
                 child: IconButton(
                   icon: Icon(Icons.arrow_back, size: 36, color: Colors.black38),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    SystemChannels.textInput.invokeMethod('TextInput.hide').whenComplete((){
+                      WidgetsBinding.instance.addPostFrameCallback((_){
+                        Navigator.of(context).pop();
+                      });
+
+                    });
+                  },
                 ),
               ),
 
@@ -100,8 +109,8 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: buttonEnabled
-                                ? Colors.grey
-                                : Colors.black),
+                                ? Colors.black
+                                : Colors.grey),
                         child: Text(
                           'Next',
                           textAlign: TextAlign.center,
