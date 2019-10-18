@@ -62,10 +62,9 @@ class RegistrationScreenPartOne extends StatelessWidget {
     return Material(
       child: Container(
         color: white,
-        height: MediaQuery.of(context).size.height,
+        height: MediaQuery.of(context).size.height+20,
         child: Column(
           children: <Widget>[
-            /*
             Container(
               margin: EdgeInsets.only(top: 10),
             ),
@@ -94,7 +93,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                     children: <Widget>[
                       Container(height: 40),
                       Container(
-                        height: 280,
+                        height: 330,
                         padding: EdgeInsets.only(left: 15),
                         child: Image(
                           image: AssetImage(
@@ -106,7 +105,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 0),
                   child: Text(
                     "welcome\naboard",
                     style: TextStyle(
@@ -117,10 +116,11 @@ class RegistrationScreenPartOne extends StatelessWidget {
                 ),
               ],
             ),
-            */
             //Mobile Input
-            SizedBox(height: 200,),
-            MobileInput(),
+            SizedBox(height: 35,),
+            GestureDetector(child:AbsorbPointer(child: MobileInput(autofocus:false)), onTap: (){
+              print("whole widget tapped");
+            },),
           ],
         ),
       ),

@@ -3,6 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:ola_like_country_picker/ola_like_country_picker.dart';
 
 class MobileInput extends StatefulWidget {
+  /// Boolean to set [TextField.autofocus].
+  ///
+  /// Default to True
+  final bool autofocus;
+
+  /// Called when the TextField widget is tapped.
+  final VoidCallback onTap;
+
+  final bool focusOnTap;
+
+  const MobileInput({Key key, this.autofocus = true, this.onTap, this.focusOnTap=true})
+      : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _MobileInputState();
@@ -30,14 +43,15 @@ class _MobileInputState extends State<MobileInput> {
     });
     _focusNode.addListener(() {
       print("event found with focus ${_focusNode.hasFocus}");
-      if ((_focusNode.hasFocus & _prefixTappedFlag) ||
-          (_focusNode.hasFocus & _suffixTappedFlag)) {
+      if ((_focusNode.hasFocus && _prefixTappedFlag) ||
+          (_focusNode.hasFocus && _suffixTappedFlag)) {
         if (!_submittedFlag) {
           print("unfocussing");
           _focusNode.unfocus();
         }
       }
       print("event end with focus ${_focusNode.hasFocus}");
+      // reset all flags
       _prefixTappedFlag = false;
       _suffixTappedFlag = false;
       _submittedFlag = false;
@@ -103,15 +117,15 @@ class _MobileInputState extends State<MobileInput> {
   Widget build(BuildContext context) {
     return Container(
       width: 300,
-      height: 100,
       child: TextField(
-        autofocus: true,
+        autofocus: widget.autofocus,
         onSubmitted: (String val) => _handleSubmitPressed(val, context),
         style: TextStyle(fontSize: 20),
         keyboardType: TextInputType.numberWithOptions(),
         controller: _controller,
         focusNode: _focusNode,
         decoration: InputDecoration(
+          hintText: 'Your Number',
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.blue, width: 2)),
           enabledBorder: UnderlineInputBorder(
@@ -150,4 +164,5 @@ class _MobileInputState extends State<MobileInput> {
     _focusNode.unfocus();
     print("END: removeFocus()");
   }
+
 }
