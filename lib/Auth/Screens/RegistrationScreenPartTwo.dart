@@ -14,8 +14,16 @@ class RegistrationScreenPartTwo extends StatefulWidget {
 
 class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
   EdgeInsetsGeometry commonPadding = EdgeInsets.only(left: 32);
+
   MobileInput mobileInputWidget;
+
+  /// Currently Typed phone No.
   String phoneNo = '';
+
+  /// Controller for TextField in [MobileInput] Widget.
+  TextEditingController get controller {
+    return mobileInputWidgetStatekey.currentState?.controller;
+  }
 
   @override
   void initState() {
@@ -23,22 +31,8 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
     mobileInputWidget = MobileInput(
       autofocus: true,
       key: mobileInputWidgetStatekey,
-      onTextChanged: (String phoneNo) {
-        print("hmm");
-        if ((phoneNo.length == 0 && this.phoneNo.length > 0) ||
-            (phoneNo.length > 0 && this.phoneNo.length == 0)) {
-          setState(() {
-            this.phoneNo = phoneNo;
-          });
-        } else {
-          this.phoneNo = phoneNo;
-        }
-      },
+      onTextChanged: _handleOnTextChanged,
     );
-  }
-
-  TextEditingController get controller {
-    return mobileInputWidgetStatekey.currentState?.controller;
   }
 
   void _handleNextPressed(BuildContext context) {
@@ -47,71 +41,21 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
         builder: (BuildContext buildContext) {
           return Loader();
         });
-    Future.delayed(
-      Duration(seconds: 1),
-      () {
+
+    validateMobileNo(this.phoneNo).then((bool isValid) {
+      if (!isValid) {
         Navigator.pop(context);
         showDialog(
             context: context,
             builder: (BuildContext buildContext) {
-              return AlertDialog(
-                contentPadding: EdgeInsets.all(0),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 4, bottom: 4),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Invalid Mobile No.',
-                          textAlign: TextAlign.center,
-                          style:
-                              TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      thickness: 1,
-                      color: Colors.grey,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 4, bottom: 4),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Please enter Valid Mobile No',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(12),
-                    ),
-                    Material(
-                      color: Colors.black,
-                      elevation: 3,
-                      child: InkWell(
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Text(
-                            'OK',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 20, color: Colors.yellowAccent, fontWeight: FontWeight.bold),
-                          ),
-                          width: 0.9 * MediaQuery.of(context).size.width,
-                        ),
-                        onTap: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return getInvalidMobileNoAlertDialog(buildContext);
             });
-      },
+      }
+    });
+
+    Future.delayed(
+      Duration(seconds: 1),
+      () {},
     );
   }
 
@@ -209,5 +153,87 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
         ),
       ),
     );
+  }
+
+  void _handleOnTextChanged(String phoneNo) {
+    if ((phoneNo.length == 0 && this.phoneNo.length > 0) ||
+        (phoneNo.length > 0 && this.phoneNo.length == 0)) {
+      setState(() {
+        this.phoneNo = phoneNo;
+      });
+    } else {
+      this.phoneNo = phoneNo;
+    }
+  }
+
+  Widget getInvalidMobileNoAlertDialog(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.all(0),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 4, bottom: 4),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Invalid Mobile No.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.grey,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 4, bottom: 4),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Please enter Valid Mobile No',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(12),
+          ),
+          Material(
+            color: Colors.black,
+            elevation: 3,
+            child: InkWell(
+              child: Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'OK',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.yellowAccent,
+                      fontWeight: FontWeight.bold),
+                ),
+                width: 0.9 * MediaQuery.of(context).size.width,
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                mobileInputWidgetStatekey.currentState.setFocusWithKeyboard();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> validateMobileNo(String value) async {
+    bool result = await Future.delayed(Duration(seconds: 2), () {
+      return false;
+    });
+    return result;
   }
 }
