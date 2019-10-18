@@ -3,6 +3,7 @@ import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
+import 'Auth/Screens/RegistrationScreenPartTwo.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
 
 void main() => runApp(CustomTheme(
@@ -42,6 +43,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
+      routes: {
+        'phoneInputScreen': (context) => RegistrationScreenPartTwo()
+      },
     );
     return MaterialApp(
       title: 'Flutter Demo',
