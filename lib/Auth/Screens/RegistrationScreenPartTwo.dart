@@ -51,12 +51,10 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
               return getInvalidMobileNoAlertDialog(buildContext);
             });
       }
+      else{
+        Navigator.pushNamed(context, 'otpInputScreen', arguments: [this.phoneNo, mobileInputWidgetStatekey.currentState.country.dialCode]);
+      }
     });
-
-    Future.delayed(
-      Duration(seconds: 1),
-      () {},
-    );
   }
 
   @override
@@ -232,7 +230,7 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
 
   Future<bool> validateMobileNo(String value) async {
     bool result = await Future.delayed(Duration(seconds: 2), () {
-      return false;
+      return true;
     });
     return result;
   }

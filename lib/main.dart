@@ -3,6 +3,7 @@ import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
+import 'Auth/Screens/RegistrationScreenPartThree.dart';
 import 'Auth/Screens/RegistrationScreenPartTwo.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
 
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
       home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
       routes: {
-        'phoneInputScreen': (context) => RegistrationScreenPartTwo()
+        'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
+        'otpInputScreen': (context) => RegistrationScreenPartThree(),
       },
     );
     return MaterialApp(
