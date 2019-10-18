@@ -119,7 +119,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
             ),
             */
             //Mobile Input
-            SizedBox(height: 400,),
+            SizedBox(height: 200,),
             MobileInput(),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ola_like_country_picker/ola_like_country_picker.dart';
 
 class MobileInput extends StatefulWidget {
@@ -9,26 +10,41 @@ class MobileInput extends StatefulWidget {
 }
 
 class _MobileInputState extends State<MobileInput> {
+  final _controller = TextEditingController(text: "");
   CountryPicker countryPicker;
-  Country country;
-  final TextEditingController _controller = new TextEditingController();
-  TextStyle textFont;
+  final _focusNode = FocusNode();
+  bool _prefixTappedFlag = false;
+  bool _suffixTappedFlag = false;
+  bool _submittedFlag = false;
 
-  @override
+  Country country;
+
   void initState() {
     super.initState();
-    country = Country.fromJson(countryCodes[200]);
-    countryPicker = new CountryPicker(onCountrySelected: (selectedCountry) {
+    country = Country.fromJson(countryCodes[0]);
+    countryPicker = CountryPicker(onCountrySelected: (Country country) {
       setState(() {
-        this.country = selectedCountry;
+        this.country = country;
       });
+      setFocusWithKeyboard();
     });
-    textFont = new TextStyle(
-      fontSize: 20,
-    );
+    _focusNode.addListener(() {
+      print("event found with focus ${_focusNode.hasFocus}");
+      if ((_focusNode.hasFocus & _prefixTappedFlag) ||
+          (_focusNode.hasFocus & _suffixTappedFlag)) {
+        if (!_submittedFlag) {
+          print("unfocussing");
+          _focusNode.unfocus();
+        }
+      }
+      print("event end with focus ${_focusNode.hasFocus}");
+      _prefixTappedFlag = false;
+      _suffixTappedFlag = false;
+      _submittedFlag = false;
+    });
   }
 
-  Widget getPrefixWidget(BuildContext context) {
+  Widget getTextFieldPrefixIconWidget() {
     Row prefixIconRow = Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -47,92 +63,91 @@ class _MobileInputState extends State<MobileInput> {
         ),
         Text(
           "+" + country.dialCode,
-          style: textFont,
+          style: TextStyle(fontSize: 20),
         ),
-        Icon(Icons.keyboard_arrow_down),
+        Icon(
+          Icons.keyboard_arrow_down,
+          color: Colors.grey,
+        ),
         Padding(
           padding: EdgeInsets.only(left: 3, right: 3),
         ),
       ],
     );
-    return GestureDetector(
-      child: prefixIconRow,
-      onTap: () => _launchCountryPicker(context),
-    );
+    GestureDetector prefixWidget = GestureDetector(
+        child: prefixIconRow,
+        onTap: () {
+          _prefixTappedFlag = true;
+          removeFocus();
+          countryPicker.launch(context);
+        });
+    return prefixWidget;
   }
 
-  Widget getSuffixWidget(BuildContext context) {
-    return Icon(
-      Icons.clear,
-      color: Colors.grey,
-    );
+  Widget getTextFieldSuffixIconWidget() {
+    GestureDetector suffixWidget = GestureDetector(
+        child: Container(
+            child: Icon(
+          Icons.clear,
+          color: Colors.grey,
+        )),
+        onTap: () {
+          _suffixTappedFlag = true;
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _controller.clear());
+        });
+    return suffixWidget;
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = 300;
-    double prefixWidth = 80;
-    double suffixWidth = 20;
-
-    Widget prefixWidget = getPrefixWidget(context);
-    Widget suffixWidget = getSuffixWidget(context);
-
-    return Material(
-      child: Center(
-        child: Stack(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  child: TextField(
-                    controller: _controller,
-                    autofocus: true,
-                    style: textFont,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        hintText: 'Your number',
-                        suffixIcon: suffixWidget,
-                        prefixIcon: prefixWidget),
-                  ),
-                  width: width,
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                GestureDetector(
-                  child: Container(
-                    height: 50,
-                    width: prefixWidth,
-                    color: Colors.orange.withOpacity(0.5),
-                  ),
-                  onTap: () {
-                    countryPicker.launch(context);
-                  },
-                ),
-                SizedBox(
-                  height: 50,
-                  width: width - prefixWidth - suffixWidth,
-                ),
-                GestureDetector(
-                  child: Container(
-                    height: 50,
-                    width: suffixWidth,
-                    color: Colors.green.withOpacity(0.5),
-                  ),
-                  onTap: () {
-                    _controller.clear();
-                  },
-                ),
-              ],
-            ),
-          ],
+    return Container(
+      width: 300,
+      height: 100,
+      child: TextField(
+        autofocus: true,
+        onSubmitted: (String val) => _handleSubmitPressed(val, context),
+        style: TextStyle(fontSize: 20),
+        keyboardType: TextInputType.numberWithOptions(),
+        controller: _controller,
+        focusNode: _focusNode,
+        decoration: InputDecoration(
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue, width: 2)),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue, width: 2)),
+          prefixIcon: getTextFieldPrefixIconWidget(),
+          suffixIcon: getTextFieldSuffixIconWidget(),
         ),
       ),
     );
   }
 
-  _launchCountryPicker(BuildContext context) {
-    countryPicker.launch(context);
+  void _handleSubmitPressed(String value, BuildContext context) {
+    _submittedFlag = true;
+    setFocusWithoutKeyboard();
+  }
+
+  setFocusWithoutKeyboard() {
+    print("START: setFocusWithoutKeyboard()");
+    print("on submit focus node has focus=${_focusNode.hasFocus}");
+    FocusScope.of(context).requestFocus(_focusNode);
+    print("executed");
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => SystemChannels.textInput.invokeMethod('TextInput.hide'));
+    print("hidden keyboard");
+    print("END: setFocusWithoutKeyboard()");
+  }
+
+  setFocusWithKeyboard() {
+    print("START: in setting focus with keyboard");
+    FocusScope.of(context).requestFocus(_focusNode);
+    print("END: setting focus without keyboard");
+  }
+
+  removeFocus() {
+    print("START: removeFocus()");
+    _focusNode.unfocus();
+    print("END: removeFocus()");
   }
 }
