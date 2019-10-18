@@ -43,6 +43,7 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
   void _handleNextPressed() {
     print('next button Pressed');
   }
+
   @override
   Widget build(BuildContext context) {
     bool buttonEnabled = (this.phoneNo.length != 0);
@@ -59,11 +60,12 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
                 child: IconButton(
                   icon: Icon(Icons.arrow_back, size: 36, color: Colors.black38),
                   onPressed: () {
-                    SystemChannels.textInput.invokeMethod('TextInput.hide').whenComplete((){
-                      WidgetsBinding.instance.addPostFrameCallback((_){
+                    SystemChannels.textInput
+                        .invokeMethod('TextInput.hide')
+                        .whenComplete(() {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
                         Navigator.of(context).pop();
                       });
-
                     });
                   },
                 ),
@@ -103,21 +105,24 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: GestureDetector(
-                    child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
+                  child: Material( //https://stackoverflow.com/a/52697978/7698247
+                    color: buttonEnabled ? Colors.black : Colors.grey,
+                    child: InkWell(
+                      splashColor: Colors.white,
+                      radius:200,
+                      child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: buttonEnabled
-                                ? Colors.black
-                                : Colors.grey),
-                        child: Text(
-                          'Next',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 22),
-                        ),
-                        width: 0.9 * MediaQuery.of(context).size.width),
-                    onTap: buttonEnabled?_handleNextPressed:null,
+                          ),
+                          child: Text(
+                            'Next',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 22),
+                          ),
+                          width: 0.9 * MediaQuery.of(context).size.width),
+                      onTap: buttonEnabled ? _handleNextPressed : null,
+                    ),
                   ),
                 ),
               ),
