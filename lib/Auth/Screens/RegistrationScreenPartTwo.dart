@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/library_widgets/flutter_mobile_input.dart';
 
 final mobileInputWidgetStatekey = new GlobalKey<MobileInputState>();
@@ -40,8 +41,78 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
     return mobileInputWidgetStatekey.currentState?.controller;
   }
 
-  void _handleNextPressed() {
-    print('next button Pressed');
+  void _handleNextPressed(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext buildContext) {
+          return Loader();
+        });
+    Future.delayed(
+      Duration(seconds: 1),
+      () {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (BuildContext buildContext) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.all(0),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 4, bottom: 4),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Invalid Mobile No.',
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      thickness: 1,
+                      color: Colors.grey,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 4, bottom: 4),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Please enter Valid Mobile No',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(12),
+                    ),
+                    Material(
+                      color: Colors.black,
+                      elevation: 3,
+                      child: InkWell(
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            'OK',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 20, color: Colors.yellowAccent, fontWeight: FontWeight.bold),
+                          ),
+                          width: 0.9 * MediaQuery.of(context).size.width,
+                        ),
+                        onTap: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+      },
+    );
   }
 
   @override
@@ -105,11 +176,12 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: Material( //https://stackoverflow.com/a/52697978/7698247
+                  child: Material(
+                    //https://stackoverflow.com/a/52697978/7698247
                     color: buttonEnabled ? Colors.black : Colors.grey,
                     child: InkWell(
                       splashColor: Colors.white,
-                      radius:200,
+                      radius: 200,
                       child: Container(
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -121,7 +193,9 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
                             style: TextStyle(color: Colors.white, fontSize: 22),
                           ),
                           width: 0.9 * MediaQuery.of(context).size.width),
-                      onTap: buttonEnabled ? _handleNextPressed : null,
+                      onTap: buttonEnabled
+                          ? () => _handleNextPressed(context)
+                          : null,
                     ),
                   ),
                 ),
