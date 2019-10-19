@@ -8,7 +8,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
     return Material(
       child: Container(
         color: white,
-        height: MediaQuery.of(context).size.height + 20,
+        height: MediaQuery.of(context).size.height+20,
         child: Column(
           children: <Widget>[
             Container(
@@ -18,13 +18,14 @@ class RegistrationScreenPartOne extends StatelessWidget {
             //App Icon and App name
             Align(
               alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 30.0),
+              child: Container(
+                padding: const EdgeInsets.only(top: 20.0,),
                 child: Image(
                   image: new AssetImage(
                     "images/applogo.png",
                   ),
-                  width: 200,
+                  width: 0.40*MediaQuery.of(context).size.width,
+                  height: 0.40*MediaQuery.of(context).size.width,
                 ),
               ),
             ),
@@ -38,14 +39,14 @@ class RegistrationScreenPartOne extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.only(left: 15, right: 15),
                       child: Image(
-                        width: MediaQuery.of(context).size.width,
+                        width: 0.75*MediaQuery.of(context).size.width,
                         image: AssetImage(
                           "images/image1.png",
                         ),
                       ),
                     ),
 
-                  SizedBox(height: 0.02*MediaQuery.of(context).size.height,),
+                  SizedBox(height: 0.04*MediaQuery.of(context).size.height,),
                     Container(
                       padding: EdgeInsets.only(left: 15, right: 15),
                       child: Image(
@@ -56,7 +57,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 0.2*MediaQuery.of(context).size.height,),
+                    SizedBox(height: 0.07*MediaQuery.of(context).size.height,),
 
                   ],
                 ),

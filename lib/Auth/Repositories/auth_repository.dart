@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:pro_logger/Auth/utils.dart';
-import 'package:pro_logger/Entries/utils.dart';
 import 'package:pro_logger/constants.dart';
 import 'package:requests/requests.dart';
 

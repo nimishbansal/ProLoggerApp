@@ -29,6 +29,7 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
     return mobileInputWidgetStatekey.currentState?.controller;
   }
 
+  AuthRepository authRepository;
   @override
   void initState() {
     super.initState();
@@ -37,6 +38,8 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
       key: mobileInputWidgetStatekey,
       onTextChanged: _handleOnTextChanged,
     );
+
+    authRepository = AuthRepository();
 
   }
 
@@ -58,8 +61,9 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
       } else {
         String phoneNo = this.phoneNo;
         String countryCode = '+' + mobileInputWidgetStatekey.currentState.country.dialCode;
-        AuthRepository authRepository = AuthRepository();
+        print("generating otp");
         authRepository.generateOtp(phoneNo: countryCode+phoneNo);
+        print("going to next");
         Navigator.pushNamed(context, 'otpInputScreen', arguments: [
           this.phoneNo,
           mobileInputWidgetStatekey.currentState.country.dialCode
