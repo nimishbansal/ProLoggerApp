@@ -45,6 +45,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                       ),
                     ),
 
+                  SizedBox(height: 0.02*MediaQuery.of(context).size.height,),
                     Container(
                       padding: EdgeInsets.only(left: 15, right: 15),
                       child: Image(
@@ -55,7 +56,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 40,),
+                    SizedBox(height: 0.2*MediaQuery.of(context).size.height,),
 
                   ],
                 ),
@@ -63,7 +64,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
             ),
             //Mobile Input
             GestureDetector(
-              child: AbsorbPointer(child: MobileInput(autofocus: false)),
+              child: AbsorbPointer(child: MobileInput(autofocus: false,)),
               onTap: () {
                 print("whole widget tapped");
                 Navigator.of(context).pushNamed('phoneInputScreen');

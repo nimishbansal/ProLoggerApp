@@ -1,0 +1,1 @@
+const OTP_MESSAGE_ENDPOINT = '/auth/send_otp/';

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:sms/sms.dart';
 
 class RegistrationScreenPartThree extends StatefulWidget {
   @override
@@ -9,6 +12,22 @@ class RegistrationScreenPartThree extends StatefulWidget {
 
 class RegistrationScreenPartThreeState
     extends State<RegistrationScreenPartThree> {
+
+    SmsReceiver receiver;
+
+  StreamSubscription<SmsMessage> _streamSubscription;
+
+
+    @override
+  void initState() {
+    super.initState();
+    receiver = new SmsReceiver();
+    _streamSubscription = receiver.onSmsReceived.listen((SmsMessage msg) {
+        RegExp regExp = new RegExp("(\\d{4})");
+        String receivedOTP = regExp.firstMatch(msg.body).group(0);
+        print(receivedOTP);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,5 +47,12 @@ class RegistrationScreenPartThreeState
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _streamSubscription.cancel();
   }
 }
