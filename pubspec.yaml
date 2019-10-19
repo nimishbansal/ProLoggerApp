@@ -21,7 +21,7 @@ dependencies:
   shared_preferences: ^0.5.3+4
   intl: ^0.15.8
   tuple: ^1.0.3
-  ola_like_country_picker: ^0.0.8
+  ola_like_country_picker: 0.1.0
   sms: ^0.2.4
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:pin_entry_text_field/pin_entry_text_field.dart';
 import 'package:sms/sms.dart';
 
 class RegistrationScreenPartThree extends StatefulWidget {
@@ -45,7 +44,6 @@ class RegistrationScreenPartThreeState
                 child: Text(
                     'Please wait while we\nauto verify the OTP\nsent to\n$dialCode${phoneNo.toString()}', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500, ),),),
             SizedBox(height: 0.1*MediaQuery.of(context).size.height,),
-            Container(child: PinEntryTextField(fields: 4, showFieldAsBox: true,),),
           ],
         ),
       ),
