@@ -6,6 +6,7 @@ import 'Auth/Screens/RegistrationScreenPartOne.dart';
 import 'Auth/Screens/RegistrationScreenPartThree.dart';
 import 'Auth/Screens/RegistrationScreenPartTwo.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
+import 'library_widgets/otp_field.dart';
 
 void main() => runApp(CustomTheme(
       child: MyApp(),
@@ -41,6 +42,9 @@ class Home extends StatelessWidget {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      home: OTPField2()
+    );
     return MaterialApp(
       home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
