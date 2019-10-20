@@ -73,6 +73,11 @@ class _OTPFieldState extends State<OTPField> {
 }
 
 class OTPField2 extends StatefulWidget {
+  final double boxWidth;
+  final double boxHeight;
+
+  const OTPField2({Key key, this.boxWidth=40, this.boxHeight=40}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return OTPField2State();
@@ -81,6 +86,7 @@ class OTPField2 extends StatefulWidget {
 
 class BlinkingWidget extends StatefulWidget {
   final Color cursorColor;
+
 
   const BlinkingWidget({Key key, this.cursorColor = Colors.blue})
       : super(key: key);
@@ -143,7 +149,7 @@ class OTPField2State extends State<OTPField2> {
   List<Widget> otpContainersWithPadding;
   List<Widget> children = List<Widget>();
   int maxLength;
-  Widget widgetWithoutText = Container(
+  Widget widgetWithoutText1 = Container(
     child: CircleAvatar(
       backgroundColor: Colors.grey,
       radius: 8,
@@ -155,9 +161,40 @@ class OTPField2State extends State<OTPField2> {
     super.initState();
     maxLength = 4;
     for (int i = 0; i < maxLength; i++) {
-      children.add(widgetWithoutText);
+      children.add(getUnfilledBoxWithoutNo());
     }
     _handleOTPChanged('');
+  }
+  Widget getUnfilledBoxWithoutNo(){
+    return Container(
+      height: widget.boxHeight,
+      width: widget.boxWidth,
+      decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: Colors.blue)),
+    );
+  }
+
+  Widget getFilledBoxWithNo(String value) {
+    return Container(
+      height: widget.boxHeight,
+      width: widget.boxWidth,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: Colors.blue)),
+      child: Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20),
+      ),
+      alignment: Alignment.center,
+    );
+
+    Text(
+      value,
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 20),
+    );
   }
 
   @override
@@ -183,8 +220,8 @@ class OTPField2State extends State<OTPField2> {
               (int index) {
                 if (index % 2 == 0)
                   return Container(
-                    width: 40,
-                    height: 40,
+                    width: widget.boxWidth,
+                    height: widget.boxHeight,
                     child: this.children[(index / 2).floor()],
                     alignment: Alignment.center,
                   );
@@ -206,11 +243,7 @@ class OTPField2State extends State<OTPField2> {
     setState(() {
       // loop for building filled boxes
       for (int i = 0; i < value.length; i++) {
-        Text textWidget = Text(
-          value[i],
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20),
-        );
+        Widget textWidget = getFilledBoxWithNo(value[i]);
         this.children[i] = i == maxLength - 1
             ? Stack(
                 alignment: Alignment.center,
@@ -234,12 +267,12 @@ class OTPField2State extends State<OTPField2> {
 //          color: Colors.greenAccent,
           child: i == value.length
               ? Stack(alignment: Alignment.center, children: <Widget>[
-                  widgetWithoutText,
-                  Align(child: BlinkingWidget(), alignment: Alignment(-0.5, 0))
+                  getUnfilledBoxWithoutNo(),
+                  Align(child: BlinkingWidget(), alignment: Alignment(-0.6, 0))
                 ])
-              : widgetWithoutText, // i == value.length ensures blinking on focused digit box
+              : getUnfilledBoxWithoutNo(), // i == value.length ensures blinking on focused digit box
           alignment: Alignment.center,
-          padding: EdgeInsets.only(top: 6, bottom: 6),
+//          padding: EdgeInsets.only(top: 6, bottom: 6),
         );
       }
     });
