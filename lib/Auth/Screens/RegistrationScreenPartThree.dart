@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:sms/sms.dart';
 
 class RegistrationScreenPartThree extends StatefulWidget {
@@ -23,9 +24,12 @@ class RegistrationScreenPartThreeState
     super.initState();
     receiver = new SmsReceiver();
     _streamSubscription = receiver.onSmsReceived.listen((SmsMessage msg) {
-        RegExp regExp = new RegExp("(\\d{4})");
-        String receivedOTP = regExp.firstMatch(msg.body).group(0);
-        print(receivedOTP);
+        if (AuthRepository().checkAuthorizedSMS(msg)){
+            RegExp regExp = new RegExp("(\\d{4})");
+            String receivedOTP = regExp.firstMatch(msg.body).group(0);
+            print(receivedOTP);
+        }
+
     });
   }
 
