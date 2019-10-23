@@ -1,102 +1,27 @@
 import 'package:flutter/material.dart';
 
-class OTPField extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _OTPFieldState();
-  }
-}
-
-class _OTPFieldState extends State<OTPField> {
-  Row textFieldRow;
-
-  @override
-  void initState() {
-    super.initState();
-    textFieldRow = getTextFieldRow();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Center(
-        child: Container(
-          width: 200,
-          height: 200,
-          color: Colors.lightGreenAccent,
-          child: textFieldRow,
-        ),
-      ),
-    );
-  }
-
-  Row getTextFieldRow() {
-    int noOfFields = 4;
-    Row textFieldRow;
-    List<Container> textFieldRowChildren;
-    textFieldRowChildren = new List<Container>.generate(
-      noOfFields,
-      (i) => Container(
-        padding: EdgeInsets.all(4),
-        child: TextField(
-          focusNode: FocusNode(),
-          keyboardType: TextInputType.phone,
-          textAlign: TextAlign.center,
-          maxLength: 1,
-          decoration: InputDecoration(counterText: ''),
-          onChanged: (String value) {
-            TextField textField = (textFieldRowChildren[i].child as TextField);
-
-            // value.length = 0 when text field back pressed
-            if (value.length == 0) {
-            } else {
-              if (i == noOfFields - 1) {
-                print(textField.focusNode.hasFocus);
-                textField.focusNode.unfocus();
-              } else {
-                TextField nextTextField =
-                    (textFieldRowChildren[i + 1].child as TextField);
-                print(nextTextField.focusNode.hasFocus);
-                FocusScope.of(context).requestFocus(nextTextField.focusNode);
-              }
-            }
-          },
-        ),
-        width: 50,
-      ),
-    );
-    textFieldRow = Row(
-      children: textFieldRowChildren,
-    );
-    return textFieldRow;
-  }
-}
-
-class OTPField2 extends StatefulWidget {
-  final double boxWidth;
-  final double boxHeight;
-
-  const OTPField2({Key key, this.boxWidth=40, this.boxHeight=40}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return OTPField2State();
-  }
-}
-
-class BlinkingWidget extends StatefulWidget {
+class BlinkingCaret extends StatefulWidget {
+  /// caret cursor color.
   final Color cursorColor;
 
+  /// width of caret cursor.
+  final double width;
 
-  const BlinkingWidget({Key key, this.cursorColor = Colors.blue})
+  final EdgeInsetsGeometry caretPadding;
+
+  const BlinkingCaret(
+      {Key key,
+      this.cursorColor = Colors.blue,
+      this.width = 2,
+      this.caretPadding = const EdgeInsets.only(top: 8, bottom: 8)})
       : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return BlinkingWidgetState();
+    return BlinkingCaretState();
   }
 }
 
-class BlinkingWidgetState extends State<BlinkingWidget>
+class BlinkingCaretState extends State<BlinkingCaret>
     with SingleTickerProviderStateMixin {
   Duration _blinkDuration = Duration(milliseconds: 250);
   AnimationController _animationController;
@@ -126,11 +51,14 @@ class BlinkingWidgetState extends State<BlinkingWidget>
     return AnimatedBuilder(
       animation: _animation,
       builder: (BuildContext context, _) {
-        return SizedBox(
-          height: double.infinity,
-          child: Container(
-            width: 3,
-            color: _animation.value,
+        return Container(
+          padding: widget.caretPadding,
+          child: SizedBox(
+            height: double.infinity,
+            child: Container(
+              width: widget.width,
+              color: _animation.value,
+            ),
           ),
         );
       },
@@ -144,17 +72,34 @@ class BlinkingWidgetState extends State<BlinkingWidget>
   }
 }
 
-class OTPField2State extends State<OTPField2> {
+class OTPField extends StatefulWidget {
+  /// Width of the single OTP box
+  final double boxWidth;
+
+  /// Height of the single OTP box
+  final double boxHeight;
+
+  final Widget defaultGap;
+
+  const OTPField(
+      {Key key,
+      this.boxWidth = 40,
+      this.boxHeight = 40,
+      this.defaultGap = const Padding(padding: EdgeInsets.all(4))})
+      : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return OTPFieldState();
+  }
+}
+
+class OTPFieldState extends State<OTPField> {
   List<Widget> otpContainers;
   List<Widget> otpContainersWithPadding;
   List<Widget> children = List<Widget>();
   int maxLength;
-  Widget widgetWithoutText1 = Container(
-    child: CircleAvatar(
-      backgroundColor: Colors.grey,
-      radius: 8,
-    ),
-  );
+  FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -165,14 +110,19 @@ class OTPField2State extends State<OTPField2> {
     }
     _handleOTPChanged('');
   }
-  Widget getUnfilledBoxWithoutNo(){
+
+  Widget getUnfilledBoxWithoutNo() {
     return Container(
-      height: widget.boxHeight,
-      width: widget.boxWidth,
-      decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.blue)),
-    );
+        height: widget.boxHeight,
+        width: widget.boxWidth,
+        alignment: Alignment.center,
+        child: CircleAvatar(
+          backgroundColor: Colors.grey,
+          maxRadius: 7,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+        ));
   }
 
   Widget getFilledBoxWithNo(String value) {
@@ -182,11 +132,15 @@ class OTPField2State extends State<OTPField2> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(color: Colors.blue)),
-      child: Text(
+      /*
+        child: Text(
         value,
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 20),
       ),
+      */
+      child: Image.network(
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQa49UMY_GWpfxiR-1Os0-cBPmygpTgGECD_LLxYzO26UOb1pFa"),
       alignment: Alignment.center,
     );
 
@@ -199,38 +153,50 @@ class OTPField2State extends State<OTPField2> {
 
   @override
   Widget build(BuildContext context) {
+    Widget textField = TextField(
+      enableInteractiveSelection: false,
+      maxLength: maxLength,
+      autofocus: true,
+      focusNode: _focusNode,
+      keyboardType: TextInputType.phone,
+      onChanged: _handleOTPChanged,
+    );
+
     return Material(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
         children: <Widget>[
-          Container(
-            child: TextField(
-              maxLength: maxLength,
-              autofocus: true,
-              keyboardType: TextInputType.phone,
-              onChanged: _handleOTPChanged,
-            ),
-            width: 200,
+          Visibility(
+            child: textField,
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: false,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List<Widget>.generate(
-              2 * maxLength,
-              (int index) {
-                if (index % 2 == 0)
-                  return Container(
-                    width: widget.boxWidth,
-                    height: widget.boxHeight,
-                    child: this.children[(index / 2).floor()],
-                    alignment: Alignment.center,
-                  );
-                else
-                  return Padding(
-                    padding: EdgeInsets.all(6),
-                  );
-              },
+          GestureDetector(
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 4)),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List<Widget>.generate(
+                  2 * maxLength - 1,
+                  (int index) {
+                    if (index % 2 == 0)
+                      return Container(
+                        width: widget.boxWidth,
+                        height: widget.boxHeight,
+                        child: this.children[(index / 2).floor()],
+                        alignment: Alignment.center,
+                      );
+                    else
+                      return widget.defaultGap;
+                  },
+                ),
+              ),
             ),
+            onTap: () {
+              FocusScope.of(context).requestFocus(_focusNode);
+            },
           ),
         ],
       ),
@@ -250,8 +216,14 @@ class OTPField2State extends State<OTPField2> {
                 children: <Widget>[
                   textWidget,
                   Align(
-                    child: BlinkingWidget(),
-                    alignment: Alignment(0.5, 0),
+                    child: BlinkingCaret(
+                      caretPadding: EdgeInsets.only(
+                          left: 4,
+                          right: 4,
+                          top: 0.1 * widget.boxHeight,
+                          bottom: 0.1 * widget.boxHeight),
+                    ),
+                    alignment: Alignment(0.65, 0),
                   )
                 ],
               )
@@ -268,7 +240,15 @@ class OTPField2State extends State<OTPField2> {
           child: i == value.length
               ? Stack(alignment: Alignment.center, children: <Widget>[
                   getUnfilledBoxWithoutNo(),
-                  Align(child: BlinkingWidget(), alignment: Alignment(-0.6, 0))
+                  Align(
+                      child: BlinkingCaret(
+                        caretPadding: EdgeInsets.only(
+                            left: 4,
+                            right: 4,
+                            top: 0.1 * widget.boxHeight,
+                            bottom: 0.1 * widget.boxHeight),
+                      ),
+                      alignment: Alignment(-0.65, 0))
                 ])
               : getUnfilledBoxWithoutNo(), // i == value.length ensures blinking on focused digit box
           alignment: Alignment.center,

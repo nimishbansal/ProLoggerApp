@@ -43,8 +43,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: OTPField2()
-    );
+      home: Container(color:Colors.yellowAccent, alignment:Alignment.center, child: Container(color:Colors.green, width: 400,height: 200, child: OTPField(boxWidth: 40,boxHeight: 40,),alignment: Alignment.center, ),),);
     return MaterialApp(
       home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
