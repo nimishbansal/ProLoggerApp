@@ -106,7 +106,7 @@ class OTPFieldState extends State<OTPField> {
   List<Widget> otpContainersWithPadding;
   List<Widget> children = List<Widget>();
   int maxLength;
-  FocusNode _focusNode = FocusNode();
+  FocusNode focusNode = FocusNode();
   bool _isKeyboardVisible = true;
   String otpValue = '';
 
@@ -160,7 +160,7 @@ class OTPFieldState extends State<OTPField> {
       enableInteractiveSelection: false,
       maxLength: maxLength,
       autofocus: true,
-      focusNode: _focusNode,
+      focusNode: focusNode,
       keyboardType: TextInputType.phone,
       onChanged: _handleOTPChanged,
     );
@@ -201,7 +201,7 @@ class OTPFieldState extends State<OTPField> {
                   if (!_isKeyboardVisible) {
                     FocusScope.of(context).requestFocus(FocusNode());
                     WidgetsBinding.instance.addPostFrameCallback(
-                      (_) => FocusScope.of(context).requestFocus(_focusNode),
+                      (_) => FocusScope.of(context).requestFocus(focusNode),
                     );
                   }
                 }),

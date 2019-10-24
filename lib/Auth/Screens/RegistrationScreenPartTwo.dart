@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
+import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/library_widgets/flutter_mobile_input.dart';
 import 'package:sms/sms.dart';
 
@@ -40,7 +41,6 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
     );
 
     authRepository = AuthRepository();
-
   }
 
   void _handleNextPressed(BuildContext context) {
@@ -60,9 +60,10 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
             });
       } else {
         String phoneNo = this.phoneNo;
-        String countryCode = '+' + mobileInputWidgetStatekey.currentState.country.dialCode;
+        String countryCode =
+            '+' + mobileInputWidgetStatekey.currentState.country.dialCode;
         print("generating otp");
-        authRepository.generateOtp(phoneNo: countryCode+phoneNo);
+        authRepository.generateOtp(phoneNo: countryCode + phoneNo);
         print("going to next");
         Navigator.pushNamed(context, 'otpInputScreen', arguments: [
           this.phoneNo,
@@ -180,67 +181,15 @@ class RegistrationScreenPartTwoState extends State<RegistrationScreenPartTwo> {
   }
 
   Widget getInvalidMobileNoAlertDialog(BuildContext context) {
-    return AlertDialog(
-      contentPadding: EdgeInsets.all(0),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 4),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Invalid Mobile No.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          Divider(
-            thickness: 1,
-            color: Colors.grey,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 4),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Please enter Valid Mobile No',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(12),
-          ),
-          Material(
-            color: Colors.black,
-            elevation: 3,
-            child: InkWell(
-              child: Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'OK',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.yellowAccent,
-                      fontWeight: FontWeight.bold),
-                ),
-                width: 0.9 * MediaQuery.of(context).size.width,
-              ),
-              onTap: () {
-                Navigator.of(context).pop();
-                mobileInputWidgetStatekey.currentState.setFocusWithKeyboard();
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+    return getAlertDialog(
+        context: context,
+        title: 'Invalid Mobile No.',
+        description: 'Please enter Valid Mobile No',
+        buttonText: 'OK',
+        onTap: () {
+          Navigator.of(context).pop();
+          mobileInputWidgetStatekey.currentState.setFocusWithKeyboard();
+        });
   }
 
   Future<bool> validateMobileNo(String value) async {

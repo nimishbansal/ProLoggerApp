@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
+import 'package:pro_logger/Entries/widgets/loader.dart';
+import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/library_widgets/otp_field.dart';
 import 'package:sms/sms.dart';
+
+final otpFieldStateKey = new GlobalKey<OTPFieldState>();
 
 class RegistrationScreenPartThree extends StatefulWidget {
   @override
@@ -19,6 +23,8 @@ class RegistrationScreenPartThreeState
   StreamSubscription<SmsMessage> _streamSubscription;
 
   String otpValue = '';
+
+  OTPField otpField;
 
   @override
   void initState() {
@@ -36,6 +42,14 @@ class RegistrationScreenPartThreeState
   @override
   Widget build(BuildContext context) {
     bool buttonEnabled = (otpValue.length == 4);
+    this.otpField = OTPField(
+      key: otpFieldStateKey,
+      onOtpChanged: (String currentOtp) {
+        setState(() {
+          otpValue = currentOtp;
+        });
+      },
+    );
     List phoneNoAndDialCode = ModalRoute.of(context).settings.arguments;
     String phoneNo = phoneNoAndDialCode[0];
     String dialCode = '+' + phoneNoAndDialCode[1];
@@ -63,13 +77,7 @@ class RegistrationScreenPartThreeState
             Container(
               padding: EdgeInsets.only(left: 40),
               alignment: Alignment.centerLeft,
-              child: OTPField(
-                onOtpChanged: (String currentOtp) {
-                  setState(() {
-                    otpValue = currentOtp;
-                  });
-                },
-              ),
+              child: this.otpField,
             ),
             Expanded(
               child: Align(
@@ -98,8 +106,9 @@ class RegistrationScreenPartThreeState
                 ),
               ),
             ),
-
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
@@ -113,6 +122,38 @@ class RegistrationScreenPartThreeState
   }
 
   _handleNextPressed(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext buildContext) {
+          return Loader();
+        });
+    validateOtp(otpValue).then((bool isOtpValid) {
+      Navigator.of(context).pop();
+      if (!isOtpValid) {
+        showDialog(
+          context: context,
+          builder: (BuildContext buildContext) {
+            return getAlertDialog(
+              context: buildContext,
+              title: 'Invalid OTP',
+              buttonText: 'OK',
+              description: 'Please Enter Valid OTP',
+              onTap: () {
+                Navigator.of(context).pop();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  FocusScope.of(context)
+                      .requestFocus(otpFieldStateKey.currentState.focusNode);
+                });
+              },
+            );
+          },
+        );
+      }
+    });
+  }
 
+  Future<bool> validateOtp(String otp) async {
+    await Future.delayed(Duration(seconds: 2), () {});
+    return false;
   }
 }
