@@ -85,7 +85,9 @@ class OTPField extends StatefulWidget {
       {Key key,
       this.boxWidth = 40,
       this.boxHeight = 40,
-      this.defaultGap = const Padding(padding: EdgeInsets.all(4))})
+      this.defaultGap = const Padding(
+        padding: EdgeInsets.all(4),
+      )})
       : super(key: key);
 
   @override
@@ -121,6 +123,7 @@ class OTPFieldState extends State<OTPField> {
           maxRadius: 7,
         ),
         decoration: BoxDecoration(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(5),
         ));
   }
@@ -129,9 +132,6 @@ class OTPFieldState extends State<OTPField> {
     return Container(
       height: widget.boxHeight,
       width: widget.boxWidth,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: Colors.blue)),
       /*
         child: Text(
         value,
@@ -140,8 +140,8 @@ class OTPFieldState extends State<OTPField> {
       ),
       */
       child: Image.network(
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQa49UMY_GWpfxiR-1Os0-cBPmygpTgGECD_LLxYzO26UOb1pFa"),
-      alignment: Alignment.center,
+          "https://cdn.freebiesupply.com/logos/large/2x/apple-logo-png-transparent.png"),
+//      alignment: Alignment.center,
     );
 
     Text(
@@ -163,19 +163,18 @@ class OTPFieldState extends State<OTPField> {
     );
 
     return Material(
+      color: Colors.transparent,
       child: Stack(
         children: <Widget>[
           Visibility(
             child: textField,
-            maintainSize: true,
+            maintainSize: false,
             maintainAnimation: true,
             maintainState: true,
             visible: false,
           ),
-          GestureDetector(
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 4)),
+          Container(
+            child: GestureDetector(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: List<Widget>.generate(
@@ -193,10 +192,10 @@ class OTPFieldState extends State<OTPField> {
                   },
                 ),
               ),
+              onTap: () {
+                FocusScope.of(context).requestFocus(_focusNode);
+              },
             ),
-            onTap: () {
-              FocusScope.of(context).requestFocus(_focusNode);
-            },
           ),
         ],
       ),
@@ -223,7 +222,7 @@ class OTPFieldState extends State<OTPField> {
                           top: 0.1 * widget.boxHeight,
                           bottom: 0.1 * widget.boxHeight),
                     ),
-                    alignment: Alignment(0.65, 0),
+                    alignment: Alignment(1.0, 0),
                   )
                 ],
               )
@@ -248,7 +247,7 @@ class OTPFieldState extends State<OTPField> {
                             top: 0.1 * widget.boxHeight,
                             bottom: 0.1 * widget.boxHeight),
                       ),
-                      alignment: Alignment(-0.65, 0))
+                      alignment: Alignment(-0.7, 0))
                 ])
               : getUnfilledBoxWithoutNo(), // i == value.length ensures blinking on focused digit box
           alignment: Alignment.center,
