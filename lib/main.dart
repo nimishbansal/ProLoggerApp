@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 
@@ -43,6 +44,9 @@ class Home extends StatelessWidget {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    storage.read(key: 'token').then((value){
+      print(value);
+    });
 //    return MaterialApp(
 //      home: Container(
 //        color: Colors.yellowAccent,

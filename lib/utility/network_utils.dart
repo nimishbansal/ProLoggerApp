@@ -14,3 +14,7 @@ class ApiResponse<T> {
         return "Status : $status \n Message : $message \n Data : $data";
     }
 }
+
+const STATUS = 'status';
+const ERROR = 'error';
+const SUCCESS = 'success';

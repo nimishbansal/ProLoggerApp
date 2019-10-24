@@ -1,9 +1,13 @@
 import 'dart:collection';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pro_logger/Auth/utils.dart';
 import 'package:pro_logger/constants.dart';
+import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
 import 'package:sms/sms.dart';
+
+final storage = new FlutterSecureStorage();
 
 class AuthRepository {
   Future<bool> generateOtp({String phoneNo}) async {
@@ -34,6 +38,9 @@ class AuthRepository {
               body: data,
               json: true);
       print(response);
+      if (response[STATUS]==SUCCESS){
+          storage.write(key: 'token', value: 'Token ${response['key']}');
+      }
       return true;
   }
 
