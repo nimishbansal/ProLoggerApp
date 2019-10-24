@@ -80,7 +80,10 @@ class OTPField extends StatefulWidget {
   /// Height of the single OTP box
   final double boxHeight;
 
+  /// Gap between two Adjacent Boxes.
   final Widget defaultGap;
+
+  final ValueChanged<String> onOtpChanged;
 
   const OTPField(
       {Key key,
@@ -88,7 +91,8 @@ class OTPField extends StatefulWidget {
       this.boxHeight = 40,
       this.defaultGap = const Padding(
         padding: EdgeInsets.all(4),
-      )})
+      ),
+      this.onOtpChanged})
       : super(key: key);
 
   @override
@@ -104,6 +108,7 @@ class OTPFieldState extends State<OTPField> {
   int maxLength;
   FocusNode _focusNode = FocusNode();
   bool _isKeyboardVisible = true;
+  String otpValue = '';
 
   @override
   void initState() {
@@ -116,9 +121,9 @@ class OTPFieldState extends State<OTPField> {
 
     maxLength = 4;
     for (int i = 0; i < maxLength; i++) {
-      children.add(getUnfilledBoxWithoutNo());
+      children.add(Container());
     }
-    _handleOTPChanged('');
+    updateChildren('');
   }
 
   Widget getUnfilledBoxWithoutNo() {
@@ -140,22 +145,12 @@ class OTPFieldState extends State<OTPField> {
     return Container(
       height: widget.boxHeight,
       width: widget.boxWidth,
-      /*
-        child: Text(
+      child: Text(
         value,
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 20),
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w300),
       ),
-      */
-      child: Image.network(
-          "https://cdn.freebiesupply.com/logos/large/2x/apple-logo-png-transparent.png"),
-//      alignment: Alignment.center,
-    );
-
-    Text(
-      value,
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 20),
+      alignment: Alignment.center,
     );
   }
 
@@ -183,53 +178,72 @@ class OTPFieldState extends State<OTPField> {
           ),
           Container(
             child: GestureDetector(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List<Widget>.generate(
-                  2 * maxLength - 1,
-                  (int index) {
-                    if (index % 2 == 0)
-                      return Container(
-                        width: widget.boxWidth,
-                        height: widget.boxHeight,
-                        child: this.children[(index / 2).floor()],
-                        alignment: Alignment.center,
-                      );
-                    else
-                      return widget.defaultGap;
-                  },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List<Widget>.generate(
+                    2 * maxLength - 1,
+                    (int index) {
+                      if (index % 2 == 0)
+                        return Container(
+                          width: widget.boxWidth,
+                          height: widget.boxHeight,
+                          child: this.children[(index / 2).floor()],
+                          alignment: Alignment.center,
+                        );
+                      else
+                        return widget.defaultGap;
+                    },
+                  ),
                 ),
-              ),
-              onTap: () {
-                // Don't execute if keyboard is already open and text field
-                // is already focused.
-                if (!_isKeyboardVisible) {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  WidgetsBinding.instance.addPostFrameCallback(
-                            (_) => FocusScope.of(context).requestFocus(_focusNode),
-                  );
-                }
-              }
-            ),
+                onTap: () {
+                  // Don't execute if keyboard is already open and text field
+                  // is already focused.
+                  if (!_isKeyboardVisible) {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) => FocusScope.of(context).requestFocus(_focusNode),
+                    );
+                  }
+                }),
           ),
         ],
       ),
     );
   }
 
-  void _handleOTPChanged(String value) {
-    print("otp has been changed");
+  void updateChildren(value) {
+    for (int i = 0; i < value.length; i++) {
+      Widget textWidget = getFilledBoxWithNo(value[i]);
+      this.children[i] = i == maxLength - 1
+          ? Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                textWidget,
+                Align(
+                  child: BlinkingCaret(
+                    caretPadding: EdgeInsets.only(
+                        left: 4,
+                        right: 4,
+                        top: 0.1 * widget.boxHeight,
+                        bottom: 0.1 * widget.boxHeight),
+                  ),
+                  alignment: Alignment(1.0, 0),
+                )
+              ],
+            )
+          : Container(
+              child: textWidget,
+            );
+    }
 
-    setState(() {
-      // loop for building filled boxes
-      for (int i = 0; i < value.length; i++) {
-        Widget textWidget = getFilledBoxWithNo(value[i]);
-        this.children[i] = i == maxLength - 1
-            ? Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  textWidget,
-                  Align(
+    // loop for building unfilled box
+    for (int i = value.length; i < this.children.length; i++) {
+//        this.children[i] = widgetWithoutText; // Default Container
+      this.children[i] = Container(
+        child: i == value.length
+            ? Stack(alignment: Alignment.center, children: <Widget>[
+                getUnfilledBoxWithoutNo(),
+                Align(
                     child: BlinkingCaret(
                       caretPadding: EdgeInsets.only(
                           left: 4,
@@ -237,38 +251,21 @@ class OTPFieldState extends State<OTPField> {
                           top: 0.1 * widget.boxHeight,
                           bottom: 0.1 * widget.boxHeight),
                     ),
-                    alignment: Alignment(1.0, 0),
-                  )
-                ],
-              )
-            : Container(
-                child: textWidget,
-              );
-      }
-
-      // loop for building unfilled box
-      for (int i = value.length; i < this.children.length; i++) {
-//        this.children[i] = widgetWithoutText; // Default Container
-        this.children[i] = Container(
-//          color: Colors.greenAccent,
-          child: i == value.length
-              ? Stack(alignment: Alignment.center, children: <Widget>[
-                  getUnfilledBoxWithoutNo(),
-                  Align(
-                      child: BlinkingCaret(
-                        caretPadding: EdgeInsets.only(
-                            left: 4,
-                            right: 4,
-                            top: 0.1 * widget.boxHeight,
-                            bottom: 0.1 * widget.boxHeight),
-                      ),
-                      alignment: Alignment(-0.7, 0))
-                ])
-              : getUnfilledBoxWithoutNo(), // i == value.length ensures blinking on focused digit box
-          alignment: Alignment.center,
+                    alignment: Alignment(-0.7, 0))
+              ])
+            : getUnfilledBoxWithoutNo(), // i == value.length ensures blinking on focused digit box
+        alignment: Alignment.center,
 //          padding: EdgeInsets.only(top: 6, bottom: 6),
-        );
-      }
+      );
+    }
+  }
+
+  void _handleOTPChanged(String value) {
+    print("otp has been changed");
+    setState(() {
+      otpValue = value;
+      updateChildren(value);
     });
+    if (widget.onOtpChanged != null) widget.onOtpChanged(otpValue);
   }
 }
