@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
+import 'package:pro_logger/library_widgets/otp_field.dart';
 import 'package:sms/sms.dart';
 
 class RegistrationScreenPartThree extends StatefulWidget {
@@ -44,10 +45,11 @@ class RegistrationScreenPartThreeState
           children: <Widget>[
             SizedBox(height: 0.1*MediaQuery.of(context).size.height,),
             Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.only(left: 40, top: 30),
                 child: Text(
-                    'Please wait while we\nauto verify the OTP\nsent to\n$dialCode${phoneNo.toString()}', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500, ),),),
+                    'Please wait.\nWe will auto verify\nthe OTP sent to\n$dialCode${phoneNo.toString()}', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500, ),),),
             SizedBox(height: 0.1*MediaQuery.of(context).size.height,),
+            OTPField(),
           ],
         ),
       ),

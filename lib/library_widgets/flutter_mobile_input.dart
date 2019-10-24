@@ -35,7 +35,9 @@ class MobileInputState extends State<MobileInput> {
 
   void initState() {
     super.initState();
-    country = Country.fromJson(countryCodes[0]);
+    country = Country.fromJson(countryCodes.where((Map<String, String> json) {
+      return json['ISO'] == 'in';
+    }).toList()[0]);
     countryPicker = CountryPicker(onCountrySelected: (Country country) {
       setState(() {
         this.country = country;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 class BlinkingCaret extends StatefulWidget {
   /// caret cursor color.
@@ -102,10 +103,17 @@ class OTPFieldState extends State<OTPField> {
   List<Widget> children = List<Widget>();
   int maxLength;
   FocusNode _focusNode = FocusNode();
+  bool _isKeyboardVisible = true;
 
   @override
   void initState() {
     super.initState();
+    KeyboardVisibilityNotification().addNewListener(
+      onChange: (bool visible) {
+        _isKeyboardVisible = visible;
+      },
+    );
+
     maxLength = 4;
     for (int i = 0; i < maxLength; i++) {
       children.add(getUnfilledBoxWithoutNo());
@@ -193,8 +201,15 @@ class OTPFieldState extends State<OTPField> {
                 ),
               ),
               onTap: () {
-                FocusScope.of(context).requestFocus(_focusNode);
-              },
+                // Don't execute if keyboard is already open and text field
+                // is already focused.
+                if (!_isKeyboardVisible) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  WidgetsBinding.instance.addPostFrameCallback(
+                            (_) => FocusScope.of(context).requestFocus(_focusNode),
+                  );
+                }
+              }
             ),
           ),
         ],

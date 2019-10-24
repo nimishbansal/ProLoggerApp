@@ -42,22 +42,22 @@ class Home extends StatelessWidget {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Container(
-        color: Colors.yellowAccent,
-        alignment: Alignment.center,
-        child: Container(
-          color: Colors.amberAccent,
-          width: 300,
-          height: 200,
-          child: OTPField(
-            boxWidth: 40,
-            boxHeight: 40,
-          ),
-          alignment: Alignment.center,
-        ),
-      ),
-    );
+//    return MaterialApp(
+//      home: Container(
+//        color: Colors.yellowAccent,
+//        alignment: Alignment.center,
+//        child: Container(
+//          color: Colors.amberAccent,
+//          width: 300,
+//          height: 200,
+//          child: OTPField(
+//            boxWidth: 40,
+//            boxHeight: 40,
+//          ),
+//          alignment: Alignment.center,
+//        ),
+//      ),
+//    );
     return MaterialApp(
       home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
