@@ -5,6 +5,7 @@ import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
 import 'Auth/Screens/RegistrationScreenPartThree.dart';
 import 'Auth/Screens/RegistrationScreenPartTwo.dart';
+import 'Entries/Screens/home_screen.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
 import 'library_widgets/otp_field.dart';
 
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
         'otpInputScreen': (context) => RegistrationScreenPartThree(),
+        'HomeScreen': (context) => HomeScreen(),
       },
     );
     return MaterialApp(

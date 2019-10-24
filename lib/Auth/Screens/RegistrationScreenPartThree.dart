@@ -100,7 +100,7 @@ class RegistrationScreenPartThreeState
                         ),
                         width: 0.9 * MediaQuery.of(context).size.width),
                     onTap: buttonEnabled
-                        ? () => _handleNextPressed(context)
+                        ? () => _handleNextPressed(context, dialCode+phoneNo)
                         : null,
                   ),
                 ),
@@ -121,13 +121,13 @@ class RegistrationScreenPartThreeState
     _streamSubscription.cancel();
   }
 
-  _handleNextPressed(BuildContext context) {
+  _handleNextPressed(BuildContext context, String phoneNo) {
     showDialog(
         context: context,
         builder: (BuildContext buildContext) {
           return Loader();
         });
-    validateOtp(otpValue).then((bool isOtpValid) {
+    validateOtp(otpValue, phoneNo).then((bool isOtpValid) {
       Navigator.of(context).pop();
       if (!isOtpValid) {
         showDialog(
@@ -149,11 +149,14 @@ class RegistrationScreenPartThreeState
           },
         );
       }
+      else{
+        Navigator.of(context).pushNamed('HomeScreen');
+      }
     });
   }
 
-  Future<bool> validateOtp(String otp) async {
-    await Future.delayed(Duration(seconds: 2), () {});
-    return false;
+  Future<bool> validateOtp(String otp, String phoneNo) async {
+    bool result = await AuthRepository().validateOtp(phoneNo: phoneNo, otp: otp);
+    return result;
   }
 }
