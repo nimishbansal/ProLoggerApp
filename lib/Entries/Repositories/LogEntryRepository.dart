@@ -1,11 +1,32 @@
 
+import 'dart:collection';
+
 import 'package:pro_logger/Entries/utils.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/constants.dart';
+import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
 import 'package:tuple/tuple.dart';
 
 class LogEntryRepository {
+
+  Future<bool> createProject({String projectName}) async {
+    String requestUrl = BASE_URL + PROJECT_ENTRY_LIST_CREATE_ENDPOINT;
+    HashMap<String, String> data;
+    data = new HashMap<String, String>();
+    data['name'] = projectName;
+    final Map<String, dynamic> response = await Requests.post(requestUrl,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Token 81a8d8783d8737a59cb684e47428d4acba33de87'
+            },
+            body: data,
+            json: true);
+    print(response);
+    return true;
+  }
+
+
   Future<Tuple2<List<LogEntry>, int>> fetchLogEntryList({pageNo: 1}) async {
     List<LogEntry> results = [];
     String requestUrl = BASE_URL +

@@ -126,7 +126,7 @@ class RegistrationScreenPartThreeState
         context: context,
         builder: (BuildContext buildContext) {
           return Loader();
-        });
+    });
     validateOtp(otpValue, phoneNo).then((bool isOtpValid) {
       Navigator.of(context).pop();
       if (!isOtpValid) {
