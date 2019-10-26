@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
@@ -5,7 +7,6 @@ import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
-
 
 final newProjectFormStateKey = GlobalKey<NewProjectFormState>();
 
@@ -70,6 +71,17 @@ class ProjectsListScreen extends StatefulWidget {
 class ProjectsListScreenState extends State<ProjectsListScreen> {
   NewProjectForm newProjectForm;
   ProjectBloc _projectBloc;
+  List<Color> availableColors = [
+    Colors.redAccent,
+
+    Colors.grey,
+    Colors.orangeAccent,
+    Colors.deepOrangeAccent,
+    Colors.purpleAccent,
+    Colors.deepPurpleAccent,
+    Colors.pink,
+
+  ];
 
   @override
   void initState() {
@@ -78,7 +90,6 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
     _projectBloc.listProjects();
     print("ok");
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -138,41 +149,77 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
         ),
       ),
       body: StreamBuilder<ApiResponse>(
-        stream: _projectBloc.listProjectStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || (snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.LOADING)){
-            return Center(child:Loader());
-          }
-          bool noProjectsCondition = snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.COMPLETED && (((snapshot.data.data as Response).json() as List<dynamic>).toList().length==0);
-          return Builder(
-            builder: (BuildContext context) {
-              return Material(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    noProjectsCondition?Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 0.3 * MediaQuery.of(context).size.height,
-                        ),
-                        Container(
-                          child: Text(
-                            "You don't have \nany projects yet.",
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-                          ),
-                          alignment: Alignment.center,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ):SizedBox(height: 0,),
-
-
-                    Expanded(
-                      child: Align(
+          stream: _projectBloc.listProjectStream,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData ||
+                (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data.status == Status.LOADING)) {
+              return Center(child: Loader());
+            }
+            bool noProjectsCondition = snapshot.hasData &&
+                snapshot.data != null &&
+                snapshot.data.status == Status.COMPLETED &&
+                (((snapshot.data.data as Response).json() as List<dynamic>)
+                        .toList()
+                        .length ==
+                    0);
+            return Builder(
+              builder: (BuildContext context) {
+                return Material(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      noProjectsCondition
+                          ? Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height:
+                                      0.3 * MediaQuery.of(context).size.height,
+                                ),
+                                Container(
+                                  child: Text(
+                                    "You don't have \nany projects yet.",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 24),
+                                  ),
+                                  alignment: Alignment.center,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            )
+                          : Container(
+                              height: 0.78 * MediaQuery.of(context).size.height,
+                              child: GridView.count(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 1.0,
+                                  padding: const EdgeInsets.all(4.0),
+                                  mainAxisSpacing: 4.0,
+                                  crossAxisSpacing: 4.0,
+                                  children: ((snapshot.data.data as Response)
+                                          .json() as List<dynamic>)
+                                      .toList()
+                                      .map((dynamic obj, ) {
+                                    return new GridTile(
+                                      child: Container(
+                                        color: availableColors[Random()
+                                            .nextInt(availableColors.length)],
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          ((obj as Map)['name']),
+                                          style: TextStyle(fontSize: 24, color: Colors.white),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList()),
+                            ),
+                      SizedBox(height: 10,),
+                      Align(
                         alignment: Alignment.bottomCenter,
                         child: Material(
                           //https://stackoverflow.com/a/52697978/7698247
@@ -189,24 +236,21 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                   'Add New Project',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.greenAccent, fontSize: 20),
+                                      color: Colors.greenAccent,
+                                      fontSize: 20),
                                 ),
-                                width: 0.9 * MediaQuery.of(context).size.width),
+                                width:
+                                    0.9 * MediaQuery.of(context).size.width),
                             onTap: () => _handleAddNewProject(context),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        }
-      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          }),
     );
   }
 
@@ -219,29 +263,36 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
     ProjectBloc projectBloc = ProjectBloc();
     await showDialog(
         context: context,
-        builder: (builderContext) =>
-            _mainDialogBuilder(builderContext, projectBloc, scaffoldContext)).then((_){
-              projectBloc.dispose();
+        builder: (builderContext) => _mainDialogBuilder(
+            builderContext, projectBloc, scaffoldContext)).then((_) {
+      projectBloc.dispose();
     });
   }
 
-  Widget _mainDialogBuilder(BuildContext context, ProjectBloc projectBloc, BuildContext scaffoldContext) {
+  Widget _mainDialogBuilder(BuildContext context, ProjectBloc projectBloc,
+      BuildContext scaffoldContext) {
     return StreamBuilder<ApiResponse>(
         stream: projectBloc.newProjectStream,
         builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.COMPLETED){
+          if (snapshot.hasData &&
+              snapshot.data != null &&
+              snapshot.data.status == Status.COMPLETED) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               print("popping");
               projectBloc.newProjectSink.add(ApiResponse.halt());
               Navigator.of(context).pop();
-              Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
-                      content: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(
-                          'Project Created Succesfully',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),duration: Duration(seconds: 1),),);
+              Scaffold.of(scaffoldContext).showSnackBar(
+                SnackBar(
+                  content: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      'Project Created Succesfully',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  duration: Duration(seconds: 1),
+                ),
+              );
             });
           }
           return AlertDialog(
@@ -290,8 +341,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                           projectBloc.createNewProject(
                               projectName: newProjectFormStateKey
                                   .currentState.myController.text);
-                        }
-                        else{
+                        } else {
                           // remove error message
                           projectBloc.newProjectSink.add(ApiResponse.error(''));
                         }
