@@ -25,6 +25,16 @@ class LogEntryRepository {
     return Tuple2(r.success, r);
     }
 
+  Future<Tuple2<bool, Response>> listProjects() async {
+    String requestUrl = BASE_URL + PROJECT_ENTRY_LIST_CREATE_ENDPOINT;
+    Map<String, String> headers =  {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token 81a8d8783d8737a59cb684e47428d4acba33de87'
+    };
+    Response r = await Requests.get(requestUrl, headers: headers);
+    return Tuple2(r.success, r);
+  }
+
   Future<Tuple2<List<LogEntry>, int>> fetchLogEntryList({pageNo: 1}) async {
     List<LogEntry> results = [];
     String requestUrl = BASE_URL +

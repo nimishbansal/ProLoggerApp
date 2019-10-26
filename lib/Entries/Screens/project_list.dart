@@ -4,6 +4,8 @@ import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/utility/network_utils.dart';
+import 'package:requests/requests.dart';
+
 
 final newProjectFormStateKey = GlobalKey<NewProjectFormState>();
 
@@ -18,8 +20,6 @@ class NewProjectForm extends StatefulWidget {
 class NewProjectFormState extends State<NewProjectForm> {
   final formKey = GlobalKey<FormState>();
   final myController = TextEditingController();
-
-  String _errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,6 @@ class NewProjectFormState extends State<NewProjectForm> {
               )),
               ListTile(
                   title: TextFormField(
-                decoration: InputDecoration(errorText: _errorText),
                 controller: myController,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -70,6 +69,16 @@ class ProjectsListScreen extends StatefulWidget {
 
 class ProjectsListScreenState extends State<ProjectsListScreen> {
   NewProjectForm newProjectForm;
+  ProjectBloc _projectBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _projectBloc = ProjectBloc();
+    _projectBloc.listProjects();
+    print("ok");
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,75 +137,92 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
           ],
         ),
       ),
-      body: Builder(
-        builder: (BuildContext context) {
-          return Material(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(
-                  height: 0.3 * MediaQuery.of(context).size.height,
-                ),
-                Container(
-                  child: Text(
-                    "You don't have \nany projects yet.",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-                  ),
-                  alignment: Alignment.center,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Material(
-                      //https://stackoverflow.com/a/52697978/7698247
-                      color: Colors.black,
-                      child: InkWell(
-                        splashColor: Colors.green,
-                        radius: 200,
-                        child: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              'Add New Project',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.greenAccent, fontSize: 20),
-                            ),
-                            width: 0.9 * MediaQuery.of(context).size.width),
-                        onTap: () => _handleAddNewProject(context),
+      body: StreamBuilder<ApiResponse>(
+        stream: _projectBloc.listProjectStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || (snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.LOADING)){
+            return Center(child:Loader());
+          }
+          bool noProjectsCondition = snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.COMPLETED && (((snapshot.data.data as Response).json() as List<dynamic>).toList().length==0);
+          return Builder(
+            builder: (BuildContext context) {
+              return Material(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    noProjectsCondition?Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 0.3 * MediaQuery.of(context).size.height,
+                        ),
+                        Container(
+                          child: Text(
+                            "You don't have \nany projects yet.",
+                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                          ),
+                          alignment: Alignment.center,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ):SizedBox(height: 0,),
+
+
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Material(
+                          //https://stackoverflow.com/a/52697978/7698247
+                          color: Colors.black,
+                          child: InkWell(
+                            splashColor: Colors.green,
+                            radius: 200,
+                            child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  'Add New Project',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.greenAccent, fontSize: 20),
+                                ),
+                                width: 0.9 * MediaQuery.of(context).size.width),
+                            onTap: () => _handleAddNewProject(context),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
+              );
+            },
           );
-        },
+        }
       ),
     );
   }
 
-  void _handleAddNewProject(BuildContext context) {
+  void _handleAddNewProject(BuildContext context) async {
     var scaffoldContext = context;
     this.newProjectForm = NewProjectForm(
       key: newProjectFormStateKey,
     );
 
     ProjectBloc projectBloc = ProjectBloc();
-    showDialog(
+    await showDialog(
         context: context,
         builder: (builderContext) =>
-            _mainDialogBuilder(builderContext, projectBloc, scaffoldContext));
+            _mainDialogBuilder(builderContext, projectBloc, scaffoldContext)).then((_){
+              projectBloc.dispose();
+    });
   }
 
   Widget _mainDialogBuilder(BuildContext context, ProjectBloc projectBloc, BuildContext scaffoldContext) {
@@ -205,6 +231,8 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.COMPLETED){
             WidgetsBinding.instance.addPostFrameCallback((_) {
+              print("popping");
+              projectBloc.newProjectSink.add(ApiResponse.halt());
               Navigator.of(context).pop();
               Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
                       content: Padding(
@@ -263,6 +291,10 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                               projectName: newProjectFormStateKey
                                   .currentState.myController.text);
                         }
+                        else{
+                          // remove error message
+                          projectBloc.newProjectSink.add(ApiResponse.error(''));
+                        }
                       },
               ),
               FlatButton(
@@ -282,5 +314,10 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
             ],
           );
         });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

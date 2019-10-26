@@ -9,15 +9,36 @@ import 'package:pro_logger/utility/network_utils.dart';
 class ProjectBloc {
   LogEntryRepository _logEntryRepository;
 
-//  Stream<ApiResponse> newProjectStream;
   StreamController<ApiResponse> _newProjectStreamController;
 
   StreamSink<ApiResponse> get newProjectSink => _newProjectStreamController.sink;
   Stream<ApiResponse> get newProjectStream => _newProjectStreamController.stream;
 
+
+  StreamController<ApiResponse> _listProjectStreamController;
+
+  StreamSink<ApiResponse> get listProjectSink => _listProjectStreamController.sink;
+  Stream<ApiResponse> get listProjectStream => _listProjectStreamController.stream;
+
   ProjectBloc() {
     _logEntryRepository = new LogEntryRepository();
     _newProjectStreamController = StreamController<ApiResponse>();
+    _listProjectStreamController = StreamController<ApiResponse>();
+  }
+
+  void listProjects({bool addLoadingInitially=true}) async {
+      if (addLoadingInitially==true){
+          listProjectSink.add(ApiResponse.loading());
+      }
+      Tuple2<bool, Response> results  = await _logEntryRepository.listProjects();
+      var response = results.item2;
+      if (results.item1){
+          listProjectSink.add(ApiResponse.completed(response));
+      }
+      else{
+          print(response.content());
+          listProjectSink.add(ApiResponse.error('Some Error Occured'));
+      }
   }
 
   void createNewProject({@required String projectName}) async {
@@ -43,5 +64,6 @@ class ProjectBloc {
 
   void dispose() {
     _newProjectStreamController.close();
+    _listProjectStreamController.close();
   }
 }
