@@ -71,40 +71,54 @@ class ProjectsListScreen extends StatefulWidget {
 class ProjectsListScreenState extends State<ProjectsListScreen> {
   NewProjectForm newProjectForm;
   ProjectBloc _projectBloc;
-  List<Color> availableColors = [
-    Colors.redAccent,
+  List<int> _selectedIndexList = List<int>();
+  bool _selectionMode = false;
 
-    Colors.grey,
-    Colors.orangeAccent,
-    Colors.deepOrangeAccent,
-    Colors.purpleAccent,
-    Colors.deepPurpleAccent,
-    Colors.pink,
-
-  ];
+  List<dynamic> _currentProjectsList = List<dynamic>();
 
   @override
   void initState() {
     super.initState();
     _projectBloc = ProjectBloc();
     _projectBloc.listProjects();
-    print("ok");
+  }
+
+  Drawer getAppDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(6),
+            child: Image.network(
+                "https://i0.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1"),
+            width: 0.4 * MediaQuery.of(context).size.width,
+            height: 0.4 * MediaQuery.of(context).size.width,
+            alignment: Alignment.center,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Text(
+              'Nimish Bansal',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+              child: Text(
+            '+91-965XXXXX49',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          )),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget box = Container(
-      padding: EdgeInsets.all(16),
-      foregroundDecoration: BoxDecoration(border: Border.all(width: 2)),
-      child: CircleAvatar(
-        child: Icon(
-          Icons.add,
-          size: 100,
-          color: Colors.white,
-        ),
-        foregroundColor: Colors.blue,
-      ),
-    );
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent));
 
@@ -113,42 +127,80 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.greenAccent,
+        actions: <Widget>[
+          _selectionMode
+              ? IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    ProjectBloc projectBloc = ProjectBloc();
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext buildContext) {
+                          return StreamBuilder<ApiResponse>(
+                              stream: projectBloc.deleteProjectStream,
+                              builder: (context, snapshot) {
+
+                                if (snapshot.hasData &&
+                                        snapshot.data != null &&
+                                        snapshot.data.status == Status.COMPLETED)
+                                  {
+                                    projectBloc.deleteProjectSink.add(ApiResponse.halt());
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      Navigator.of(context).pop();
+                                      _selectedIndexList.clear();
+                                      _selectionMode = false;
+                                      _projectBloc.listProjects(addLoadingInitially: false);
+                                    });
+                                  }
+
+                                bool _isLoading=snapshot.hasData && snapshot.data != null && snapshot.data.status == Status.LOADING;
+                                return AlertDialog(
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        'Are you Sure you want to delete ${_selectedIndexList.length} projects?',
+                                      ),
+                                      _isLoading ? Loader() : SizedBox()
+                                    ],
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text('Yes'),
+                                      onPressed: _isLoading?null:() {
+                                        projectBloc.deleteProjects(
+                                            _selectedIndexList,
+                                            _currentProjectsList);
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text('No'),
+                                      onPressed:_isLoading?null: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        }).then((_) {
+                      projectBloc.dispose();
+                    });
+                  },
+                )
+              : SizedBox(
+                  height: 0,
+                  width: 0,
+                ),
+        ],
         title: Text(
           'Projects',
           style: TextStyle(color: Colors.black),
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(6),
-              child: Image.network(
-                  "https://i0.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1"),
-              width: 0.4 * MediaQuery.of(context).size.width,
-              height: 0.4 * MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: Text(
-                'Nimish Bansal',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-                child: Text(
-              '+91-965XXXXX49',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            )),
-          ],
-        ),
-      ),
+      drawer: getAppDrawer(),
       body: StreamBuilder<ApiResponse>(
           stream: _projectBloc.listProjectStream,
           builder: (context, snapshot) {
@@ -165,6 +217,11 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                         .toList()
                         .length ==
                     0);
+
+            if (snapshot.hasData && snapshot.data != null) {
+              _currentProjectsList =
+                  ((snapshot.data.data as Response).json() as List<dynamic>);
+            }
             return Builder(
               builder: (BuildContext context) {
                 return Material(
@@ -179,8 +236,8 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                               ? Column(
                                   children: <Widget>[
                                     SizedBox(
-                                      height:
-                                          0.3 * MediaQuery.of(context).size.height,
+                                      height: 0.3 *
+                                          MediaQuery.of(context).size.height,
                                     ),
                                     Container(
                                       child: Text(
@@ -203,25 +260,69 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                       padding: const EdgeInsets.all(4.0),
                                       mainAxisSpacing: 4.0,
                                       crossAxisSpacing: 4.0,
-                                      children: ((snapshot.data.data as Response)
+                                      children: ((snapshot.data.data
+                                                  as Response)
                                               .json() as List<dynamic>)
                                           .toList()
-                                          .map((dynamic obj, ) {
-                                        return new GridTile(
-                                          child: Container(
-                                            color: availableColors[Random()
-                                                .nextInt(availableColors.length)],
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              ((obj as Map)['name']),
-                                              style: TextStyle(fontSize: 24, color: Colors.white),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList()),
+                                          .asMap()
+                                          .map((
+                                            int index,
+                                            dynamic obj,
+                                          ) {
+                                            return MapEntry(
+                                              index,
+                                              new GridTile(
+                                                header: GridTileBar(
+                                                  leading: _selectionMode
+                                                      ? Icon(
+                                                          _selectedIndexList
+                                                                  .contains(
+                                                                      index)
+                                                              ? Icons
+                                                                  .check_circle
+                                                              : Icons
+                                                                  .radio_button_unchecked,
+                                                          color: _selectedIndexList
+                                                                  .contains(
+                                                                      index)
+                                                              ? Colors
+                                                                  .lightBlueAccent
+                                                              : Colors.black,
+                                                        )
+                                                      : null,
+                                                ),
+                                                child: InkWell(
+                                                  child: Container(
+                                                    color: Colors.blueGrey,
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      ((obj as Map)['name']),
+                                                      style: TextStyle(
+                                                          fontSize: 24,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                  onLongPress: () {
+                                                    _changeSelection(
+                                                        index: index);
+                                                  },
+                                                  onTap: () {
+                                                    if (_selectionMode) {
+                                                      _changeSelection(
+                                                          index: index);
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          })
+                                          .values
+                                          .toList()),
                                 ),
                         ],
                       ),
+
+                      // Add New Project Button
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Padding(
@@ -235,22 +336,26 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                 splashColor: Colors.green,
                                 radius: 300,
                                 child: Container(
-                                        padding: EdgeInsets.all(8),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            Icon(Icons.add, color: Colors.greenAccent,),
-                                            Text(
-                                              'Add New Project',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                      color: Colors.greenAccent,
-                                                      fontSize: 20),
-                                            ),
-                                          ],
+                                    padding: EdgeInsets.all(8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.add,
+                                          color: Colors.greenAccent,
                                         ),
-                                        width:
-                                        0.6 * MediaQuery.of(context).size.width),
+                                        Text(
+                                          'Add New Project',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.greenAccent,
+                                              fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    width: 0.6 *
+                                        MediaQuery.of(context).size.width),
                                 onTap: () => _handleAddNewProject(context),
                               ),
                             ),
@@ -290,7 +395,6 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
               snapshot.data != null &&
               snapshot.data.status == Status.COMPLETED) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              print("popping");
               projectBloc.newProjectSink.add(ApiResponse.halt());
               Navigator.of(context).pop();
               Scaffold.of(scaffoldContext).showSnackBar(
@@ -305,12 +409,13 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                   duration: Duration(seconds: 1),
                 ),
               );
+              _selectedIndexList.clear();
+              _selectionMode = false;
               _projectBloc.listProjects(addLoadingInitially: false);
             });
           }
           return AlertDialog(
             content: Builder(builder: (_) {
-              print("data is ${snapshot.data}");
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -382,5 +487,24 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _changeSelection({int index}) {
+    setState(() {
+      if (_selectedIndexList.length == 0) {
+        _selectionMode = true;
+      }
+      if (_selectedIndexList.contains(index)) {
+        _selectedIndexList.remove(index);
+      } else {
+        _selectedIndexList.add(index);
+      }
+      if (_selectedIndexList.length == 0) {
+        _selectionMode = false;
+      }
+    });
+    if (index == -1) {
+      _selectedIndexList.clear();
+    }
   }
 }
