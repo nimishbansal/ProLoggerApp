@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
+import 'package:pro_logger/Entries/Screens/project_detail.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/utility/network_utils.dart';
@@ -120,13 +121,13 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent));
+        SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.grey[400]));
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Colors.green[600],
         actions: <Widget>[
           _selectionMode
               ? IconButton(
@@ -293,7 +294,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                 ),
                                                 child: InkWell(
                                                   child: Container(
-                                                    color: Colors.blueGrey,
+                                                    color: Colors.deepPurpleAccent,
                                                     alignment: Alignment.center,
                                                     child: Text(
                                                       ((obj as Map)['name']),
@@ -306,10 +307,23 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                     _changeSelection(
                                                         index: index);
                                                   },
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     if (_selectionMode) {
                                                       _changeSelection(
                                                           index: index);
+                                                    }
+                                                    else{
+                                                      var result = await Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (_) {
+                                                            return ProjectDetailScreen(
+                                                              projectId: (obj as Map<String, dynamic>)['id'],
+                                                              projectName: (obj as Map<String, dynamic>)['name']
+                                                            );
+                                                          },
+                                                        ),
+                                                      );
                                                     }
                                                   },
                                                 ),
