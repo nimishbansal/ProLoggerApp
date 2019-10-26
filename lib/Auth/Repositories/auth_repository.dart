@@ -15,38 +15,40 @@ class AuthRepository {
     HashMap<String, String> data;
     data = new HashMap<String, String>();
     data['phone_no'] = phoneNo;
-    final Map<String, dynamic> response = await Requests.post(requestUrl,
+    Response r = await Requests.post(requestUrl,
         headers: {
           'Content-Type': 'application/json',
         },
         body: data,
         json: true);
+    final Map<String, dynamic> response = r.json();
     print(response);
     return true;
   }
 
   Future<bool> validateOtp({String phoneNo, String otp}) async {
-      String requestUrl = BASE_URL + OTP_VERIFY_ENDPOINT;
-      HashMap<String, String> data;
-      data = new HashMap<String, String>();
-      data['phone_no'] = phoneNo;
-      data['key'] = otp;
-      final Map<String, dynamic> response = await Requests.post(requestUrl,
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: data,
-              json: true);
-      print(response);
-      if (response[STATUS]==SUCCESS){
-          storage.write(key: 'token', value: 'Token ${response['key']}');
-      }
-      return true;
+    String requestUrl = BASE_URL + OTP_VERIFY_ENDPOINT;
+    HashMap<String, String> data;
+    data = new HashMap<String, String>();
+    data['phone_no'] = phoneNo;
+    data['key'] = otp;
+    Response r = await Requests.post(
+      requestUrl,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: data,
+    );
+    final Map<String, dynamic> response = r.json();
+    if (response[STATUS] == SUCCESS) {
+      storage.write(key: 'token', value: 'Token ${response['key']}');
+    }
+    return true;
   }
 
-  bool checkAuthorizedSMS(SmsMessage msg){
-      // TODO: add more rules
+  bool checkAuthorizedSMS(SmsMessage msg) {
+    // TODO: add more rules
 //      if (msg.sender!='VK-540604') return false;
-      return true;
+    return true;
   }
 }

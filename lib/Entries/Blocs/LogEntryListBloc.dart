@@ -50,7 +50,7 @@ class LogEntryListBloc {
 
   void fetchLogEntriesList({int pageNo}) async {
     this.pageNo = pageNo;
-    _logEntryListStateController.add(ApiResponse.loading('Page${this.pageNo}'));
+    _logEntryListStateController.add(ApiResponse.loading(message:'Page${this.pageNo}'));
     try {
       var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
       logEntries = result.item1;

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
+import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
+import 'package:pro_logger/common_widgets.dart';
+import 'package:pro_logger/utility/network_utils.dart';
 
 final newProjectFormStateKey = GlobalKey<NewProjectFormState>();
+
 class NewProjectForm extends StatefulWidget {
   const NewProjectForm({Key key}) : super(key: key);
   @override
@@ -16,6 +19,8 @@ class NewProjectFormState extends State<NewProjectForm> {
   final formKey = GlobalKey<FormState>();
   final myController = TextEditingController();
 
+  String _errorText;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -27,7 +32,7 @@ class NewProjectFormState extends State<NewProjectForm> {
             children: <Widget>[
               ListTile(
                   title: Text(
-                '*Project Name',
+                'Project Name',
                 style: TextStyle(
                     fontSize: 18,
                     color: Colors.blueAccent,
@@ -35,13 +40,14 @@ class NewProjectFormState extends State<NewProjectForm> {
               )),
               ListTile(
                   title: TextFormField(
-                    controller: myController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
+                decoration: InputDecoration(errorText: _errorText),
+                controller: myController,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Project Name can't be empty";
+                  }
+                  return null;
+                },
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -81,6 +87,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
     );
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent));
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
@@ -121,101 +128,158 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
           ],
         ),
       ),
-      body: Material(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(
-              height: 0.3 * MediaQuery.of(context).size.height,
-            ),
-            Container(
-              child: Text(
-                "You don't have \nany projects yet.",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-              ),
-              alignment: Alignment.center,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Material(
-                  //https://stackoverflow.com/a/52697978/7698247
-                  color: Colors.black,
-                  child: InkWell(
-                    splashColor: Colors.green,
-                    radius: 200,
-                    child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          'Add New Project',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.greenAccent, fontSize: 22),
-                        ),
-                        width: 0.9 * MediaQuery.of(context).size.width),
-                    onTap: () => _handleAddNewProject(context),
+      body: Builder(
+        builder: (BuildContext context) {
+          return Material(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 0.3 * MediaQuery.of(context).size.height,
+                ),
+                Container(
+                  child: Text(
+                    "You don't have \nany projects yet.",
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                  ),
+                  alignment: Alignment.center,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Material(
+                      //https://stackoverflow.com/a/52697978/7698247
+                      color: Colors.black,
+                      child: InkWell(
+                        splashColor: Colors.green,
+                        radius: 200,
+                        child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              'Add New Project',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.greenAccent, fontSize: 20),
+                            ),
+                            width: 0.9 * MediaQuery.of(context).size.width),
+                        onTap: () => _handleAddNewProject(context),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
             ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
   void _handleAddNewProject(BuildContext context) {
-    this.newProjectForm = NewProjectForm(key: newProjectFormStateKey,);
+    var scaffoldContext = context;
+    this.newProjectForm = NewProjectForm(
+      key: newProjectFormStateKey,
+    );
+
+    ProjectBloc projectBloc = ProjectBloc();
     showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.all(0),
-              actions: <Widget>[
-                RaisedButton(
-                  color: Colors.blueAccent,
-                  child: Text(
-                    'Ok',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  onPressed: () {
-                    if(newProjectFormStateKey.currentState.formKey.currentState.validate()){
-                        Navigator.of(context).pop();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context){
-                            return Loader();
-                        });
-                        LogEntryRepository().createProject(projectName:newProjectFormStateKey.currentState.myController.text);
+        builder: (builderContext) =>
+            _mainDialogBuilder(builderContext, projectBloc, scaffoldContext));
+  }
 
-                    }
-                  },
+  Widget _mainDialogBuilder(BuildContext context, ProjectBloc projectBloc, BuildContext scaffoldContext) {
+    return StreamBuilder<ApiResponse>(
+        stream: projectBloc.newProjectStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!=null && snapshot.data.status == Status.COMPLETED){
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.of(context).pop();
+              Scaffold.of(scaffoldContext).showSnackBar(SnackBar(
+                      content: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          'Project Created Succesfully',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),duration: Duration(seconds: 1),),);
+            });
+          }
+          return AlertDialog(
+            content: Builder(builder: (_) {
+              print("data is ${snapshot.data}");
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  this.newProjectForm,
+                  (snapshot.hasData &&
+                          snapshot.data != null &&
+                          snapshot.data.status == Status.LOADING)
+                      ? Loader()
+                      : SizedBox(
+                          height: 0,
+                        ),
+                  (snapshot.hasData &&
+                          snapshot.data != null &&
+                          snapshot.data.status == Status.ERROR)
+                      ? Text(
+                          snapshot.data.message.toString(),
+                          style: TextStyle(color: Colors.red),
+                        )
+                      : SizedBox(
+                          height: 0,
+                        ),
+//                  Text(snapshot.data?.message?.toString() ?? 'aww', style: TextStyle(color: Colors.red),),
+                ],
+              );
+            }),
+            actions: <Widget>[
+              FlatButton(
+                disabledTextColor: Colors.grey,
+                color: Colors.white,
+                child: Text(
+                  'Ok',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
                 ),
-                RaisedButton(
-                  color: Colors.redAccent,
-                  child: Text(
-                    'Cancel',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                onPressed: (snapshot.data?.status == Status.LOADING)
+                    ? null
+                    : () {
+                        var formKey =
+                            newProjectFormStateKey.currentState.formKey;
+                        if (formKey.currentState.validate()) {
+                          projectBloc.createNewProject(
+                              projectName: newProjectFormStateKey
+                                  .currentState.myController.text);
+                        }
+                      },
+              ),
+              FlatButton(
+                disabledTextColor: Colors.grey,
+                color: Colors.white,
+                child: Text(
+                  'Cancel',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
                 ),
-              ],
-              content: this.newProjectForm,
+                onPressed: (snapshot.data?.status == Status.LOADING)
+                    ? null
+                    : () {
+                        Navigator.of(context).pop();
+                      },
+              )
+            ],
           );
         });
   }

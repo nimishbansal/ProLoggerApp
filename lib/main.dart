@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     storage.read(key: 'token').then((value){
-      print(value);
+      print("token value is $value");
     });
 //    return MaterialApp(
 //      home: Container(
