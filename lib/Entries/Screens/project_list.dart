@@ -109,6 +109,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
         SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent));
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.greenAccent,
@@ -167,81 +168,92 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
             return Builder(
               builder: (BuildContext context) {
                 return Material(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
+                  child: Stack(
                     children: <Widget>[
-                      noProjectsCondition
-                          ? Column(
-                              children: <Widget>[
-                                SizedBox(
-                                  height:
-                                      0.3 * MediaQuery.of(context).size.height,
-                                ),
-                                Container(
-                                  child: Text(
-                                    "You don't have \nany projects yet.",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 24),
-                                  ),
-                                  alignment: Alignment.center,
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            )
-                          : Container(
-                              height: 0.78 * MediaQuery.of(context).size.height,
-                              child: GridView.count(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 1.0,
-                                  padding: const EdgeInsets.all(4.0),
-                                  mainAxisSpacing: 4.0,
-                                  crossAxisSpacing: 4.0,
-                                  children: ((snapshot.data.data as Response)
-                                          .json() as List<dynamic>)
-                                      .toList()
-                                      .map((dynamic obj, ) {
-                                    return new GridTile(
-                                      child: Container(
-                                        color: availableColors[Random()
-                                            .nextInt(availableColors.length)],
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          ((obj as Map)['name']),
-                                          style: TextStyle(fontSize: 24, color: Colors.white),
-                                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          noProjectsCondition
+                              ? Column(
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height:
+                                          0.3 * MediaQuery.of(context).size.height,
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "You don't have \nany projects yet.",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 24),
                                       ),
-                                    );
-                                  }).toList()),
-                            ),
-                      SizedBox(height: 10,),
+                                      alignment: Alignment.center,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                )
+                              : Expanded(
+                                  child: GridView.count(
+                                      crossAxisCount: 2,
+                                      childAspectRatio: 1.0,
+                                      padding: const EdgeInsets.all(4.0),
+                                      mainAxisSpacing: 4.0,
+                                      crossAxisSpacing: 4.0,
+                                      children: ((snapshot.data.data as Response)
+                                              .json() as List<dynamic>)
+                                          .toList()
+                                          .map((dynamic obj, ) {
+                                        return new GridTile(
+                                          child: Container(
+                                            color: availableColors[Random()
+                                                .nextInt(availableColors.length)],
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              ((obj as Map)['name']),
+                                              style: TextStyle(fontSize: 24, color: Colors.white),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList()),
+                                ),
+                        ],
+                      ),
                       Align(
                         alignment: Alignment.bottomCenter,
-                        child: Material(
-                          //https://stackoverflow.com/a/52697978/7698247
-                          color: Colors.black,
-                          child: InkWell(
-                            splashColor: Colors.green,
-                            radius: 200,
-                            child: Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  'Add New Project',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.greenAccent,
-                                      fontSize: 20),
-                                ),
-                                width:
-                                    0.9 * MediaQuery.of(context).size.width),
-                            onTap: () => _handleAddNewProject(context),
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: Material(
+                              //https://stackoverflow.com/a/52697978/7698247
+                              color: Colors.black,
+                              child: InkWell(
+                                splashColor: Colors.green,
+                                radius: 300,
+                                child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Icon(Icons.add, color: Colors.greenAccent,),
+                                            Text(
+                                              'Add New Project',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                      color: Colors.greenAccent,
+                                                      fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                        width:
+                                        0.6 * MediaQuery.of(context).size.width),
+                                onTap: () => _handleAddNewProject(context),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -293,6 +305,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                   duration: Duration(seconds: 1),
                 ),
               );
+              _projectBloc.listProjects(addLoadingInitially: false);
             });
           }
           return AlertDialog(
