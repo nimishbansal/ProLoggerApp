@@ -6,6 +6,7 @@ import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
 import 'Auth/Screens/RegistrationScreenPartThree.dart';
 import 'Auth/Screens/RegistrationScreenPartTwo.dart';
+import 'Entries/Screens/project_detail.dart';
 import 'Entries/Screens/project_list.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
 import 'library_widgets/otp_field.dart';
@@ -66,11 +67,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 //      home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
-      initialRoute: 'HomeScreen',
+      initialRoute: 'ProjectDetailScreen',
       routes: {
         'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
         'otpInputScreen': (context) => RegistrationScreenPartThree(),
         'HomeScreen': (context) => ProjectsListScreen(),
+        'ProjectDetailScreen': (context) => ProjectDetailScreen(),
       },
     );
     return MaterialApp(
