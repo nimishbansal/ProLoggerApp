@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
+import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/Entries/Screens/project_detail.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/common_widgets.dart';
@@ -143,21 +144,24 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                           return StreamBuilder<ApiResponse>(
                               stream: projectBloc.deleteProjectStream,
                               builder: (context, snapshot) {
-
                                 if (snapshot.hasData &&
-                                        snapshot.data != null &&
-                                        snapshot.data.status == Status.COMPLETED)
-                                  {
-                                    projectBloc.deleteProjectSink.add(ApiResponse.halt());
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      Navigator.of(context).pop();
-                                      _selectedIndexList.clear();
-                                      _selectionMode = false;
-                                      _projectBloc.listProjects(addLoadingInitially: false);
-                                    });
-                                  }
+                                    snapshot.data != null &&
+                                    snapshot.data.status == Status.COMPLETED) {
+                                  projectBloc.deleteProjectSink
+                                      .add(ApiResponse.halt());
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    Navigator.of(context).pop();
+                                    _selectedIndexList.clear();
+                                    _selectionMode = false;
+                                    _projectBloc.listProjects(
+                                        addLoadingInitially: false);
+                                  });
+                                }
 
-                                bool _isLoading=snapshot.hasData && snapshot.data != null && snapshot.data.status == Status.LOADING;
+                                bool _isLoading = snapshot.hasData &&
+                                    snapshot.data != null &&
+                                    snapshot.data.status == Status.LOADING;
                                 return AlertDialog(
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -171,17 +175,21 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                   actions: <Widget>[
                                     FlatButton(
                                       child: Text('Yes'),
-                                      onPressed: _isLoading?null:() {
-                                        projectBloc.deleteProjects(
-                                            _selectedIndexList,
-                                            _currentProjectsList);
-                                      },
+                                      onPressed: _isLoading
+                                          ? null
+                                          : () {
+                                              projectBloc.deleteProjects(
+                                                  _selectedIndexList,
+                                                  _currentProjectsList);
+                                            },
                                     ),
                                     FlatButton(
                                       child: Text('No'),
-                                      onPressed:_isLoading?null: () {
-                                        Navigator.of(context).pop();
-                                      },
+                                      onPressed: _isLoading
+                                          ? null
+                                          : () {
+                                              Navigator.of(context).pop();
+                                            },
                                     ),
                                   ],
                                 );
@@ -294,7 +302,8 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                 ),
                                                 child: InkWell(
                                                   child: Container(
-                                                    color: Colors.deepPurpleAccent,
+                                                    color:
+                                                        Colors.deepPurpleAccent,
                                                     alignment: Alignment.center,
                                                     child: Text(
                                                       ((obj as Map)['name']),
@@ -311,16 +320,28 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                     if (_selectionMode) {
                                                       _changeSelection(
                                                           index: index);
-                                                    }
-                                                    else{
-                                                      var result = await Navigator.push(
+                                                    } else {
+                                                      int projectId = (obj as Map<String, dynamic>)['id'];
+                                                      String projectTitle = (obj as Map<String, dynamic>)['name'];
+                                                      Navigator.push(context, MaterialPageRoute(builder: (_){
+                                                        return LogEntryListScreen(projectId: projectId, title: projectTitle,);
+                                                      }));
+                                                      return;
+                                                      var result =
+                                                          await Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (_) {
                                                             return ProjectDetailScreen(
-                                                              projectId: (obj as Map<String, dynamic>)['id'],
-                                                              projectName: (obj as Map<String, dynamic>)['name']
-                                                            );
+                                                                projectId: (obj as Map<
+                                                                        String,
+                                                                        dynamic>)[
+                                                                    'id'],
+                                                                projectName: (obj
+                                                                        as Map<
+                                                                            String,
+                                                                            dynamic>)[
+                                                                    'name']);
                                                           },
                                                         ),
                                                       );

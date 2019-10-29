@@ -6,7 +6,6 @@ import 'package:pro_logger/Entries/Blocs/LogEntryDetailBloc.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
-import '../../main.dart';
 import 'LevelSpecificLogEntryDetailScreen.dart';
 
 //https://stackoverflow.com/questions/54101589/navigating-to-a-new-screen-when-stream-value-in-bloc-changes
@@ -16,12 +15,14 @@ class LogEntryDetailScreen extends StatefulWidget {
   final String message;
   final LogEntry logEntry;
   final int id;
+  final int projectId;
 
   LogEntryDetailScreen(
       {Key key,
       @required this.id,
       this.title,
       this.message,
+      this.projectId,
       @required this.logEntry})
       : super(key: key);
 
@@ -47,7 +48,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
   void initState() {
     super.initState();
     _logEntryDetailBloc = LogEntryDetailBloc();
-    _logEntryDetailBloc.displayResults(this.widget.id);
+    _logEntryDetailBloc.displayResults(this.widget.id, widget.projectId);
     _listen();
   }
 

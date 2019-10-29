@@ -22,8 +22,8 @@ class LogEntryDetailBloc {
     _logEntryRepository = new LogEntryRepository();
   }
 
-  void displayResults(int id) async {
-    LogEntry entry = await _logEntryRepository.fetchLogEntryDetails(id);
+  void displayResults(int id, int projectId) async {
+    LogEntry entry = await _logEntryRepository.fetchLogEntryDetails(id, projectId);
     _issueDetailStateController.add(entry);
   }
 

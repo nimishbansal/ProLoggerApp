@@ -63,7 +63,7 @@ class LogLevel
 
 	LogLevel.fromLevelName(String level_name)
 	{
-	    List<dynamic> args = logLevelDictionary[level_name];
+		List<dynamic> args = logLevelDictionary[level_name];
         name=args[0];
         level=args[1];
         color=args[2];

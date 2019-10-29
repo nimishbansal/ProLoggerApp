@@ -17,6 +17,7 @@ class LogEntryListBloc {
   static const int pageSize = 10;
 
   get lastPage {
+      if (noOfRecords==0) return 1;
     return (noOfRecords / pageSize).ceil();
   }
 
@@ -43,16 +44,16 @@ class LogEntryListBloc {
 
   LogEntryListBloc() {
     _logEntryRepository = new LogEntryRepository();
-    this.fetchLogEntriesList(pageNo: 1);
+//    this.fetchLogEntriesList(pageNo: 1);
     this.connectToSocket();
     this._logEntryEventController.stream.listen(_mapEventToState);
   }
 
-  void fetchLogEntriesList({int pageNo}) async {
+  void fetchLogEntriesList({int pageNo, int projectId}) async {
     this.pageNo = pageNo;
     _logEntryListStateController.add(ApiResponse.loading(message:'Page${this.pageNo}'));
     try {
-      var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo);
+      var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo, projectId: projectId);
       logEntries = result.item1;
       noOfRecords = result.item2;
       logEntriesSelectedStatus = logEntries
@@ -105,5 +106,3 @@ class LogEntryListBloc {
     _webSocket.close();
   }
 }
-
-final logEntryListBloc = LogEntryListBloc();

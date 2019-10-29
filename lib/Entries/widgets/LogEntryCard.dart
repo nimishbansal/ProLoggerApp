@@ -12,8 +12,10 @@ import 'package:pro_logger/Entries/Events/issue_events.dart';
 
 class LogEntryCard extends StatefulWidget {
   final int index;
+  final LogEntryListBloc logEntryListBloc;
+  final int projectId;
 
-  LogEntryCard({Key key, this.index}) : super(key: key);
+  LogEntryCard({Key key, this.index, this.logEntryListBloc, this.projectId}) : super(key: key);
 
   @override
   _LogEntryCardState createState() => _LogEntryCardState(logEntry:logEntryListBloc.logEntriesSelectedStatus[index].item1);
@@ -37,9 +39,9 @@ class _LogEntryCardState extends State<LogEntryCard> {
                   title: Text('${logEntry.title}'),
                   subtitle: Text('${logEntry.message}'),
                   trailing: Checkbox(
-                    value: logEntryListBloc.logEntriesSelectedStatus[widget.index].item2,
+                    value: widget.logEntryListBloc.logEntriesSelectedStatus[widget.index].item2,
                     onChanged: (_) {
-                      logEntryListBloc.logEventControllerSink.add(LogEntryCheckBoxToggledEvent(index:widget.index));
+                      widget.logEntryListBloc.logEventControllerSink.add(LogEntryCheckBoxToggledEvent(index:widget.index));
                     },
                   ),
                 ),
@@ -51,6 +53,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 MaterialPageRoute(
                   builder: (_) {
                     return LogEntryDetailScreen(
+                        projectId: widget.projectId,
                         id: logEntry.id,
                         title: logEntry.title,
                         message: logEntry.message,
@@ -59,7 +62,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 ),
               );
               if (result == "RECORD_DELETED") {
-                logEntryListBloc.fetchLogEntriesList(pageNo:logEntryListBloc.pageNo);
+                widget.logEntryListBloc.fetchLogEntriesList(pageNo:widget.logEntryListBloc.pageNo);
 
               }
             }),

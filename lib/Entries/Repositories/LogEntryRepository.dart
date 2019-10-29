@@ -47,13 +47,13 @@ class LogEntryRepository {
 
 
 
-  Future<Tuple2<List<LogEntry>, int>> fetchLogEntryList({pageNo: 1}) async {
+  Future<Tuple2<List<LogEntry>, int>> fetchLogEntryList({pageNo: 1, int projectId}) async {
     List<LogEntry> results = [];
     String requestUrl = BASE_URL +
         LOG_ENTRY_LIST_ENDPOINT +
         PAGINATOR_QUERY_PARAM +
         pageNo.toString();
-    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1");
+    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", projectId.toString());
     Response r = await Requests.get(parameterisedRequestUrl);
     final Map<String, dynamic> response = r.json();
 
@@ -65,9 +65,9 @@ class LogEntryRepository {
     return Tuple2(results, count);
   }
 
-  Future<LogEntry> fetchLogEntryDetails(int entryId) async {
+  Future<LogEntry> fetchLogEntryDetails(int entryId, int projectId) async {
     String requestUrl = BASE_URL + LOG_ENTRY_RETRIEVE_UPDATE_DESTROY_ENDPOINT;
-    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1").replaceAll("{entry_id}", entryId.toString());
+    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", projectId.toString()).replaceAll("{entry_id}", entryId.toString());
     Response r = await Requests.get(parameterisedRequestUrl);
     final Map<String, dynamic> response = r.json();
     return LogEntry.fromJson(response);

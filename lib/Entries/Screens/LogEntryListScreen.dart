@@ -8,8 +8,9 @@ import 'package:pro_logger/utility/network_utils.dart';
 import 'package:tuple/tuple.dart';
 
 class LogEntryListScreen extends StatefulWidget {
+  final int projectId;
   final String title;
-  LogEntryListScreen({Key key, this.title}) : super(key: key);
+  LogEntryListScreen({Key key, this.title, this.projectId}) : super(key: key);
 
   final ThemeData screenDefaultTheme = ThemeData(primaryColor: white);
 
@@ -18,10 +19,13 @@ class LogEntryListScreen extends StatefulWidget {
 }
 
 class _LogEntryListScreenState extends State<LogEntryListScreen> {
+  LogEntryListBloc logEntryListBloc;
   @override
   void initState() {
     super.initState();
-    logEntryListBloc.fetchLogEntriesList(pageNo: 1);
+    logEntryListBloc = LogEntryListBloc();
+    logEntryListBloc.fetchLogEntriesList(pageNo: 1, projectId: widget.projectId);
+//    logEntryListBloc.fetchLogEntriesList(pageNo: 1, projectId:"");
   }
 
   @override
@@ -42,7 +46,6 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
         builder: (context, snapshot) {
           if (!snapshot.hasData ||
               (snapshot.hasData && snapshot.data.status == Status.LOADING)) {
-            print("snapshot data is ${snapshot.data}");
             return Center(
                 child: Image(image: new AssetImage("images/loader.gif")));
           } else if (snapshot.hasData && snapshot.data.status == Status.ERROR) {
@@ -50,14 +53,19 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Image.network('https://static.thenounproject.com/png/207492-200.png', width: 50, height: 50,),
-                  Padding(padding: EdgeInsets.all(8),),
+                  Image.network(
+                    'https://static.thenounproject.com/png/207492-200.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                  ),
                   Text(snapshot.data.message)
                 ],
               ),
             );
           } else {
-            print("snapshot data is ${snapshot.data}");
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -98,9 +106,10 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
       itemBuilder: (context, index) {
         LogEntry logEntry = logEntriesSelectedStatus[index].item1;
         return LogEntryCard(
-          key: ValueKey(logEntry),
-          index: index
-        );
+            projectId:widget.projectId,
+            logEntryListBloc: logEntryListBloc,
+            key: ValueKey(logEntry),
+            index: index);
       },
     );
   }
@@ -114,10 +123,16 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
   }
 
   void _handleLeftButtonPressed() {
-    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo - 1);
+    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo - 1, projectId: widget.projectId);
   }
 
   void _handleRightButtonPressed() {
-    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo + 1);
+    logEntryListBloc.fetchLogEntriesList(pageNo: logEntryListBloc.pageNo + 1, projectId: widget.projectId);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    logEntryListBloc.dispose();
   }
 }
