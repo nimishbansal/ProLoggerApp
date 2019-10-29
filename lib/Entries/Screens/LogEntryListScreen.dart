@@ -37,7 +37,9 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: () {
+              Navigator.of(context).pop();
+          },
         ),
         title: Text("Issues"),
       ),
