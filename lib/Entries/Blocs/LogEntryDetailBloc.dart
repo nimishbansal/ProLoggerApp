@@ -27,8 +27,8 @@ class LogEntryDetailBloc {
     _issueDetailStateController.add(entry);
   }
 
-  void deleteLogEntry(int id) async {
-    bool result = await _logEntryRepository.deleteLogEntry(id);
+  void deleteLogEntry(int id, int projectId) async {
+    bool result = await _logEntryRepository.deleteLogEntry(id, projectId);
     _issueDeleteStateController.add(result);
   }
 

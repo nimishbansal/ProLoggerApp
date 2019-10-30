@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 //      home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
-      initialRoute: 'ProjectDetailScreen',
+      initialRoute: 'HomeScreen',
       routes: {
         'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
         'otpInputScreen': (context) => RegistrationScreenPartThree(),

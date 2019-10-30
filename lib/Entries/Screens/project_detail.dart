@@ -31,38 +31,55 @@ class ProjectDetailScreenState extends State<ProjectDetailScreen> {
         title: Text(widget.projectName??'Project1'),
       ),
       body: Container(
-        child: new WebviewScaffold(
-                url: new Uri.dataFromString(
-                '<html>'
-                '<head>'
-                '<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>'
-                '</head>'
-                '<style>'
-                'pre.prettyprint {'
-                'border: none !important;'
-                'font-size: 1em;'
-                'background-color: #F1F8FF'
-                '}'
-                '</style>'
-                '<body>'
-                '<div>'
-                'Install our python sdk early in your application\'s setup'
-                '<pre class="prettyprint py">'
-                '$installCode'
-                '</pre>'
-                '<br/>'
-                'Import and initialize the prologger SDK early in your applications setup'
-                '<pre class="prettyprint py">'
-                '$sourceCode'
-                '</pre>'
-                '<br/>'
-                'You can cause a Python error by inserting a divide by zero expression into your application:'
-                '<pre class="prettyprint py">'
-                '$exampleCode'
-                '</pre>'
-                '</div>'
-                '</body>'
-                '</html>', mimeType: 'text/html').toString()
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 6,),
+            Row(
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(left: 4),),
+                Text('Setup', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+              ],
+            ),
+            SizedBox(height: 6,),
+            Container(
+              height: 0.8*MediaQuery.of(context).size.height,
+              child: new WebviewScaffold(
+                      url: new Uri.dataFromString(
+                      '<html>'
+                      '<head>'
+                      '<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>'
+                      '</head>'
+                      '<style>'
+                      'pre.prettyprint {'
+                      'border: none !important;'
+                      'font-size: 1em;'
+                      'background-color: #F1F8FF'
+                      '}'
+                      '</style>'
+                      '<body>'
+                      '<div>'
+                      'Install our python sdk early in your application\'s setup'
+                      '<pre class="prettyprint py">'
+                      '$installCode'
+                      '</pre>'
+                      '<br/>'
+                      'Import and initialize the prologger SDK early in your applications setup'
+                      '<pre class="prettyprint py">'
+                      '$sourceCode'
+                      '</pre>'
+                      '<br/>'
+                      'You can cause a Python error by inserting a divide by zero expression into your application:'
+                      '<pre class="prettyprint py">'
+                      '$exampleCode'
+                      '</pre>'
+                      '</div>'
+                      '</body>'
+                      '</html>', mimeType: 'text/html').toString()
+              ),
+            ),
+          ],
         )
       ),
     );

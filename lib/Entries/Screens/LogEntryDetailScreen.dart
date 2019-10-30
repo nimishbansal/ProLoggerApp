@@ -66,7 +66,7 @@ class _LogEntryDetailScreenState extends State<LogEntryDetailScreen> {
       onPressed: () {
         Navigator.of(context).pop();
         print("continue");
-        _logEntryDetailBloc.deleteLogEntry(this.widget.id);
+        _logEntryDetailBloc.deleteLogEntry(this.widget.id, this.widget.projectId);
         this.setState(() {
           toDelete = true;
         });

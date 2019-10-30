@@ -73,9 +73,9 @@ class LogEntryRepository {
     return LogEntry.fromJson(response);
   }
 
-  Future<bool> deleteLogEntry(int entryId) async {
+  Future<bool> deleteLogEntry(int entryId, int projectId) async {
     String requestUrl = BASE_URL + LOG_ENTRY_RETRIEVE_UPDATE_DESTROY_ENDPOINT;
-    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", "1").replaceAll("{entry_id}", entryId.toString());
+    String parameterisedRequestUrl = requestUrl.replaceAll("{project_id}", projectId.toString()).replaceAll("{entry_id}", entryId.toString());
     Response r = await Requests.delete(parameterisedRequestUrl);
     if (r.content() == '')
         return true;
