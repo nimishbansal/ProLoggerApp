@@ -1,9 +1,9 @@
-import 'package:dartis/dartis.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
+import 'globals.dart' as globals;
 
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
 import 'Auth/Screens/RegistrationScreenPartThree.dart';
@@ -11,7 +11,6 @@ import 'Auth/Screens/RegistrationScreenPartTwo.dart';
 import 'Entries/Screens/project_detail.dart';
 import 'Entries/Screens/project_list.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
-import 'library_widgets/otp_field.dart';
 
 void main() => runApp(CustomTheme(
       child: MyApp(),
@@ -73,6 +72,7 @@ class MyAppState extends State<MyApp> {
       if (value != null) {
         setState(() {
           _userLoggedIn = true;
+          globals.authToken = value;
         });
       } else {
         setState(() {

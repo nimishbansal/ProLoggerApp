@@ -169,7 +169,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                       Text(
                                         'Are you Sure you want to delete ${_selectedIndexList.length} projects?',
                                       ),
-                                      _isLoading ? Loader() : SizedBox()
+                                      _isLoading ? Loader() : SizedBox(height: 0,)
                                     ],
                                   ),
                                   actions: <Widget>[
@@ -327,24 +327,6 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                         return LogEntryListScreen(projectId: projectId, title: projectTitle,);
                                                       }));
                                                       return;
-                                                      var result =
-                                                          await Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (_) {
-                                                            return ProjectDetailScreen(
-                                                                projectId: (obj as Map<
-                                                                        String,
-                                                                        dynamic>)[
-                                                                    'id'],
-                                                                projectName: (obj
-                                                                        as Map<
-                                                                            String,
-                                                                            dynamic>)[
-                                                                    'name']);
-                                                          },
-                                                        ),
-                                                      );
                                                     }
                                                   },
                                                 ),
@@ -451,29 +433,32 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
           }
           return AlertDialog(
             content: Builder(builder: (_) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  this.newProjectForm,
-                  (snapshot.hasData &&
-                          snapshot.data != null &&
-                          snapshot.data.status == Status.LOADING)
-                      ? Loader()
-                      : SizedBox(
-                          height: 0,
-                        ),
-                  (snapshot.hasData &&
-                          snapshot.data != null &&
-                          snapshot.data.status == Status.ERROR)
-                      ? Text(
-                          snapshot.data.message.toString(),
-                          style: TextStyle(color: Colors.red),
-                        )
-                      : SizedBox(
-                          height: 0,
-                        ),
+              return Container(
+                width: 0.5*MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    this.newProjectForm,
+                    (snapshot.hasData &&
+                            snapshot.data != null &&
+                            snapshot.data.status == Status.LOADING)
+                        ? Loader()
+                        : SizedBox(
+                            height: 0,
+                          ),
+                    (snapshot.hasData &&
+                            snapshot.data != null &&
+                            snapshot.data.status == Status.ERROR)
+                        ? Text(
+                            snapshot.data.message.toString(),
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : SizedBox(
+                            height: 0,
+                          ),
 //                  Text(snapshot.data?.message?.toString() ?? 'aww', style: TextStyle(color: Colors.red),),
-                ],
+                  ],
+                ),
               );
             }),
             actions: <Widget>[

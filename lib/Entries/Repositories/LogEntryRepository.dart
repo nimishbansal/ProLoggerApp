@@ -7,18 +7,14 @@ import 'package:pro_logger/constants.dart';
 import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
 import 'package:tuple/tuple.dart';
+import 'package:pro_logger/globals.dart' as globals;
 
 class LogEntryRepository {
-  String authToken;
-  Future getAuthToken;
-  LogEntryRepository() {
-    getAuthToken = storage.read(key: 'token').then((value) {
-      authToken = value;
-    });
-  }
+  String get authToken{
+    return globals.authToken;
+}
 
   Future<Tuple2<bool, Response>> createProject({String projectName}) async {
-    await getAuthToken;
     String requestUrl = BASE_URL + PROJECT_ENTRY_LIST_CREATE_ENDPOINT;
     HashMap<String, String> data;
     data = new HashMap<String, String>();
@@ -28,7 +24,6 @@ class LogEntryRepository {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': authToken
-//              'Authorization': 'Token 81a8d8783d8737a59cb684e47428d4acba33de87'
       },
       body: data,
     );
@@ -37,7 +32,6 @@ class LogEntryRepository {
   }
 
   Future<Tuple2<bool, Response>> listProjects() async {
-    await getAuthToken;
     String requestUrl = BASE_URL + PROJECT_ENTRY_LIST_CREATE_ENDPOINT;
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -49,14 +43,14 @@ class LogEntryRepository {
   }
 
   Future<Tuple2<bool, Response>> deleteProjects(List<int> projectIds) async {
-    await getAuthToken;
     String requestUrl = BASE_URL + PROJECT_BULK_DELETE_ENDPOINT;
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': authToken
 //      'Authorization': 'Token 81a8d8783d8737a59cb684e47428d4acba33de87'
     };
-    Response r = await Requests.post(requestUrl, body: projectIds, headers: headers);
+    Response r =
+        await Requests.post(requestUrl, body: projectIds, headers: headers);
     return Tuple2(r.success, r);
   }
 

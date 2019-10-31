@@ -6,6 +6,7 @@ import 'package:pro_logger/constants.dart';
 import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
 import 'package:sms/sms.dart';
+import 'package:pro_logger/globals.dart' as globals;
 
 final storage = new FlutterSecureStorage();
 
@@ -41,6 +42,7 @@ class AuthRepository {
     final Map<String, dynamic> response = r.json();
     if (response[STATUS] == SUCCESS) {
       storage.write(key: 'token', value: 'Token ${response['key']}');
+      globals.authToken = 'Token ${response['key']}';
     }
     return true;
   }
