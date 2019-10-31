@@ -73,7 +73,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
               children: <Widget>[
                 Container(
                   child: _myListView(context, snapshot.data.data),
-                  height: MediaQuery.of(context).size.height - 130,
+                  height: MediaQuery.of(context).size.height - 136,
                 ),
                 BottomAppBar(
                   child: Row(

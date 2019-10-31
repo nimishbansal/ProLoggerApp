@@ -9,6 +9,7 @@ import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
 import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:pro_logger/utility/network_utils.dart';
+import 'package:pro_logger/globals.dart' as globals;
 
 class LogEntryListBloc {
   LogEntry logEntry = new LogEntry(
@@ -79,7 +80,7 @@ class LogEntryListBloc {
   void connectToRedis() async {
     final pubsub =
         await PubSub.connect<String, String>("redis://192.168.0.107:6379");
-    pubsub.subscribe(channel: "onChat" + "81a8d8783d8737a59cb684e47428d4acba33de87");
+    pubsub.subscribe(channel: "onChat" + globals.authToken.split(" ")[1]);
     pubsub.stream.listen((data) {
       if (data.runtimeType.toString() == 'MessageEvent<String, String>') {
         this.logEntry = LogEntry.fromJson(json
