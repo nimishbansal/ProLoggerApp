@@ -1,3 +1,4 @@
+import 'package:dartis/dartis.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
@@ -43,11 +44,24 @@ class Home extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
+
+  void hmm() async {
+//    final client = await Client.connect('redis://192.168.0.107:6379');
+//    print(client.toString());
+//    final commands = client.asCommands();
+  final pubsub = await PubSub.connect<String, String>("redis://192.168.0.107:6379");
+  pubsub.psubscribe(pattern: "onChat");
+  pubsub.stream.listen((data){
+    print(data.toString());
+  });
+  }
   @override
   Widget build(BuildContext context) {
     storage.read(key: 'token').then((value){
       print("token value is $value");
     });
+    hmm();
+
 //    return MaterialApp(
 //      home: Container(
 //        color: Colors.yellowAccent,
