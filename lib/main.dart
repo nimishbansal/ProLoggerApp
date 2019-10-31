@@ -44,44 +44,24 @@ class Home extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
-
   void hmm() async {
 //    final client = await Client.connect('redis://192.168.0.107:6379');
 //    print(client.toString());
 //    final commands = client.asCommands();
-  final pubsub = await PubSub.connect<String, String>("redis://192.168.0.107:6379");
-  pubsub.psubscribe(pattern: "onChat");
-  pubsub.stream.listen((data){
-    print(data.toString());
-  });
+//    commands.set("mynumber", "1234");
+//    final pubsub = await PubSub.connect<String, String>("redis://192.168.0.107:6379");
+//    pubsub.psubscribe(pattern: "onChat"+"81a8d8783d8737a59cb684e47428d4acba33de87");
+//    pubsub.stream.listen((data) {
+//      print(data.toString());
+//    });
   }
+
   @override
   Widget build(BuildContext context) {
-    storage.read(key: 'token').then((value){
-      print("token value is $value");
-    });
-    hmm();
-
-//    return MaterialApp(
-//      home: Container(
-//        color: Colors.yellowAccent,
-//        alignment: Alignment.center,
-//        child: Container(
-//          color: Colors.amberAccent,
-//          width: 300,
-//          height: 200,
-//          child: OTPField(
-//            boxWidth: 40,
-//            boxHeight: 40,
-//          ),
-//          alignment: Alignment.center,
-//        ),
-//      ),
-//    );
     return MaterialApp(
-//      home: RegistrationScreenPartOne(),
+      home: RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
-      initialRoute: 'HomeScreen',
+//      initialRoute: 'phoneInputScreen',
       routes: {
         'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
         'otpInputScreen': (context) => RegistrationScreenPartThree(),

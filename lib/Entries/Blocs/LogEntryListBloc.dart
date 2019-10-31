@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dartis/dartis.dart';
 import 'package:tuple/tuple.dart';
 import 'package:pro_logger/Entries/Events/issue_events.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
@@ -17,7 +18,7 @@ class LogEntryListBloc {
   static const int pageSize = 10;
 
   get lastPage {
-      if (noOfRecords==0) return 1;
+    if (noOfRecords == 0) return 1;
     return (noOfRecords / pageSize).ceil();
   }
 
@@ -27,9 +28,6 @@ class LogEntryListBloc {
   List<Tuple2<LogEntry, bool>> logEntriesSelectedStatus =
       new List<Tuple2<LogEntry, bool>>();
   LogEntryRepository _logEntryRepository;
-
-  WebSocket _webSocket;
-  IOWebSocketChannel _ioWebSocketChannel;
 
   StreamController<ApiResponse> _logEntryListStateController =
       StreamController<ApiResponse>();
@@ -44,23 +42,32 @@ class LogEntryListBloc {
 
   LogEntryListBloc() {
     _logEntryRepository = new LogEntryRepository();
-//    this.fetchLogEntriesList(pageNo: 1);
-    this.connectToSocket();
+    this.connectToRedis();
     this._logEntryEventController.stream.listen(_mapEventToState);
   }
 
   void fetchLogEntriesList({int pageNo, int projectId}) async {
     this.pageNo = pageNo;
-    _logEntryListStateController.add(ApiResponse.loading(message:'Page${this.pageNo}'));
+    _logEntryListStateController
+        .add(ApiResponse.loading(message: 'Page${this.pageNo}'));
     try {
-      var result = await _logEntryRepository.fetchLogEntryList(pageNo: pageNo, projectId: projectId);
+      var result = await _logEntryRepository.fetchLogEntryList(
+          pageNo: pageNo, projectId: projectId);
       logEntries = result.item1;
       noOfRecords = result.item2;
       logEntriesSelectedStatus = logEntries
-          .map((currentLogEntry) => Tuple2(currentLogEntry, false))
-          .toList();
-      _logEntryListStateController
-          .add(ApiResponse.completed(logEntriesSelectedStatus));
+              .map((currentLogEntry) => Tuple2(currentLogEntry, false))
+              .toList();
+
+      if (noOfRecords==0){
+        _logEntryListStateController
+                .add(ApiResponse.error('No records found'));
+      }
+      else{
+        _logEntryListStateController
+                .add(ApiResponse.completed(logEntriesSelectedStatus));
+      }
+
     } catch (e) {
       if (e.runtimeType == SocketException) {
         _logEntryListStateController
@@ -69,19 +76,22 @@ class LogEntryListBloc {
     }
   }
 
-  void connectToSocket() async {
-    this._webSocket = await WebSocket.connect("ws://192.168.0.107:8080/",
-        protocols: ['echo-protocol']);
-    this._ioWebSocketChannel = IOWebSocketChannel(_webSocket);
-    this._ioWebSocketChannel.sink.add(json.encode({'type': 'onConnect'}));
-    this._ioWebSocketChannel.stream.listen((dynamic data) {
-      this.logEntry = LogEntry.fromJson(json.decode(data.toString()));
-      this.logEventControllerSink.add(NewLogEntryEvent());
+  void connectToRedis() async {
+    final pubsub =
+        await PubSub.connect<String, String>("redis://192.168.0.107:6379");
+    pubsub.subscribe(channel: "onChat" + "81a8d8783d8737a59cb684e47428d4acba33de87");
+    pubsub.stream.listen((data) {
+      if (data.runtimeType.toString() == 'MessageEvent<String, String>') {
+        this.logEntry = LogEntry.fromJson(json
+            .decode((data as MessageEvent<String, String>).message.toString()));
+        this.logEventControllerSink.add(NewLogEntryEvent());
+      }
     });
   }
 
   void _mapEventToState(LogEntryEvent event) {
-    if (event is NewLogEntryEvent) { // New issue event
+    if (event is NewLogEntryEvent) {
+      // New issue event
       noOfRecords++;
       if (this.pageNo == 1) {
         if (logEntriesSelectedStatus.length < pageSize) {
@@ -92,9 +102,11 @@ class LogEntryListBloc {
         this.logEntriesSelectedStatus.setRange(0, 1, [Tuple2(logEntry, false)]);
         this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
       }
-    } else if (event is LogEntryCheckBoxToggledEvent) { // Log Entry List Item Selected
+    } else if (event is LogEntryCheckBoxToggledEvent) {
+      // Log Entry List Item Selected
       var previousTuple = this.logEntriesSelectedStatus[event.index];
-      this.logEntriesSelectedStatus[event.index] = Tuple2(previousTuple.item1, !previousTuple.item2);
+      this.logEntriesSelectedStatus[event.index] =
+          Tuple2(previousTuple.item1, !previousTuple.item2);
       this.inIssue.add(ApiResponse.completed(this.logEntriesSelectedStatus));
     }
   }
@@ -102,7 +114,5 @@ class LogEntryListBloc {
   void dispose() {
     _logEntryEventController.close();
     _logEntryListStateController.close();
-    _ioWebSocketChannel.sink.close();
-    _webSocket.close();
   }
 }

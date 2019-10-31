@@ -19,8 +19,7 @@ class AuthRepository {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: data,
-        json: true);
+        json: data,);
     final Map<String, dynamic> response = r.json();
     print(response);
     return true;
