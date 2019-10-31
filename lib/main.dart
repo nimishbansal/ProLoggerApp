@@ -2,6 +2,7 @@ import 'package:dartis/dartis.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
+import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/ThemeManager/widgets/CustomThemeChangerWidget.dart';
 
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
@@ -43,8 +44,15 @@ class Home extends StatelessWidget {
   }
 }
 
-class MyApp extends StatelessWidget {
-  void hmm() async {
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return MyAppState();
+  }
+}
+
+class MyAppState extends State<MyApp> {
+//  void hmm() async {
 //    final client = await Client.connect('redis://192.168.0.107:6379');
 //    print(client.toString());
 //    final commands = client.asCommands();
@@ -54,12 +62,30 @@ class MyApp extends StatelessWidget {
 //    pubsub.stream.listen((data) {
 //      print(data.toString());
 //    });
+//  }
+
+  bool _userLoggedIn;
+
+  @override
+  void initState() {
+    super.initState();
+    storage.read(key: 'token').then((value) {
+      if (value != null) {
+        setState(() {
+          _userLoggedIn = true;
+        });
+      } else {
+        setState(() {
+          _userLoggedIn = false;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: RegistrationScreenPartOne(),
+      home: _userLoggedIn==null?Loader():_userLoggedIn==true ? ProjectsListScreen() : RegistrationScreenPartOne(),
       theme: CustomTheme.of(context),
 //      initialRoute: 'phoneInputScreen',
       routes: {
