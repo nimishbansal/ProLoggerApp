@@ -62,7 +62,7 @@ class _LogEntryCardState extends State<LogEntryCard> {
                 ),
               );
               if (result == "RECORD_DELETED") {
-                widget.logEntryListBloc.fetchLogEntriesList(pageNo:widget.logEntryListBloc.pageNo);
+                widget.logEntryListBloc.fetchLogEntriesList(pageNo:widget.logEntryListBloc.pageNo, projectId: widget.projectId);
 
               }
             }),
