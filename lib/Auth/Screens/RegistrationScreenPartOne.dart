@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pro_logger/library_widgets/flutter_mobile_input.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
+import 'dart:math';
 
 class RegistrationScreenPartOne extends StatelessWidget {
+
+  @override
+  StatelessElement createElement() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp
+    ]);
+    return super.createElement();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -24,8 +35,8 @@ class RegistrationScreenPartOne extends StatelessWidget {
                   image: new AssetImage(
                     "images/applogo.png",
                   ),
-                  width: 0.40*MediaQuery.of(context).size.width,
-                  height: 0.40*MediaQuery.of(context).size.width,
+                  width: 0.5*MediaQuery.of(context).size.width,
+                  height: 0.5*MediaQuery.of(context).size.width,
                 ),
               ),
             ),
@@ -46,7 +57,7 @@ class RegistrationScreenPartOne extends StatelessWidget {
                       ),
                     ),
 
-                  SizedBox(height: 0.04*MediaQuery.of(context).size.height,),
+                  SizedBox(height: 0.5*sqrt(MediaQuery.of(context).size.height,)),
                     Container(
                       padding: EdgeInsets.only(left: 15, right: 15),
                       child: Image(
@@ -57,19 +68,26 @@ class RegistrationScreenPartOne extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 0.07*MediaQuery.of(context).size.height,),
+                    SizedBox(height: 0.04*MediaQuery.of(context).size.height,),
 
                   ],
                 ),
               ],
             ),
             //Mobile Input
-            GestureDetector(
-              child: AbsorbPointer(child: MobileInput(autofocus: false,)),
-              onTap: () {
-                print("whole widget tapped");
-                Navigator.of(context).pushNamed('phoneInputScreen');
-              },
+
+            Expanded(
+              child: Container(
+                  padding: EdgeInsets.only(bottom: 0.03*MediaQuery.of(context).size.height),
+                  alignment: Alignment.bottomCenter,
+                child: GestureDetector(
+                  child: AbsorbPointer(child: MobileInput(autofocus: false,)),
+                  onTap: () {
+                    print("whole widget tapped");
+                    Navigator.of(context).pushNamed('phoneInputScreen');
+                  },
+                ),
+              ),
             ),
 
           ],
