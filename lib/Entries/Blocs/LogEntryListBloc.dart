@@ -48,12 +48,14 @@ class LogEntryListBloc {
   }
 
   void fetchLogEntriesList({int pageNo, int projectId}) async {
-    this.pageNo = pageNo;
+    print("hmm");
+      this.pageNo = pageNo;
     _logEntryListStateController
         .add(ApiResponse.loading(message: 'Page${this.pageNo}'));
     try {
       var result = await _logEntryRepository.fetchLogEntryList(
           pageNo: pageNo, projectId: projectId);
+
       logEntries = result.item1;
       noOfRecords = result.item2;
       logEntriesSelectedStatus = logEntries
@@ -74,6 +76,10 @@ class LogEntryListBloc {
         _logEntryListStateController
             .add(ApiResponse.error('Connection Refused'));
       }
+      print("exception is $e");
+      _logEntryListStateController
+              .add(ApiResponse.error('Sorry, :-( \nSome error occured'));
+
     }
   }
 
@@ -82,6 +88,7 @@ class LogEntryListBloc {
         await PubSub.connect<String, String>("redis://192.168.0.107:6379");
     pubsub.subscribe(channel: "onChat" + globals.authToken.split(" ")[1]);
     pubsub.stream.listen((data) {
+        print(data);
       if (data.runtimeType.toString() == 'MessageEvent<String, String>') {
         this.logEntry = LogEntry.fromJson(json
             .decode((data as MessageEvent<String, String>).message.toString()));

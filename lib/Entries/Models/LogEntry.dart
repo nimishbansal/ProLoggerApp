@@ -11,6 +11,8 @@ class LogEntry {
   DateTime createdAt;
   Map<String, dynamic> tags;
 
+  Map<String, dynamic> stacktrace;
+
   LogEntry(
       {@required this.id,
       @required this.title,
@@ -39,6 +41,7 @@ class LogEntry {
           createdAtJson['second']);
     }
     tags = jsonDecode(jsonEncode(data['tags']));
+    stacktrace = jsonDecode(jsonEncode(data['stacktrace']));
   }
 
   @override

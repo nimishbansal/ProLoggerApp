@@ -4,6 +4,22 @@ import 'package:pro_logger/Entries/Models/LogEntry.dart';
 import 'package:pro_logger/utility/LogLevel.dart';
 
 class StackTraceFrameTile extends StatefulWidget {
+  final int excetptionLineNo;
+  final String fileName;
+  final String functionName;
+  final String preContextText;
+  final String exceptionContextText;
+  final String postContextText;
+
+  const StackTraceFrameTile(
+      {Key key,
+      this.excetptionLineNo,
+      this.fileName,
+      this.functionName,
+      this.preContextText,
+      this.exceptionContextText,
+      this.postContextText})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return StackTraceFrameTileState();
@@ -21,16 +37,13 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
 
   @override
   Widget build(BuildContext context) {
-    var exception_line_no = 26;
-    var file_name = "utility/zohocrm/zohocrm_leads.py";
-    var function_name = "load_oauth_token_and_access_token_from_pickle";
-    var complete_line =
-        '$file_name in $function_name at line $exception_line_no';
+    var completeLine =
+        '${widget.fileName} in ${widget.functionName} at line ${widget.excetptionLineNo}';
 
-    var text_widget = Expanded(
+    var textWidget = Expanded(
         child: Container(
       child: Text(
-        complete_line,
+        completeLine,
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       color: Color(0xececf1).withAlpha(0xFF),
@@ -39,10 +52,10 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
 
     var self = this;
 
-    var plus_minus_icon = Icons.remove;
-    if (collapsed) plus_minus_icon = Icons.add;
+    var plusMinusIcon = Icons.remove;
+    if (collapsed) plusMinusIcon = Icons.add;
 
-    var plus_minus_button = IconButton(
+    var plusMinusButton = IconButton(
         onPressed: () {
           toggleCollapse();
         },
@@ -51,7 +64,7 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
                 border: new Border.all(color: Colors.grey),
                 color: Color(0xFFFFFF).withAlpha(0xFF)),
             child: Icon(
-              plus_minus_icon,
+              plusMinusIcon,
               color: Colors.grey,
             )));
 
@@ -63,7 +76,7 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
           child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[text_widget, plus_minus_button])),
+              children: <Widget>[textWidget, plusMinusButton])),
       onTap: () {
         toggleCollapse();
       },
@@ -85,19 +98,20 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              preContextText,
+              widget.preContextText,
               style: TextStyle(height: 1.2, fontSize: 15),
             ),
             Container(
               child: Text(
-                exceptionContextText,
+                widget.exceptionContextText,
                 style:
                     TextStyle(color: Colors.white, height: 1.2, fontSize: 15),
               ),
               color: Color(0x6c5fc7).withAlpha(0xFFFFF),
               width: double.infinity,
             ),
-            Text(postContextText, style: TextStyle(height: 1.2, fontSize: 15))
+            Text(widget.postContextText,
+                style: TextStyle(height: 1.2, fontSize: 15))
           ],
         ),
       );
@@ -130,11 +144,31 @@ class ErrorDetailScreenContainerState
 
   @override
   Widget build(BuildContext context) {
-    var x = StackTraceFrameTile();
-    var y = StackTraceFrameTile();
-    var z = StackTraceFrameTile();
+    List<Widget> exceptionStackTracesTiles = [];
+    if (widget.logEntry.stacktrace != null) {
+      widget.logEntry.stacktrace['frames_data'].forEach((currentMap) {
+        List<String> previousLines = [];
+        List<String> nextLines = [];
+        (currentMap['previous_lines'] as List<dynamic>).forEach((dynamic p) {
+          previousLines.add(p);
+        });
+        (currentMap['next_lines'] as List<dynamic>).forEach((dynamic p) {
+          nextLines.add(p);
+        });
+        exceptionStackTracesTiles.add(
+          StackTraceFrameTile(
+            functionName: currentMap['function_name'],
+            excetptionLineNo: currentMap['line_no'],
+            fileName: currentMap['filepath'],
+            preContextText: previousLines.join(),
+            exceptionContextText: currentMap['code_line'],
+            postContextText: nextLines.join(),
+          ),
+        );
+      });
+    }
 
-    var frames = [
+    List<Widget> frames = [
       //Message
       new Text(
         'Message:',
@@ -163,10 +197,12 @@ class ErrorDetailScreenContainerState
           ),
         ),
       ),
-      x,
-      y,
-      z,
+    ];
 
+    if (exceptionStackTracesTiles.length != 0) {
+      frames.addAll(exceptionStackTracesTiles);
+    }
+    frames.addAll([
       Padding(
         padding: EdgeInsets.all(4),
       ),
@@ -231,7 +267,7 @@ class ErrorDetailScreenContainerState
       Divider(
         color: Colors.grey[500],
       ),
-    ];
+    ]);
     return new Container(
       child: ListView(
         shrinkWrap: true,
