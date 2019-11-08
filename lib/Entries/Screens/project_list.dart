@@ -78,6 +78,15 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
 
   List<dynamic> _currentProjectsList = List<dynamic>();
 
+  List<Color> colorSet = [
+    Color(0x86C745).withAlpha(0xFFFFFF),
+    Color(0xF16129).withAlpha(0xFFFFFF),
+    Color(0xA54EA5).withAlpha(0xFFFFFF),
+    Color(0x008DDE).withAlpha(0xFFFFFF),
+    Color(0xFCAF32).withAlpha(0xFFFFFF),
+    Color(0xC94266).withAlpha(0xFFFFFF),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -169,7 +178,11 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                       Text(
                                         'Are you Sure you want to delete ${_selectedIndexList.length} projects?',
                                       ),
-                                      _isLoading ? Loader() : SizedBox(height: 0,)
+                                      _isLoading
+                                          ? Loader()
+                                          : SizedBox(
+                                              height: 0,
+                                            )
                                     ],
                                   ),
                                   actions: <Widget>[
@@ -302,8 +315,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                 ),
                                                 child: InkWell(
                                                   child: Container(
-                                                    color:
-                                                        Colors.deepPurpleAccent,
+                                                    color: colorSet[index % 6],
                                                     alignment: Alignment.center,
                                                     child: Text(
                                                       ((obj as Map)['name']),
@@ -321,10 +333,19 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                       _changeSelection(
                                                           index: index);
                                                     } else {
-                                                      int projectId = (obj as Map<String, dynamic>)['id'];
-                                                      String projectTitle = (obj as Map<String, dynamic>)['name'];
-                                                      Navigator.push(context, MaterialPageRoute(builder: (_){
-                                                        return LogEntryListScreen(projectId: projectId, title: projectTitle,);
+                                                      int projectId = (obj
+                                                          as Map<String,
+                                                              dynamic>)['id'];
+                                                      String projectTitle = (obj
+                                                          as Map<String,
+                                                              dynamic>)['name'];
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(
+                                                              builder: (_) {
+                                                        return LogEntryListScreen(
+                                                          projectId: projectId,
+                                                          title: projectTitle,
+                                                        );
                                                       }));
                                                       return;
                                                     }
@@ -434,7 +455,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
           return AlertDialog(
             content: Builder(builder: (_) {
               return Container(
-                width: 0.5*MediaQuery.of(context).size.width,
+                width: 0.5 * MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[

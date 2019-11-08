@@ -37,6 +37,7 @@ class LogEntry {
           createdAtJson['year'],
           createdAtJson['month'],
           createdAtJson['day'],
+          createdAtJson['hour'],
           createdAtJson['minute'],
           createdAtJson['second']);
     }
