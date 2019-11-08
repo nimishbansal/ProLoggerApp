@@ -98,19 +98,20 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              widget.preContextText,
+              widget.preContextText.trimRight(),
               style: TextStyle(height: 1.2, fontSize: 15),
             ),
             Container(
               child: Text(
-                widget.exceptionContextText,
+                widget.exceptionContextText.trimRight(),
                 style:
                     TextStyle(color: Colors.white, height: 1.2, fontSize: 15),
               ),
-              color: Color(0x6c5fc7).withAlpha(0xFFFFF),
+                color: Colors.redAccent,
+//              color: Color(0x6c5fc7).withAlpha(0xFFFFF),
               width: double.infinity,
             ),
-            Text(widget.postContextText,
+            Text(widget.postContextText.trimRight(),
                 style: TextStyle(height: 1.2, fontSize: 15))
           ],
         ),
@@ -198,6 +199,9 @@ class ErrorDetailScreenContainerState
         ),
       ),
     ];
+
+    // reverse stack tiles to show the recent first
+    exceptionStackTracesTiles = exceptionStackTracesTiles.reversed.toList();
 
     if (exceptionStackTracesTiles.length != 0) {
       frames.addAll(exceptionStackTracesTiles);

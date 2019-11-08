@@ -81,6 +81,7 @@ class LogEntryRepository {
         .replaceAll("{entry_id}", entryId.toString());
     Response r = await Requests.get(parameterisedRequestUrl);
     final Map<String, dynamic> response = r.json();
+    print("current response is $response");
     return LogEntry.fromJson(response);
   }
 
