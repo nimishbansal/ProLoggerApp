@@ -43,8 +43,9 @@ class AuthRepository {
     if (response[STATUS] == SUCCESS) {
       storage.write(key: 'token', value: 'Token ${response['key']}');
       globals.authToken = 'Token ${response['key']}';
+      return true;
     }
-    return true;
+    return false;
   }
 
   bool checkAuthorizedSMS(SmsMessage msg) {
