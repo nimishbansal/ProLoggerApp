@@ -509,6 +509,22 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
               _selectedIndexList.clear();
               _selectionMode = false;
               _projectBloc.listProjects(addLoadingInitially: false);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) {
+                      Map<String, dynamic> projectDetailJson = (snapshot.data.data as Response).json();
+                      print(projectDetailJson);
+                      return ProjectDetailScreen(
+                              projectName: projectDetailJson['name'].toString(),
+                              projectId: projectDetailJson['id'],
+                              secretKey: projectDetailJson['secret_key'].toString()
+                      );
+                    },
+                  ),
+                );
+
             });
           }
           return AlertDialog(
