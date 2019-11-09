@@ -16,6 +16,7 @@ class StackTraceFrameTile extends StatefulWidget {
   final String preContextText;
   final String exceptionContextText;
   final String postContextText;
+  final Map<String, dynamic> localVariables;
 
   const StackTraceFrameTile(
       {Key key,
@@ -24,7 +25,8 @@ class StackTraceFrameTile extends StatefulWidget {
       this.functionName,
       this.preContextText,
       this.exceptionContextText,
-      this.postContextText})
+      this.postContextText,
+      this.localVariables})
       : super(key: key);
   @override
   State<StatefulWidget> createState() {
@@ -110,7 +112,21 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
               width: double.infinity,
             ),
             Text(widget.postContextText.trimRight(),
-                style: TextStyle(height: 1.2, fontSize: 15))
+                style: TextStyle(height: 1.2, fontSize: 15)),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              child: Text(
+                'Variables',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blueGrey,
+              padding: EdgeInsets.all(4),
+            ),
+            Column(
+              children: getLocalVariablesWidgetList(widget.localVariables),
+            )
           ],
         ),
       );
@@ -119,6 +135,32 @@ class StackTraceFrameTileState extends State<StackTraceFrameTile> {
       children: <Widget>[groupTextWidgetAndExpandButton, expandedDetails],
     );
     return finalColumn;
+  }
+
+  List<Widget> getLocalVariablesWidgetList(
+      Map<String, dynamic> localVariables) {
+    List<Widget> localsWidget = [];
+    localVariables.forEach((String key, dynamic value) {
+      localsWidget.add(
+        Container(
+          padding: EdgeInsets.only(top: 3, bottom: 3),
+          child: ListView(
+            children: <Widget>[
+              Text(key, style: TextStyle(fontSize: 16, color: Colors.green),),
+              Padding(child: Text(":",style: TextStyle(fontSize: 16),),padding: EdgeInsets.only(left: 4, right: 4),),
+              Text(
+                value.toString(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 16, color:Colors.blue),
+              ),
+            ],
+            scrollDirection: Axis.horizontal,
+          ),
+          height: 30,
+        ),
+      );
+    });
+    return localsWidget;
   }
 }
 
@@ -138,10 +180,9 @@ class LogEntryDetailListViewComponent extends StatefulWidget {
 
 class LogEntryDetailListViewComponentState
     extends State<LogEntryDetailListViewComponent> {
-
-    bool get _showExceptionStackTrace {
-       return widget.logEntry.stacktrace != null;
-    }
+  bool get _showExceptionStackTrace {
+    return widget.logEntry.stacktrace != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +205,7 @@ class LogEntryDetailListViewComponentState
             preContextText: previousLines.join(),
             exceptionContextText: currentMap['code_line'],
             postContextText: nextLines.join(),
+            localVariables: currentMap['locals'],
           ),
         );
       });
@@ -206,18 +248,22 @@ class LogEntryDetailListViewComponentState
         color: Colors.grey[500],
       ),
 
-
       // Exception Stack Trace
-      _showExceptionStackTrace?Align(
-        alignment: Alignment.centerLeft,
-        child: new Text(
-          'Exception:',
-          style: TextStyle(
-            fontSize: 22,
-            color: Color.fromRGBO(127, 127, 127, 1),
-          ),
-        ),
-      ):SizedBox(height: 0,width: 0,),
+      _showExceptionStackTrace
+          ? Align(
+              alignment: Alignment.centerLeft,
+              child: new Text(
+                'Exception:',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Color.fromRGBO(127, 127, 127, 1),
+                ),
+              ),
+            )
+          : SizedBox(
+              height: 0,
+              width: 0,
+            ),
     ];
 
     if (_showExceptionStackTrace && exceptionStackTracesTiles.length != 0) {
@@ -229,9 +275,14 @@ class LogEntryDetailListViewComponentState
         padding: EdgeInsets.all(4),
       ),
 
-      _showExceptionStackTrace?Divider(
-        color: Colors.grey[500],
-      ):SizedBox(height: 0,width: 0,),
+      _showExceptionStackTrace
+          ? Divider(
+              color: Colors.grey[500],
+            )
+          : SizedBox(
+              height: 0,
+              width: 0,
+            ),
 
       // Timestamp
       new Text(

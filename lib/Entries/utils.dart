@@ -4,3 +4,4 @@ const PROJECT_BULK_DELETE_ENDPOINT = PROJECT_ENTRY_LIST_CREATE_ENDPOINT + 'bulk_
 const LOG_ENTRY_LIST_ENDPOINT = '/projects/{project_id}/log_entries/';
 const LOG_ENTRY_RETRIEVE_UPDATE_DESTROY_ENDPOINT = LOG_ENTRY_LIST_ENDPOINT + '{entry_id}/';
 const PAGINATOR_QUERY_PARAM = '?page=';
+const LOG_ENTRY_BULK_DELETE_ENDPOINT = '/projects/{project_id}/log_entries/bulk_delete/';

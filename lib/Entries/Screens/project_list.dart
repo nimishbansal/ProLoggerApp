@@ -1,12 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
-import 'package:pro_logger/Entries/Screens/project_detail.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
-import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
 
@@ -137,7 +133,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.green[600],
+        backgroundColor: Colors.greenAccent,
         actions: <Widget>[
           _selectionMode
               ? IconButton(
@@ -182,7 +178,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                           ? Loader()
                                           : SizedBox(
                                               height: 0,
-                                            )
+                                            ),
                                     ],
                                   ),
                                   actions: <Widget>[

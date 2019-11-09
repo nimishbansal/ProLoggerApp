@@ -96,4 +96,15 @@ class LogEntryRepository {
     else
       return false;
   }
+
+  Future<Tuple2<bool, Response>> deleteLogEntries(List<int> logEntryIds, int projectId) async {
+    String requestUrl = (BASE_URL + LOG_ENTRY_BULK_DELETE_ENDPOINT).replaceAll('{project_id}', projectId.toString());
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': authToken
+    };
+    Response r =
+    await Requests.post(requestUrl, body: logEntryIds, headers: headers);
+    return Tuple2(r.success, r);
+  }
 }

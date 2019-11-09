@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartis/dartis.dart';
+import 'package:requests/requests.dart';
 import 'package:tuple/tuple.dart';
 import 'package:pro_logger/Entries/Events/issue_events.dart';
 import 'package:pro_logger/Entries/Repositories/LogEntryRepository.dart';
@@ -41,14 +42,20 @@ class LogEntryListBloc {
   Sink<LogEntryEvent> get logEventControllerSink =>
       _logEntryEventController.sink;
 
+
+  // Stream utils for deleting logEntries list
+  StreamController<ApiResponse> _deleteLogEntriesStreamController;
+  StreamSink<ApiResponse> get deleteLogEntriesSink => _deleteLogEntriesStreamController.sink;
+  Stream<ApiResponse> get deleteLogEntriesStream => _deleteLogEntriesStreamController.stream;
+
   LogEntryListBloc() {
     _logEntryRepository = new LogEntryRepository();
     this.connectToRedis();
     this._logEntryEventController.stream.listen(_mapEventToState);
+    _deleteLogEntriesStreamController = StreamController<ApiResponse>();
   }
 
   void fetchLogEntriesList({int pageNo, int projectId}) async {
-    print("hmm");
       this.pageNo = pageNo;
     _logEntryListStateController
         .add(ApiResponse.loading(message: 'Page${this.pageNo}'));
@@ -82,6 +89,22 @@ class LogEntryListBloc {
 
     }
   }
+
+  void deleteLogEntries(List<Tuple2<LogEntry, bool>> logEntriesTuplesList, int projectId) async {
+    deleteLogEntriesSink.add(ApiResponse.loading());
+    List<int> logEntryIds = logEntriesTuplesList.map((Tuple2<LogEntry, bool> logEntrySelectedStatus){
+      return logEntrySelectedStatus.item1.id;
+    }).toList();
+    Tuple2<bool, Response> results = await _logEntryRepository.deleteLogEntries(logEntryIds, projectId);
+    var response = results.item2;
+    if (results.item1) {
+      deleteLogEntriesSink.add(ApiResponse.completed(response));
+    } else {
+      print(response.content());
+      deleteLogEntriesSink.add(ApiResponse.error('Some Error Occured'));
+    }
+  }
+
 
   void connectToRedis() async {
     final pubsub =
@@ -122,5 +145,6 @@ class LogEntryListBloc {
   void dispose() {
     _logEntryEventController.close();
     _logEntryListStateController.close();
+    _deleteLogEntriesStreamController.close();
   }
 }
