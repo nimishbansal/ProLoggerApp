@@ -6,7 +6,9 @@ class ProjectDetailScreen extends StatefulWidget {
 
   final String projectName;
 
-  const ProjectDetailScreen({Key key, this.projectId, this.projectName})
+  final String secretKey;
+
+  const ProjectDetailScreen({Key key, this.projectId, this.projectName, this.secretKey})
       : super(key: key);
 
   @override
@@ -67,7 +69,7 @@ class ProjectDetailScreenState extends State<ProjectDetailScreen> {
                       '<br/>'
                       'Import and initialize the prologger SDK early in your applications setup'
                       '<pre class="prettyprint py">'
-                      '$sourceCode'
+                      '${sourceCode.replaceFirst('{0}', widget.secretKey)};'
                       '</pre>'
                       '<br/>'
                       'You can cause a Python error by inserting a divide by zero expression into your application:'
@@ -90,10 +92,11 @@ var installCode = """
 \$ pip install --upgrade prologgersdk==0.0.1
 """;
 
+
 var sourceCode =
 """
 import prologgersdk
-prologgersdk.setup("b87686e508")
+prologgersdk.setup("{0}")
 """;
 
 var exampleCode =

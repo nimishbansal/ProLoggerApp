@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
+import 'package:pro_logger/Entries/Screens/project_detail.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';
@@ -287,28 +288,90 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                             int index,
                                             dynamic obj,
                                           ) {
+                                            var _selection;
                                             return MapEntry(
                                               index,
                                               new GridTile(
                                                 header: GridTileBar(
-                                                  leading: _selectionMode
-                                                      ? Icon(
-                                                          _selectedIndexList
-                                                                  .contains(
-                                                                      index)
-                                                              ? Icons
-                                                                  .check_circle
-                                                              : Icons
-                                                                  .radio_button_unchecked,
-                                                          color: _selectedIndexList
-                                                                  .contains(
-                                                                      index)
-                                                              ? Colors
-                                                                  .lightBlueAccent
-                                                              : Colors.black,
-                                                        )
-                                                      : null,
-                                                ),
+                                                    leading: _selectionMode
+                                                        ? Icon(
+                                                            _selectedIndexList
+                                                                    .contains(
+                                                                        index)
+                                                                ? Icons
+                                                                    .check_circle
+                                                                : Icons
+                                                                    .radio_button_unchecked,
+                                                            color: _selectedIndexList
+                                                                    .contains(
+                                                                        index)
+                                                                ? Colors
+                                                                    .greenAccent
+                                                                : Colors.black,
+                                                          )
+                                                        : null,
+                                                    title: SizedBox(
+                                                      width: 100,
+                                                    ),
+                                                    trailing: Container(
+                                                      child: PopupMenuButton<
+                                                          String>(
+                                                        onSelected: (String
+                                                            value) async {
+                                                          setState(() {
+                                                            _selection = value;
+                                                            print(
+                                                                "value is $value, project is ${(obj as Map)['id']}");
+                                                          });
+                                                          print((obj as Map).keys.toList());
+                                                          if (value ==
+                                                              'Setup') {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (_) {
+                                                                  return ProjectDetailScreen(
+                                                                    projectName:
+                                                                        (obj as Map)[
+                                                                            'name'],
+                                                                    projectId:
+                                                                        (obj as Map)[
+                                                                            'id'],
+                                                                    secretKey: (obj as Map)['secret_key']
+                                                                  );
+                                                                },
+                                                              ),
+                                                            );
+                                                          }
+                                                        },
+                                                        child: Icon(
+                                                            Icons.more_vert),
+                                                        itemBuilder: (BuildContext
+                                                                context) =>
+                                                            <
+                                                                PopupMenuEntry<
+                                                                    String>>[
+                                                          const PopupMenuItem<
+                                                              String>(
+                                                            value: 'About',
+                                                            child:
+                                                                Text('About'),
+                                                          ),
+                                                          const PopupMenuItem<
+                                                              String>(
+                                                            value: 'Setup',
+                                                            child:
+                                                                Text('Setup'),
+                                                          ),
+                                                          const PopupMenuItem<
+                                                              String>(
+                                                            value: 'Insights',
+                                                            child: Text(
+                                                                'Insights'),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )),
                                                 child: InkWell(
                                                   child: Container(
                                                     color: colorSet[index % 6],
