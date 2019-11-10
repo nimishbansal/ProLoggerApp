@@ -92,7 +92,7 @@ class MyAppState extends State<MyApp> {
         'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
         'otpInputScreen': (context) => RegistrationScreenPartThree(),
         'HomeScreen': (context) => ProjectsListScreen(),
-        'ProjectDetailScreen': (context) => ProjectDetailScreen(),
+        'ProjectDetailScreen': (context) => ProjectSetupScreen(),
       },
     );
     return MaterialApp(

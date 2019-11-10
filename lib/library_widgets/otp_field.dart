@@ -268,4 +268,15 @@ class OTPFieldState extends State<OTPField> {
     });
     if (widget.onOtpChanged != null) widget.onOtpChanged(otpValue);
   }
+
+  void clear(){
+    setState(() {
+      otpValue = '';
+      updateChildren('');
+    });
+  }
+  void fillWithOTP(String value){
+    assert (value.length == maxLength);
+    _handleOTPChanged(value);
+  }
 }

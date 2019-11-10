@@ -26,6 +26,10 @@ class RegistrationScreenPartThreeState
 
   OTPField otpField;
 
+  List phoneNoAndDialCode;
+  String phoneNo;
+  String dialCode;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +39,11 @@ class RegistrationScreenPartThreeState
         RegExp regExp = new RegExp("(\\d{4})");
         String receivedOTP = regExp.firstMatch(msg.body).group(0);
         print(receivedOTP);
+        try{
+          otpFieldStateKey.currentState.fillWithOTP(receivedOTP);
+          _handleNextPressed(context, dialCode+phoneNo);
+        }
+        catch(ex){}
       }
     });
   }
@@ -50,9 +59,9 @@ class RegistrationScreenPartThreeState
         });
       },
     );
-    List phoneNoAndDialCode = ModalRoute.of(context).settings.arguments;
-    String phoneNo = phoneNoAndDialCode[0];
-    String dialCode = '+' + phoneNoAndDialCode[1];
+    phoneNoAndDialCode = ModalRoute.of(context).settings.arguments;
+    phoneNo = phoneNoAndDialCode[0];
+    dialCode = '+' + phoneNoAndDialCode[1];
     return Scaffold(
       body: Material(
         child: Column(

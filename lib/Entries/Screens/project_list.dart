@@ -323,22 +323,26 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                                                             print(
                                                                 "value is $value, project is ${(obj as Map)['id']}");
                                                           });
-                                                          print((obj as Map).keys.toList());
+                                                          print((obj as Map)
+                                                              .keys
+                                                              .toList());
                                                           if (value ==
                                                               'Setup') {
-                                                            Navigator.push(
+                                                            await Navigator
+                                                                .push(
                                                               context,
                                                               MaterialPageRoute(
                                                                 builder: (_) {
-                                                                  return ProjectDetailScreen(
-                                                                    projectName:
-                                                                        (obj as Map)[
-                                                                            'name'],
-                                                                    projectId:
-                                                                        (obj as Map)[
-                                                                            'id'],
-                                                                    secretKey: (obj as Map)['secret_key']
-                                                                  );
+                                                                  return ProjectSetupScreen(
+                                                                      projectName:
+                                                                          (obj as Map)[
+                                                                              'name'],
+                                                                      projectId:
+                                                                          (obj as Map)[
+                                                                              'id'],
+                                                                      secretKey:
+                                                                          (obj as Map)[
+                                                                              'secret_key']);
                                                                 },
                                                               ),
                                                             );
@@ -491,7 +495,7 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
           if (snapshot.hasData &&
               snapshot.data != null &&
               snapshot.data.status == Status.COMPLETED) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
               projectBloc.newProjectSink.add(ApiResponse.halt());
               Navigator.of(context).pop();
               Scaffold.of(scaffoldContext).showSnackBar(
@@ -509,22 +513,19 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
               _selectedIndexList.clear();
               _selectionMode = false;
               _projectBloc.listProjects(addLoadingInitially: false);
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) {
-                      Map<String, dynamic> projectDetailJson = (snapshot.data.data as Response).json();
-                      print(projectDetailJson);
-                      return ProjectDetailScreen(
-                              projectName: projectDetailJson['name'].toString(),
-                              projectId: projectDetailJson['id'],
-                              secretKey: projectDetailJson['secret_key'].toString()
-                      );
-                    },
-                  ),
-                );
-
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) {
+                    Map<String, dynamic> projectDetailJson =
+                        (snapshot.data.data as Response).json();
+                    return ProjectSetupScreen(
+                        projectName: projectDetailJson['name'].toString(),
+                        projectId: projectDetailJson['id'],
+                        secretKey: projectDetailJson['secret_key'].toString());
+                  },
+                ),
+              );
             });
           }
           return AlertDialog(
@@ -552,7 +553,6 @@ class ProjectsListScreenState extends State<ProjectsListScreen> {
                         : SizedBox(
                             height: 0,
                           ),
-//                  Text(snapshot.data?.message?.toString() ?? 'aww', style: TextStyle(color: Colors.red),),
                   ],
                 ),
               );

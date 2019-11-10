@@ -210,7 +210,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
 
   @override
   void dispose() {
+      logEntryListBloc.dispose();
     super.dispose();
-    logEntryListBloc.dispose();
   }
 }
