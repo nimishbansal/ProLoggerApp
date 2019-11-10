@@ -8,7 +8,6 @@ import 'globals.dart' as globals;
 import 'Auth/Screens/RegistrationScreenPartOne.dart';
 import 'Auth/Screens/RegistrationScreenPartThree.dart';
 import 'Auth/Screens/RegistrationScreenPartTwo.dart';
-import 'Entries/Screens/project_detail.dart';
 import 'Entries/Screens/project_list.dart';
 import 'Entries/widgets/LogLevelSelectModal.dart';
 
@@ -92,7 +91,6 @@ class MyAppState extends State<MyApp> {
         'phoneInputScreen': (context) => RegistrationScreenPartTwo(),
         'otpInputScreen': (context) => RegistrationScreenPartThree(),
         'HomeScreen': (context) => ProjectsListScreen(),
-        'ProjectDetailScreen': (context) => ProjectSetupScreen(),
       },
     );
     return MaterialApp(

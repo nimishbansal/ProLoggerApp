@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pro_logger/Entries/Blocs/project_list_bloc.dart';
 import 'package:pro_logger/Entries/Screens/LogEntryListScreen.dart';
-import 'package:pro_logger/Entries/Screens/project_detail.dart';
+import 'package:pro_logger/Entries/Screens/project_setup.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/utility/network_utils.dart';
 import 'package:requests/requests.dart';

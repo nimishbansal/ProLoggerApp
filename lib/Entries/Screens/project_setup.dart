@@ -20,43 +20,48 @@ class ProjectSetupScreen extends StatefulWidget {
 
 class ProjectSetupScreenState extends State<ProjectSetupScreen> {
   WebviewScaffold webViewScaffold;
+  @override
+  void initState() {
+    super.initState();
+    webViewScaffold = new WebviewScaffold(
+      url: new Uri.dataFromString(
+              '<html>'
+                      '<head>'
+                      '<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>'
+                      '</head>'
+                      '<style>'
+                      'pre.prettyprint {'
+                      'border: none !important;'
+                      'font-size: 1em;'
+                      'background-color: #F1F8FF'
+                      '}'
+                      '</style>'
+                      '<body>'
+                      '<div>'
+                      'Install our python sdk early in your application\'s setup'
+                      '<pre class="prettyprint py">'
+                      '$installCode'
+                      '</pre>'
+                      '<br/>'
+                      'Import and initialize the prologger SDK early in your applications setup'
+                      '<pre class="prettyprint py">'
+                      '${sourceCode.replaceFirst('{0}', widget.secretKey)}'
+                      '</pre>'
+                      '<br/>'
+                      'You can cause a Python error by inserting a divide by zero expression into your application:'
+                      '<pre class="prettyprint py">'
+                      '$exampleCode'
+                      '</pre>'
+                      '</div>'
+                      '</body>'
+                      '</html>',
+              mimeType: 'text/html')
+              .toString(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    webViewScaffold = new WebviewScaffold(
-        url: new Uri.dataFromString(
-                '<html>'
-                '<head>'
-                '<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>'
-                '</head>'
-                '<style>'
-                'pre.prettyprint {'
-                'border: none !important;'
-                'font-size: 1em;'
-                'background-color: #F1F8FF'
-                '}'
-                '</style>'
-                '<body>'
-                '<div>'
-                'Install our python sdk early in your application\'s setup'
-                '<pre class="prettyprint py">'
-                '$installCode'
-                '</pre>'
-                '<br/>'
-                'Import and initialize the prologger SDK early in your applications setup'
-                '<pre class="prettyprint py">'
-                '${sourceCode.replaceFirst('{0}', widget.secretKey)}'
-                '</pre>'
-                '<br/>'
-                'You can cause a Python error by inserting a divide by zero expression into your application:'
-                '<pre class="prettyprint py">'
-                '$exampleCode'
-                '</pre>'
-                '</div>'
-                '</body>'
-                '</html>',
-                mimeType: 'text/html')
-            .toString());
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.projectName ?? 'Project1'),
