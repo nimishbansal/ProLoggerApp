@@ -52,6 +52,13 @@ class ProjectSetupScreenState extends State<ProjectSetupScreen> {
                       '<pre class="prettyprint py">'
                       '$exampleCode'
                       '</pre>'
+                      '<br/>'
+                      'If you are aware of Logging Dict configuration for. e.g in Django'
+                      '[https://docs.djangoproject.com/en/2.2/topics/logging/]'
+                      'then you can use'
+                      '<pre class="prettyprint py">'
+                      '${loggingDictConfig.replaceFirst('{0}', widget.secretKey)}'
+                      '</pre>'
                       '</div>'
                       '</body>'
                       '</html>',
@@ -116,4 +123,25 @@ secret_key="{0}"
 
 var exampleCode = """
 division_by_zero = 1 / 0
+""";
+
+var loggingDictConfig = """
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'pro_logger': {
+            'level': 'DEBUG', # Specify your level
+            'class': 'prologgersdk.log.ProLoggerHandler',
+            "secret_key": "{0}" # this is your secret key
+        }
+    },
+    'loggers': {
+        '': { # empty one is root logger, You can use your own named logger
+            'handlers': ['pro_logger', ],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}
 """;
