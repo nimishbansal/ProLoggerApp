@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pro_logger/Auth/Repositories/auth_repository.dart';
 import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/common_widgets.dart';
@@ -29,6 +30,7 @@ class RegistrationScreenPartThreeState
   List phoneNoAndDialCode;
   String phoneNo;
   String dialCode;
+  int otpEstimateTs;
 
   @override
   void initState() {
@@ -39,13 +41,13 @@ class RegistrationScreenPartThreeState
         RegExp regExp = new RegExp("(\\d{4})");
         String receivedOTP = regExp.firstMatch(msg.body).group(0);
         print(receivedOTP);
-        try{
+        try {
           otpFieldStateKey.currentState.fillWithOTP(receivedOTP);
-          _handleNextPressed(context, dialCode+phoneNo);
-        }
-        catch(ex){}
+//          _handleNextPressed(context, dialCode+phoneNo);
+        } catch (ex) {}
       }
     });
+    otpEstimateTs = DateTime.now().millisecondsSinceEpoch + 20000;
   }
 
   @override
@@ -88,6 +90,45 @@ class RegistrationScreenPartThreeState
               alignment: Alignment.centerLeft,
               child: this.otpField,
             ),
+            SizedBox(height: 20,),
+            StreamBuilder(
+                stream: Stream.periodic(Duration(seconds: 1), (i) => i),
+                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  DateFormat format = DateFormat("mm:ss");
+                  int now = DateTime.now().millisecondsSinceEpoch;
+                  Duration remaining =
+                      Duration(milliseconds: otpEstimateTs - now);
+                  if (remaining >= Duration.zero) {
+                    var dateString =
+                        '${remaining.inMinutes}:${remaining.inSeconds}';
+                    return Container(
+                      padding: EdgeInsets.only(left: 40),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                          'Auto Verifying your otp in ${format.format(format.parse(dateString))}',
+                      style: TextStyle(fontSize: 18),),
+                    );
+                  } else {
+                    return GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 40),
+                        alignment: Alignment(-0.6, 0),
+                        child: Row(
+                          children: <Widget>[
+                            Text('Didn\'t Received OTP? ', style: TextStyle(fontSize: 18),),
+                            Text('Resend OTP', style: TextStyle(color: Colors.blue,decoration:TextDecoration.underline,fontSize: 18)),
+                          ],
+                        ),
+                      ),
+                      onTap: (){
+                        setState(() {
+                          AuthRepository().generateOtp(phoneNo: dialCode+phoneNo);
+                          otpEstimateTs = DateTime.now().millisecondsSinceEpoch + 20000;
+                        });
+                      },
+                    );
+                  }
+                }),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
@@ -109,7 +150,7 @@ class RegistrationScreenPartThreeState
                         ),
                         width: 0.9 * MediaQuery.of(context).size.width),
                     onTap: buttonEnabled
-                        ? () => _handleNextPressed(context, dialCode+phoneNo)
+                        ? () => _handleNextPressed(context, dialCode + phoneNo)
                         : null,
                   ),
                 ),
@@ -135,7 +176,7 @@ class RegistrationScreenPartThreeState
         context: context,
         builder: (BuildContext buildContext) {
           return Loader();
-    });
+        });
     validateOtp(otpValue, phoneNo).then((bool isOtpValid) {
       Navigator.of(context).pop();
       if (!isOtpValid) {
@@ -157,15 +198,15 @@ class RegistrationScreenPartThreeState
             );
           },
         );
-      }
-      else{
+      } else {
         Navigator.of(context).pushNamed('HomeScreen');
       }
     });
   }
 
   Future<bool> validateOtp(String otp, String phoneNo) async {
-    bool result = await AuthRepository().validateOtp(phoneNo: phoneNo, otp: otp);
+    bool result =
+        await AuthRepository().validateOtp(phoneNo: phoneNo, otp: otp);
     return result;
   }
 }
