@@ -108,7 +108,7 @@ class LogEntryListBloc {
 
   void connectToRedis() async {
     final pubsub =
-        await PubSub.connect<String, String>("redis://192.168.0.107:6379");
+        await PubSub.connect<String, String>("redis://18.223.156.125:6379");
     pubsub.subscribe(channel: "onChat" + globals.authToken.split(" ")[1]);
     pubsub.stream.listen((data) {
         print(data);
