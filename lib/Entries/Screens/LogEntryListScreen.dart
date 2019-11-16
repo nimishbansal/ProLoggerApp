@@ -53,7 +53,7 @@ class _LogEntryListScreenState extends State<LogEntryListScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       LogEntryListBloc _deletelogEntriesListBloc =
-                          LogEntryListBloc();
+                          LogEntryListBloc(connectToSocket: false);
                       return StreamBuilder<ApiResponse>(
                           stream:
                               _deletelogEntriesListBloc.deleteLogEntriesStream,

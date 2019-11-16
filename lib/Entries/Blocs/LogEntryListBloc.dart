@@ -50,12 +50,9 @@ class LogEntryListBloc {
   Stream<ApiResponse> get deleteLogEntriesStream =>
       _deleteLogEntriesStreamController.stream;
 
-  LogEntryListBloc() {
+  LogEntryListBloc({bool connectToSocket = true}) {
     _logEntryRepository = new LogEntryRepository();
-//    this.connectToRedis();
-    print("connecting");
-    this.connectToSocket();
-    print("executed");
+    if (connectToSocket) this.connectToSocket();
     this._logEntryEventController.stream.listen(_mapEventToState);
     _deleteLogEntriesStreamController = StreamController<ApiResponse>();
   }
@@ -130,18 +127,17 @@ class LogEntryListBloc {
     manager = SocketIOManager();
     SocketOptions socketOptions = SocketOptions('http://3.17.182.118:5000');
 //      SocketOptions socketOptions = SocketOptions('http://192.168.0.107:5000');
-    if (socket == null || await socket.isConnected() == false) {
-      if (socket!=null && !await socket.isConnected()) {
-        manager.clearInstance(socket); // to disconnect
-      }
-      socket = await manager.createInstance(socketOptions);
-      // we have made an event that can be listened from the authenticated user
-      socket.on("onChat" + globals.authToken.split(" ")[1], (data) {
-        this.logEntry = LogEntry.fromJson(data);
-        this.logEventControllerSink.add(NewLogEntryEvent());
-      });
-      socket.connect();
+    if (LogEntryListBloc.socket != null) {
+      await manager.clearInstance(socket); // to disconnect
     }
+    LogEntryListBloc.socket = await manager.createInstance(socketOptions);
+    // we have made an event that can be listened from the authenticated user
+    LogEntryListBloc.socket.on("onChat" + globals.authToken.split(" ")[1],
+        (data) {
+      this.logEntry = LogEntry.fromJson(data);
+      this.logEventControllerSink.add(NewLogEntryEvent());
+    });
+    LogEntryListBloc.socket.connect();
   }
 
   void _mapEventToState(LogEntryEvent event) {
