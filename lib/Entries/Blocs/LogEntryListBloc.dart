@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:dartis/dartis.dart';
 import 'package:requests/requests.dart';
 import 'package:tuple/tuple.dart';
@@ -42,21 +43,25 @@ class LogEntryListBloc {
   Sink<LogEntryEvent> get logEventControllerSink =>
       _logEntryEventController.sink;
 
-
   // Stream utils for deleting logEntries list
   StreamController<ApiResponse> _deleteLogEntriesStreamController;
-  StreamSink<ApiResponse> get deleteLogEntriesSink => _deleteLogEntriesStreamController.sink;
-  Stream<ApiResponse> get deleteLogEntriesStream => _deleteLogEntriesStreamController.stream;
+  StreamSink<ApiResponse> get deleteLogEntriesSink =>
+      _deleteLogEntriesStreamController.sink;
+  Stream<ApiResponse> get deleteLogEntriesStream =>
+      _deleteLogEntriesStreamController.stream;
 
   LogEntryListBloc() {
     _logEntryRepository = new LogEntryRepository();
-    this.connectToRedis();
+//    this.connectToRedis();
+    print("connecting");
+    this.connectToSocket();
+    print("executed");
     this._logEntryEventController.stream.listen(_mapEventToState);
     _deleteLogEntriesStreamController = StreamController<ApiResponse>();
   }
 
   void fetchLogEntriesList({int pageNo, int projectId}) async {
-      this.pageNo = pageNo;
+    this.pageNo = pageNo;
     _logEntryListStateController
         .add(ApiResponse.loading(message: 'Page${this.pageNo}'));
     try {
@@ -66,18 +71,15 @@ class LogEntryListBloc {
       logEntries = result.item1;
       noOfRecords = result.item2;
       logEntriesSelectedStatus = logEntries
-              .map((currentLogEntry) => Tuple2(currentLogEntry, false))
-              .toList();
+          .map((currentLogEntry) => Tuple2(currentLogEntry, false))
+          .toList();
 
-      if (noOfRecords==0){
+      if (noOfRecords == 0) {
+        _logEntryListStateController.add(ApiResponse.error('No records found'));
+      } else {
         _logEntryListStateController
-                .add(ApiResponse.error('No records found'));
+            .add(ApiResponse.completed(logEntriesSelectedStatus));
       }
-      else{
-        _logEntryListStateController
-                .add(ApiResponse.completed(logEntriesSelectedStatus));
-      }
-
     } catch (e) {
       if (e.runtimeType == SocketException) {
         _logEntryListStateController
@@ -85,17 +87,19 @@ class LogEntryListBloc {
       }
       print("exception is $e");
       _logEntryListStateController
-              .add(ApiResponse.error('Sorry, :-( \nSome error occured'));
-
+          .add(ApiResponse.error('Sorry, :-( \nSome error occured'));
     }
   }
 
-  void deleteLogEntries(List<Tuple2<LogEntry, bool>> logEntriesTuplesList, int projectId) async {
+  void deleteLogEntries(
+      List<Tuple2<LogEntry, bool>> logEntriesTuplesList, int projectId) async {
     deleteLogEntriesSink.add(ApiResponse.loading());
-    List<int> logEntryIds = logEntriesTuplesList.map((Tuple2<LogEntry, bool> logEntrySelectedStatus){
+    List<int> logEntryIds = logEntriesTuplesList
+        .map((Tuple2<LogEntry, bool> logEntrySelectedStatus) {
       return logEntrySelectedStatus.item1.id;
     }).toList();
-    Tuple2<bool, Response> results = await _logEntryRepository.deleteLogEntries(logEntryIds, projectId);
+    Tuple2<bool, Response> results =
+        await _logEntryRepository.deleteLogEntries(logEntryIds, projectId);
     var response = results.item2;
     if (results.item1) {
       deleteLogEntriesSink.add(ApiResponse.completed(response));
@@ -105,19 +109,38 @@ class LogEntryListBloc {
     }
   }
 
-
   void connectToRedis() async {
     final pubsub =
         await PubSub.connect<String, String>("redis://3.17.182.118:6379");
     pubsub.subscribe(channel: "onChat" + globals.authToken.split(" ")[1]);
     pubsub.stream.listen((data) {
-        print(data);
+      print(data);
       if (data.runtimeType.toString() == 'MessageEvent<String, String>') {
         this.logEntry = LogEntry.fromJson(json
             .decode((data as MessageEvent<String, String>).message.toString()));
         this.logEventControllerSink.add(NewLogEntryEvent());
       }
     });
+  }
+
+  SocketIOManager manager;
+  static SocketIO socket;
+
+  void connectToSocket() async {
+    manager = SocketIOManager();
+    SocketOptions socketOptions = SocketOptions('http://3.17.182.118:5000');
+//      SocketOptions socketOptions = SocketOptions('http://192.168.0.107:5000');
+    if (socket == null || await socket.isConnected() == false) {
+      if (socket!=null && !await socket.isConnected()) {
+        manager.clearInstance(socket); // to disconnect
+      }
+      socket = await manager.createInstance(socketOptions);
+      socket.on("chat", (data) {
+        this.logEntry = LogEntry.fromJson(data);
+        this.logEventControllerSink.add(NewLogEntryEvent());
+      });
+      socket.connect();
+    }
   }
 
   void _mapEventToState(LogEntryEvent event) {
@@ -146,5 +169,6 @@ class LogEntryListBloc {
     _logEntryEventController.close();
     _logEntryListStateController.close();
     _deleteLogEntriesStreamController.close();
+//    manager.clearInstance(socket); // to disconnect
   }
 }
