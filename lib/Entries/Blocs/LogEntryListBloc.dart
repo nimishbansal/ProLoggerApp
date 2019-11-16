@@ -135,7 +135,8 @@ class LogEntryListBloc {
         manager.clearInstance(socket); // to disconnect
       }
       socket = await manager.createInstance(socketOptions);
-      socket.on("chat", (data) {
+      // we have made an event that can be listened from the authenticated user
+      socket.on("onChat" + globals.authToken.split(" ")[1], (data) {
         this.logEntry = LogEntry.fromJson(data);
         this.logEventControllerSink.add(NewLogEntryEvent());
       });
