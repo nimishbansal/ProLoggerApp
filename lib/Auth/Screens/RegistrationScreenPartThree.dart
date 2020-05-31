@@ -7,6 +7,9 @@ import 'package:pro_logger/Entries/widgets/loader.dart';
 import 'package:pro_logger/common_widgets.dart';
 import 'package:pro_logger/library_widgets/otp_field.dart';
 import 'package:sms/sms.dart';
+import 'package:tuple/tuple.dart';
+
+import '../utils.dart';
 
 final otpFieldStateKey = new GlobalKey<OTPFieldState>();
 
@@ -177,36 +180,50 @@ class RegistrationScreenPartThreeState
         builder: (BuildContext buildContext) {
           return Loader();
         });
-    validateOtp(otpValue, phoneNo).then((bool isOtpValid) {
-      Navigator.of(context).pop();
-      if (!isOtpValid) {
-        showDialog(
-          context: context,
-          builder: (BuildContext buildContext) {
-            return getAlertDialog(
-              context: buildContext,
-              title: 'Invalid OTP',
-              buttonText: 'OK',
-              description: 'Please Enter Valid OTP',
-              onTap: () {
-                Navigator.of(context).pop();
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  FocusScope.of(context)
-                      .requestFocus(otpFieldStateKey.currentState.focusNode);
-                });
-              },
-            );
-          },
-        );
-      } else {
-        Navigator.of(context).pushNamed('HomeScreen');
-      }
-    });
+      validateOtp(otpValue, phoneNo).then((Tuple3<bool, String, String> tup) {
+        bool isOtpValid = tup.item1;
+        String reason = tup.item2;
+        String title = tup.item3;
+        Navigator.of(context).pop();
+        if (!isOtpValid) {
+          showDialog(
+            context: context,
+            builder: (BuildContext buildContext) {
+              return getAlertDialog(
+                context: buildContext,
+                title: title,
+                buttonText: 'OK',
+                description: reason,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    FocusScope.of(context)
+                            .requestFocus(otpFieldStateKey.currentState.focusNode);
+                  });
+                },
+              );
+            },
+          );
+        } else {
+          Navigator.of(context).pushNamed('HomeScreen');
+        }
+      });
   }
 
-  Future<bool> validateOtp(String otp, String phoneNo) async {
-    bool result =
-        await AuthRepository().validateOtp(phoneNo: phoneNo, otp: otp);
-    return result;
+  Future<Tuple3<bool, String, String>> validateOtp(String otp, String phoneNo) async {
+    try{
+      bool result =
+      await AuthRepository().validateOtp(phoneNo: phoneNo, otp: otp);
+      String reason, title;
+      if (!result){
+        reason = INVALID_OTP_MESSAGE;
+        title = INVALID_OTP_TITLE;
+      }
+      return Tuple3(result, reason, title);
+    }
+    catch(e){
+      return Tuple3(false, e.toString(), 'Some error occurred');
+    }
+
   }
 }

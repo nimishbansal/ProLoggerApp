@@ -44,12 +44,13 @@ Widget getAlertDialog({@required BuildContext context,@required  String title,@r
                         child: Container(
                             padding: EdgeInsets.all(8),
                             child: Text(
-                                'OK',
+                                'Ok',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                         fontSize: 20,
-                                        color: Colors.yellowAccent,
-                                        fontWeight: FontWeight.bold),
+                                        color: Colors.white,
+//                                        fontWeight: FontWeight.bold,
+                                ),
                             ),
                             width: 0.9 * MediaQuery.of(context).size.width,
                         ),
