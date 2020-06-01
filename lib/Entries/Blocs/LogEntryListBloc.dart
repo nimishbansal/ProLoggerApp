@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:dartis/dartis.dart';
+import 'package:pro_logger/constants.dart';
 import 'package:requests/requests.dart';
 import 'package:tuple/tuple.dart';
 import 'package:pro_logger/Entries/Events/issue_events.dart';
@@ -125,7 +126,7 @@ class LogEntryListBloc {
 
   void connectToSocket() async {
     manager = SocketIOManager();
-    SocketOptions socketOptions = SocketOptions('http://3.17.182.118:5000');
+    SocketOptions socketOptions = SocketOptions(SOCKET_CONNECT_URL);
 //      SocketOptions socketOptions = SocketOptions('http://192.168.0.107:5000');
     if (LogEntryListBloc.socket != null) {
       await manager.clearInstance(socket); // to disconnect
