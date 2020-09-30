@@ -25,7 +25,7 @@ class LogEntryRepository {
         'Content-Type': 'application/json',
         'Authorization': authToken
       },
-      body: data,
+      json: data,
     );
     final Map<String, dynamic> response = r.json();
     return Tuple2(r.success, r);

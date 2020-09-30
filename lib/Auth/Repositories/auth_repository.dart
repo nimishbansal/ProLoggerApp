@@ -16,11 +16,13 @@ class AuthRepository {
     HashMap<String, String> data;
     data = new HashMap<String, String>();
     data['phone_no'] = phoneNo;
-    Response r = await Requests.post(requestUrl,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        json: data,);
+    Response r = await Requests.post(
+      requestUrl,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      json: data,
+    );
     final Map<String, dynamic> response = r.json();
     print(response);
     return true;
@@ -32,14 +34,13 @@ class AuthRepository {
     data = new HashMap<String, String>();
     data['phone_no'] = phoneNo;
     data['key'] = otp;
-    Response r = await Requests.post(
-      requestUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: data,
-    );
+    Response r = await Requests.post(requestUrl,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        json: data);
     final Map<String, dynamic> response = r.json();
+    print(response);
     if (response[STATUS] == SUCCESS) {
       storage.write(key: 'token', value: 'Token ${response['key']}');
       globals.authToken = 'Token ${response['key']}';
